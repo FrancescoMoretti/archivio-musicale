@@ -1,0 +1,56 @@
+DROP TABLE IF EXISTS immagini_edizioni;
+DROP TABLE IF EXISTS edizioni;
+DROP TABLE IF EXISTS immagini_stampe;
+DROP TABLE IF EXISTS stampe;
+DROP TABLE IF EXISTS utenti;
+
+CREATE TABLE utenti(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    ruolo ENUM('admin', 'editor', 'viewer') NOT NULL DEFAULT 'viewer',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE edizioni(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    collocazione VARCHAR(15) UNIQUE NOT NULL,
+    link_rism VARCHAR(255),
+    autore VARCHAR(255),
+    titolo VARCHAR(255) NOT NULL,
+    data_str VARCHAR(50),
+    editore VARCHAR(255),
+    descrizione TEXT,
+    note TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE immagini_edizioni(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    edizione_id INT NOT NULL,
+    url_immagine VARCHAR(255) NOT NULL,
+    ordine INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (edizione_id) REFERENCES edizioni(id) ON DELETE CASCADE
+);
+
+CREATE TABLE stampe(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    autore VARCHAR(255),
+    titolo VARCHAR(255) NOT NULL,
+    data_str VARCHAR(50),
+    stampa VARCHAR(100),
+    dimensioni VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE immagini_stampe(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    stampa_id INT NOT NULL,
+    url_immagine VARCHAR(255) NOT NULL,
+    ordine INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (stampa_id) REFERENCES stampe(id) ON DELETE CASCADE
+);
