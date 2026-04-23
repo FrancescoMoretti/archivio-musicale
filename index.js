@@ -41,14 +41,14 @@ app.post("/api/insert-edizioni", upload.array("immagini"), async (req, res) => {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const [result] = await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note]);
-        const edizioneId=result.insertId;//recupero id dell'edizione inserita
+        const edizioneId = result.insertId;//recupero id dell'edizione inserita
         //caricamento immagini su cloudinary
         if (files && files.length > 0) {
-            for (let i=0; i<files.length; i++) {
-                const file=files[i];
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
                 const imageUrl = await uploadToCloudinary(file.buffer, "edizioni");
                 const queryImmagine = `INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
-                await connection.execute(queryImmagine, [edizioneId, imageUrl, i+1]);
+                await connection.execute(queryImmagine, [edizioneId, imageUrl, i + 1]);
             }
         }
         await connection.commit();
