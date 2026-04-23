@@ -16,7 +16,7 @@ CREATE TABLE edizioni(
     id INT AUTO_INCREMENT PRIMARY KEY,
     collocazione VARCHAR(15) UNIQUE NOT NULL,
     link_rism VARCHAR(255),
-    autore VARCHAR(255),
+    autore VARCHAR(255) NOT NULL,
     titolo VARCHAR(255) NOT NULL,
     data_str VARCHAR(50),
     editore VARCHAR(255),
