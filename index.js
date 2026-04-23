@@ -10,6 +10,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));// Serve i file statici dalla cartella public
 
+app.use('/admin', express.static('admin'));
+
 const pool = require('./src/db');
 const { upload, cloudinary } = require('./src/cloudinaryConfig');
 
@@ -27,7 +29,7 @@ const uploadToCloudinary = (buffer, folder) => {
 };
 
 //inserimento edizione
-app.post("/api/insert-edizioni", upload.array("immagini"), async (req, res) => {
+app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
