@@ -2,68 +2,69 @@
 <html lang="it">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts/area_admin_script.js"></script>
-    <title>Area amministratore</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="scripts/area_admin_script.js" defer></script>
+  <title>Area amministratore</title>
 </head>
 
 <body>
-    <header></header>
-    <main>
-        <h1>Area amministratore</h1>
-        <h2>Gestione dei contenuti</h2>
-        <div id="radio-div">
-            <input type="radio" name="tipo-form" id="radio1" value="1">
-            <label for="radio1">Edizioni e Manoscritti</label>
-        </div>
-        <div class="grid" id="content-grid">
-          <div class="element" id="aggiungi-edizioni-form" style="display: none">
-            <h3>Aggiunta Edizioni e Manoscritti: </h3>
-            <form id="edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
-              <p id="message1"></p><!--messaggio di conferma-->
-              <div>
-                <label for="n_collocazione" class="required">Collocazione: </label>
-                <input type="number" name="collocazione" id="n_collocazione" placeholder="1" required>
-              </div>
-              <div>
-                <label for="link_rism">Link RISM: </label>
-                <input type="url" name="link_rism" id="link_rism" placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107">
-              </div>
-              <div>
-                <label for="autore" class="required">Autore: </label>
-                <input type="text" name="autore" id="autore" placeholder="Autore" required>
-              </div>
-              <div>
-                <label for="titolo" class="required">Titolo: </label>
-                <input type="text" name="titolo" id="titolo" placeholder="Titolo" required>
-              </div>
-              <div>
-                <label for="data_str">Data: </label>
-                <input type="text" name="data_str" id="data_str" placeholder="s.d. 1813ca">
-              </div>
-              <div>
-                <label for="editore">Editore: </label>
-                <input type="text" name="editore" id="editore" placeholder="Editore">
-              </div>
-              <div>
-                <label for="descrizione" class="text-label">Descrizione: </label>
-                <textarea name="descrizione" id="descrizione" placeholder="Descrizione"></textarea>
-              </div>
-              <div>
-                <label for="note" class="text-label">Note: </label>
-                <textarea name="note" id="note" placeholder="Note"></textarea>
-              </div>
-              <div>
-                <label for="immagini">Immagini: </label>
-                <input type="file" name="immagini" id="immagini" accept="image/*" multiple>
-              </div>
-              <input type="submit" value="Aggiungi contenuto">
-            </form>
+  <header></header>
+  <main>
+    <h1>Area amministratore</h1>
+    <h2>Gestione dei contenuti</h2>
+    <div id="radio-div">
+      <input type="radio" name="tipo-form" id="radio1" value="1">
+      <label for="radio1">Edizioni e Manoscritti</label>
+    </div>
+    <div class="grid" id="content-grid">
+      <div class="element" id="aggiungi-edizioni-form" style="display: none">
+        <h3>Aggiunta Edizioni e Manoscritti: </h3>
+        <form id="edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
+          <p id="message1"></p><!--messaggio di conferma-->
+          <div>
+            <label for="n_collocazione" class="required">Collocazione: </label>
+            <input type="number" name="collocazione" id="n_collocazione" placeholder="1" required>
           </div>
-        </div>
-    </main>
-    <footer></footer>
+          <div>
+            <label for="link_rism">Link RISM: </label>
+            <input type="url" name="link_rism" id="link_rism"
+              placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107">
+          </div>
+          <div>
+            <label for="autore" class="required">Autore: </label>
+            <input type="text" name="autore" id="autore" placeholder="Autore" required>
+          </div>
+          <div>
+            <label for="titolo" class="required">Titolo: </label>
+            <input type="text" name="titolo" id="titolo" placeholder="Titolo" required>
+          </div>
+          <div>
+            <label for="data_str">Data: </label>
+            <input type="text" name="data_str" id="data_str" placeholder="s.d. 1813ca">
+          </div>
+          <div>
+            <label for="editore">Editore: </label>
+            <input type="text" name="editore" id="editore" placeholder="Editore">
+          </div>
+          <div>
+            <label for="descrizione" class="text-label">Descrizione: </label>
+            <textarea name="descrizione" id="descrizione" placeholder="Descrizione"></textarea>
+          </div>
+          <div>
+            <label for="note" class="text-label">Note: </label>
+            <textarea name="note" id="note" placeholder="Note"></textarea>
+          </div>
+          <div>
+            <label for="immagini">Immagini: </label>
+            <input type="file" name="immagini" id="immagini" accept="image/*" multiple>
+          </div>
+          <input type="submit" value="Aggiungi contenuto">
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer></footer>
 </body>
 
 </html>

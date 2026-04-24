@@ -28,7 +28,7 @@ const uploadToCloudinary = (buffer, folder) => {
     });
 };
 
-//inserimento edizione
+//endpoint per inserimento edizione
 app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
     const files = req.files;//immagini
@@ -57,13 +57,88 @@ app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
         res.json({ success: true, message: "Edizione e immagini salvate con successo!" });
     } catch (err) {
         await connection.rollback();
-        console.error("Errore durante l'inserimento:", err);
+        console.error("Errore nell'endpoint add-edizione: ", err);
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ message: "Errore: il numero di collocazione è già esistente." });
         }
         res.status(500).json({ message: "Errore interno durante il salvataggio." });
     } finally {
         connection.release();
+    }
+});
+
+//endpoint per lista edizioni
+app.get("/api/show-edizioni", async (req, res) => {
+    const { limit, offset, filtro } = req.query;
+    const limite = parseInt(limit, 10) || 5;
+    const inizio = parseInt(offset, 10) || 0;
+    //query per contare le righe che avrà la tabella
+    let queryTotali = "SELECT COUNT(*) AS totali FROM edizioni e";
+    //query per estrarre contenuti e url dell'immagine, uso left jin per estrarre anche edizioni senza immagini
+    let queryContenuti = `SELECT e.id, e.collocazione, e.titolo, e.autore, i.url_immagine FROM edizioni e LEFT JOIN immagini_edizioni i ON e.id=i.edizione_id AND i.ordine=1`;
+    let paramsContenuti = [];
+    let paramsTotali = [];
+    let whereClause = "";//clausola where
+    //gestione filtro
+    if (filtro) {
+        whereClause = " WHERE e.autore LIKE ? OR e.titolo LIKE ?";
+        const filtroLike = `%${filtro}%`;
+        paramsTotali.push(filtroLike, filtroLike);
+        paramsContenuti.push(filtroLike, filtroLike);
+    }
+    queryTotali += whereClause;
+    queryContenuti += whereClause;
+    //gestione ordinamento
+    queryContenuti += " ORDER BY e.collocazione ASC LIMIT ? OFFSET ?";
+    paramsContenuti.push(limite, inizio);
+    try {
+        const [risultatoTotale] = await pool.query(queryTotali, paramsTotali);
+        const totali = risultatoTotale[0].totali;
+        const [righe] = await pool.query(queryContenuti, paramsContenuti);
+        res.json({
+            success: true,
+            contenuti: righe,
+            totali: totali
+        });
+    } catch (err) {
+        console.error("Errore nell'endpoint show-edizioni: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Errore durante il recupero delle edizioni."
+        });
+    }
+});
+
+//endpoint per lettura edizione
+app.get("/api/edizione/:collocazione", async (req, res) => {
+    const collocazione = req.params.collocazione;
+    const queryContenuti = "SELECT * FROM edizioni WHERE collocazione=?";
+    const queryImmagini = "SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
+    try {
+        const [edizioneRisultato] = await pool.query(queryContenuti, [collocazione]);
+        //risorsa non trovata
+        if (edizioneRisultato.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Edizione/Manoscritto non trovato"
+            });
+        }
+        const content = edizioneRisultato[0];
+        //recupero le immagini della risorsa
+        const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
+        const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
+        res.json({
+            success: true,
+            content: content,
+            immagini: listaUrlImmagini,
+            n_immagini: listaUrlImmagini.length
+        });
+    } catch (err) {
+        console.error("Errore nell'endpoint edizione: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Errore durante il recupero della risorsa."
+        });
     }
 });
 

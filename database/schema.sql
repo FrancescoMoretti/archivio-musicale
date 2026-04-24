@@ -14,7 +14,7 @@ CREATE TABLE utenti(
 
 CREATE TABLE edizioni(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    collocazione VARCHAR(15) UNIQUE NOT NULL,
+    collocazione INT UNIQUE NOT NULL CHECK (collocazione>0),
     link_rism VARCHAR(255),
     autore VARCHAR(255) NOT NULL,
     titolo VARCHAR(255) NOT NULL,

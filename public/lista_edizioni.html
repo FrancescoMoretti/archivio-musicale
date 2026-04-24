@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="scripts/lista_edizioni_script.js" defer></script>
+    <title>Edizioni e Manoscritti</title>
+</head>
+
+<body>
+    <header></header>
+    <main>
+        <section id="ricerca-sec">
+            <h1>Edizioni e Manoscritti</h1>
+            <div>
+                <label for="search-bar">Ricerca: </label>
+                <input type="text" name="search-bar" id="search-bar" palceholder="Cerca un titolo o un autore">
+            </div>
+        </section>
+        <section class="lista-contenuti">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Collocazione</th>
+                        <th>Autore</th>
+                        <th>Titolo</th>
+                        <th>Immagine</th>
+                    </tr>
+                </thead>
+                <tbody id="tabella">
+
+                </tbody>
+            </table>
+            <div id="paginazione">
+                <button id="prec-btn"><span class="material-symbols-outlined">arrow_back</span></button>
+                <span id="schermata">Pagina 1</span>
+                <button id="succ-btn"><span class="material-symbols-outlined">arrow_forward</span></button>
+            </div>
+        </section>
+    </main>
+    <footer></footer>
+</body>
+
+</html>
