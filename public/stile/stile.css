@@ -1,0 +1,483 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+/*
+Font serif: "EB Garamond";
+Font sans-serif: "Ubuntu";
+*/
+
+/*stile generale*/
+:root{
+    --bianco: #fff;
+    --carta1: #faebd7;/*antiquewhite*/
+    --colorC: #555;
+    --colorD: #444;
+    --sfondoScuro: #222;
+    --grigioChiaro: #cbcac5;
+    --carta2: #ffe4c4;/*bisque*/
+}
+
+::selection{
+    background-color: var(--grigioChiaro);
+}
+
+body {
+    margin: 0;
+    text-align: center;
+    background-color: var(--carta1);
+    padding-top: 5em;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /*Tutto lo schermo*/
+}
+
+main {
+    flex: 1; /*occupa tutto lo spazio che avanza tra header e footer */
+}
+
+
+h1, h2, h3, h4, h5, h6{
+    font-family: "EB Garamond", serif;
+    text-align: center;
+}
+
+h1{
+    font-size: 2em;
+}
+
+h2{
+    font-size: 1.75em;
+}
+
+h3{
+    font-size: 1.5em;
+}
+
+p, q{
+    font-family: "Ubuntu", sans-serif;
+    text-align: justify;
+    font-size: 1.05em;
+}
+
+a{
+    font-family: "Ubuntu", sans-serif;
+    text-decoration: none;
+}
+/*fine stile generale*/
+
+/*inizio stile menù*/
+header nav{
+    font-family: "EB Garamond", serif;
+    background-color: var(--sfondoScuro);
+    color: var(--carta1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+#menu-toggle, #menu-icon{
+    display: none;
+}
+
+#menu img{
+    height: 2.5em;
+    vertical-align: middle;
+    border-radius: 50%;
+}
+
+#menu{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+#menu li{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+#menu li#logo{
+    flex: 0 0 auto;
+    margin: 0 2em;
+}
+
+#menu::before{
+    /*elemento fantasma per pareggiare link a destra e a sinistra del logo*/
+    content: "";
+    flex: 1;
+}
+
+#menu a{
+    color: var(--bianco);
+    font-weight: bold;
+    font-family: "EB Garamond", serif;
+    transition: color 0.3s ease-out;
+    padding: 0.5em 1.5em;
+    font-size: 1.10em;
+}
+
+#menu a:hover{
+    color: var(--carta2);
+}
+
+.current{
+    text-decoration: underline;
+}
+/*fine stile menù*/
+
+/*inizio stile footer*/
+footer{
+    padding: 1em;
+    background-color: var(--sfondoScuro);
+    color: var(--bianco);
+}
+
+footer address{
+    display: flex;
+    justify-content: center;
+    margin: 0 4em;
+    gap: 5em;
+}
+
+footer p{
+    text-align: center;
+}
+
+footer p a{
+    font-style: italic;
+    color: var(--bianco);
+    transition: 0.3s ease-out;
+}
+
+footer p a:hover{
+    color: var(--carta2);
+}
+
+footer .material-symbols-outlined{
+    vertical-align: middle;
+    margin-right: 0.2em;
+    font-size: 1.5em;
+}
+/*fine stile footer*/
+
+/*inizio stile grid layout*/
+.grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0 4em 2em 4em;
+    column-gap: 2em;
+}
+
+.grid img{
+    width: 100%;
+    height: 75%;
+    object-fit: cover;
+    border-radius: 5%;
+    transition: 0.3s ease-out;
+}
+
+.grid img:hover{
+    transform: scale(1.05);
+}
+
+.grid .element{
+    overflow: hidden;
+}
+/*fine stile grid layout*/
+
+/*inizio stile pagine lista*/
+#ricerca-sec{
+    display: block;
+    width: 40%;
+    margin: 0 auto;
+}
+
+#ricerca-sec div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+#ricerca-sec label{
+    font-family: "Ubuntu", sans-serif;
+    font-weight: bold;
+    font-size: 1.10em;
+}
+
+#ricerca-sec input[type=text]{
+    font-size: 1.15em;
+    width: 100%;
+}
+
+.lista-contenuti{
+    margin: auto 4em;
+}
+    /*inizio stile tabella*/
+    table{
+        border-collapse: collapse;
+        border: 2px solid var(--sfondoScuro);
+        margin: auto;
+        margin-top: 1em;
+        font-family: "Ubuntu", sans-serif;
+    }
+
+    /*table th{
+        padding: 0 0.5em;
+    }*/
+
+    table th,
+    table td{
+        border: 2px solid var(--sfondoScuro);
+        padding: 0.2em 0.5em;
+    }
+
+    table tbody{
+        cursor: pointer;
+    }
+
+    table th{
+        background-color: var(--carta2);
+    }
+
+    table tr:nth-child(odd){
+        background-color: var(--carta1);
+    }
+
+    table tr:nth-child(even){
+        background-color: var(--carta2);
+    }
+    /*fine stile tabella*/
+.lista-contenuti #paginazione{
+    text-align: center;
+    font-family: "Ubuntu", sans-serif;
+    font-size: 1.05em;
+    margin: 1em auto;
+}
+/*fine stile pagine lista*/
+
+/*inizio stile area_admin*/
+#area-admin #radio-div{
+    display: inline;
+    width: 40%;
+    margin: 0 auto;
+}
+
+#area-admin #radio-div input[name="tipo-form"]{
+    display: none;
+}
+
+#area-admin #radio-div label{
+    width: auto;
+    padding: 0.20em 1em;
+    cursor: pointer;
+    background-color: var(--carta2);
+    color: var(--sfondoScuro);
+    border-radius: 35%;
+    border: var(--sfondoScuro) solid 2px;
+    transition: color 0.3s ease-out;
+    margin: auto 0.5em;
+    font-family: "Ubuntu", sans-serif;
+    font-weight: bold;
+}
+
+#area-admin #radio-div label:hover,
+#area-admin #radio-div input[type=radio]:checked+label{
+    background-color: var(--colorC);
+    color: var(--carta2);
+}
+
+#area-admin .grid{
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 1em;
+}
+
+#area-admin .grid .element{
+    display: none;
+    background-color: var(--carta2);
+    border-radius: 10%;
+    margin: 0.5em 0;
+    padding: 0 1.5em 1em 1.5em;
+}
+
+    /*inizio stile form*/
+    form{
+        font-family: "Ubuntu", sans-serif;
+    }
+
+    form label{
+        font-weight: bold;
+        font-size: 1.10;
+        padding-right: 0.25em;
+        white-space: nowrap;
+    }
+
+    form .required{
+        text-decoration: underline;
+    }
+
+    form input,
+    form select{
+        font-size: 1.05em;
+    }
+
+    form textarea{
+        font-size: 1.05em;
+        font-family: "Ubuntu", sans-serif;
+        width: 100%;
+        height: 1.20em;
+    }
+
+    form input[type=number]{
+        width: 3em;
+        text-align: center;
+    }
+
+    form div{
+        margin-bottom: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+    }
+
+    form p{
+        text-align: center;
+        margin-top: 0;
+        visibility: hidden;
+    }
+
+    form input[type=text],
+    form input[type=url]{
+        width: 100%;
+    }
+
+    form input::file-selector-button{
+        width: auto;
+        padding: 0.20em 1em;
+        font-size: 1em;
+        font-family: "Ubuntu", sans-serif;
+        cursor: pointer;
+        font-weight: bold;
+        background-color: var(--carta2);
+        color: var(--sfondoScuro);
+        border-radius: 35%;
+        transition: color 0.3s ease-out;
+    }
+
+    form input::file-selector-button:hover{
+        background-color: var(--colorC);
+        color: var(--carta2);
+    }
+
+    form input[type=submit],
+    form input[type=button],
+    form input[type=reset],
+    button{
+        width: auto;
+        padding: 0.20em 1em;
+        font-size: 1em;
+        font-family: "Ubuntu", sans-serif;
+        cursor: pointer;
+        font-weight: bold;
+        background-color: var(--carta2);
+        color: var(--sfondoScuro);
+        border-radius: 35%;
+        transition: color 0.3s ease-out;
+    }
+
+    form input[type=submit]:hover,
+    form input[type=button]:hover,
+    form input[type=reset]:hover,
+    button:hover{
+        background-color: var(--colorC);
+        color: var(--carta2);
+    }
+    /*fine stile form*/
+/*fine stile area_admin*/
+
+/*inizio stile pagine contenuti*/
+.articolo{
+    visibility: hidden;
+    padding-top: 2em;
+}
+
+.articolo .grid{
+    align-items: start;
+}
+
+.articolo img{
+    border-radius: 0%;
+}
+
+.articolo img:hover{
+    transform: none;
+}
+
+#scheda{
+    grid-column: span 2;
+    text-align: justify;
+    font-size: 1.2em;
+    vertical-align: top;
+}
+
+#scheda h3{
+    text-align: left;
+    font-family: "Ubuntu", sans-serif;
+    margin-bottom: 0.75em;
+}
+
+#scheda ul{
+    list-style: none;
+    color: var(--sfondoScuro);
+    font-family: "Ubuntu", sans-serif;
+    padding-left: 0;
+    margin: 0;
+}
+
+#scheda li{
+    margin-bottom: 0.75em;
+}
+
+#scheda span{
+    font-weight: bold;
+}
+
+#scheda a{
+    color: var(--sfondoScuro);
+    font-family: "Ubuntu", sans-serif;
+    transition: 0.3s ease-out;
+}
+
+#scheda a:hover{
+    color: var(--colorC);
+}
+
+    /*inizio stile slider*/
+    #slider{
+        width: 100%;
+        overflow: hidden;
+        cursor: w-resize;
+    }
+
+    #slider-track{
+        display: flex;
+        transition: 0.5s ease-out;
+    }
+
+    .slide{
+        width: 100%;
+    }
+
+    #slider p{
+        font-size: 1em;
+        color: var(--colorD);
+        text-align: center;
+        margin-top: 0.25em;
+    }
+    /*fine stile slider*/
+/*fine stile pagine contenuti*/

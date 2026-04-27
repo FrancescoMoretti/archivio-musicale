@@ -18,7 +18,8 @@ window.onload=async function() {
         event.preventDefault();
         const form=event.target;
         const message=document.getElementById("message1");
-        message.textContent="Caricamento in corso";
+        message.style.visibility="visible";
+        message.textContent="Caricamento in corso...";
         //validazione client-side
         const collocazione=form.elements["collocazione"].value.trim();
         const autore=form.elements["autore"].value.trim();

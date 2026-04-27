@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="stile/stile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="scripts/lista_edizioni_script.js" defer></script>
@@ -10,7 +11,20 @@
 </head>
 
 <body>
-    <header></header>
+    <header>
+        <nav>
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" id="menu-icon">&#9776;</label>
+            <ul id="menu">
+                <li><a href="/index.html">Home</a></li>
+                <li><a class="current" href="/lista_edizioni.html">Catalogo</a></li>
+                <li id="logo"><a href="/index.html"><img src="immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
+                <li><a href="#">Biografia</a></li>
+                <li><a href="#">Trovaci</a></li>
+                <li><a href="/admin/area_admin.html">Accedi</a></li>
+            </ul>
+        </nav>
+    </header>
     <main>
         <section id="ricerca-sec">
             <h1>Edizioni e Manoscritti</h1>
@@ -40,7 +54,14 @@
             </div>
         </section>
     </main>
-    <footer></footer>
+    <footer>
+        <p>&copy; 2025 Archivio musicale Luca Moretti. Tutti i diritti riservati</p>
+        <p>Trovaci sui social: <a href="https://www.facebook.com/share/15rkzqvaTg/" target="_blank">Facebook</a></p>
+        <address>
+            <p><span class="material-symbols-outlined">mail</span>mail</p>
+            <p><span class="material-symbols-outlined">call</span>Telefono</p>
+        </address>
+    </footer>
 </body>
 
 </html>

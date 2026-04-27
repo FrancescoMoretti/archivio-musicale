@@ -61,6 +61,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function mostraPagina(lista_da_mostrare, totale) {
         const tabella = document.getElementById("tabella");
         const tab = document.querySelector('.lista-contenuti table');
+        tabella.style.visibility="hidden";//nascondo il corpo della tabella mentre lo popolo
         tabella.innerHTML = "";
         lista_da_mostrare.forEach(edizione => {
             const tr = document.createElement("tr");
@@ -101,11 +102,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             tabella.appendChild(tr);
         });
         //adatto tabella al contenuto
-        if (tab && lista_da_mostrare.length != righe) {
-            tab.style.minHeight = 'auto';
-        } else {
-            tab.style.minHeight = '106em';
-        }
+        tab.style.minHeight = 'auto';
+        tabella.style.visibility="visible";//mostro il corpo della tabella
         //aggiorno indice pagina
         document.getElementById("schermata").textContent = `Pagina ${schermata}`;
         //gestione bottoni

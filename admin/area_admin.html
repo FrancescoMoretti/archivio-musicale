@@ -3,25 +3,40 @@
 
 <head>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="/stile/stile.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="scripts/area_admin_script.js" defer></script>
   <title>Area amministratore</title>
 </head>
 
 <body>
-  <header></header>
-  <main>
+  <header>
+    <nav>
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" id="menu-icon">&#9776;</label>
+            <ul id="menu">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="/lista_edizioni.html">Catalogo</a></li>
+                <li id="logo"><a href="/index.html"><img src="/immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
+                <li><a href="#">Biografia</a></li>
+                <li><a href="#">Trovaci</a></li>
+                <li><a class="current" href="/admin/area_admin.html">Accedi</a></li>
+            </ul>
+        </nav>
+  </header>
+  <main id="area-admin">
     <h1>Area amministratore</h1>
     <h2>Gestione dei contenuti</h2>
     <div id="radio-div">
       <input type="radio" name="tipo-form" id="radio1" value="1">
       <label for="radio1">Edizioni e Manoscritti</label>
     </div>
-    <div class="grid" id="content-grid">
-      <div class="element" id="aggiungi-edizioni-form" style="display: none">
+    <div class="grid">
+      <div class="element" id="aggiungi-edizioni-form">
         <h3>Aggiunta Edizioni e Manoscritti: </h3>
         <form id="edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
-          <p id="message1"></p><!--messaggio di conferma-->
+          <p id="message1">messaggio<!--messaggio di conferma--></p>
           <div>
             <label for="n_collocazione" class="required">Collocazione: </label>
             <input type="number" name="collocazione" id="n_collocazione" placeholder="1" required>
@@ -64,7 +79,14 @@
       </div>
     </div>
   </main>
-  <footer></footer>
+  <footer>
+    <p>&copy; 2025 Archivio musicale Luca Moretti. Tutti i diritti riservati</p>
+        <p>Trovaci sui social: <a href="https://www.facebook.com/share/15rkzqvaTg/" target="_blank">Facebook</a></p>
+        <address>
+            <p><span class="material-symbols-outlined">mail</span>mail</p>
+            <p><span class="material-symbols-outlined">call</span>Telefono</p>
+        </address>
+  </footer>
 </body>
 
 </html>

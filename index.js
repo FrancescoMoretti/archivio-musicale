@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -54,7 +55,7 @@ app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
             }
         }
         await connection.commit();
-        res.json({ success: true, message: "Edizione e immagini salvate con successo!" });
+        res.json({ success: true, message: "Documento salvato con successo!" });
     } catch (err) {
         await connection.rollback();
         console.error("Errore nell'endpoint add-edizione: ", err);
@@ -120,7 +121,7 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
         if (edizioneRisultato.length === 0) {
             return res.status(404).json({
                 success: false,
-                message: "Edizione/Manoscritto non trovato"
+                message: "Edizione/Manoscritto non trovato."
             });
         }
         const content = edizioneRisultato[0];
@@ -140,6 +141,10 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
             message: "Errore durante il recupero della risorsa."
         });
     }
+});
+
+app.use((req, res)=>{
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
 app.listen(PORT, () => {
