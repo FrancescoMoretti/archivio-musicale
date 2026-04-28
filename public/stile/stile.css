@@ -356,27 +356,10 @@ footer .material-symbols-outlined{
         width: 100%;
     }
 
-    form input::file-selector-button{
-        width: auto;
-        padding: 0.20em 1em;
-        font-size: 1em;
-        font-family: "Ubuntu", sans-serif;
-        cursor: pointer;
-        font-weight: bold;
-        background-color: var(--carta2);
-        color: var(--sfondoScuro);
-        border-radius: 35%;
-        transition: color 0.3s ease-out;
-    }
-
-    form input::file-selector-button:hover{
-        background-color: var(--colorC);
-        color: var(--carta2);
-    }
-
     form input[type=submit],
     form input[type=button],
     form input[type=reset],
+    form input::file-selector-button,
     button{
         width: auto;
         padding: 0.20em 1em;
@@ -393,11 +376,15 @@ footer .material-symbols-outlined{
     form input[type=submit]:hover,
     form input[type=button]:hover,
     form input[type=reset]:hover,
+    form input::file-selector-button:hover,
     button:hover{
         background-color: var(--colorC);
         color: var(--carta2);
     }
     /*fine stile form*/
+#cancella-edizione-form div{
+    justify-content: center;
+}
 /*fine stile area_admin*/
 
 /*inizio stile pagine contenuti*/

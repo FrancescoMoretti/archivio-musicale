@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
     const scheda = document.getElementById("scheda");
     const immaginiDiv = document.getElementById("immagini");
     //collocazione non specificata o non valida
-    if (!collocazione || collocazione <= 0) {
+    if (!collocazione || isNaN(collocazione) || collocazione <= 0) {
         window.location.href = "/404.html";
         return;
     }

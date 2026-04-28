@@ -34,7 +34,9 @@ app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
-        return res.status(400).json({ message: "Campi obbligatori mancanti (collocazione, autore, titolo)" });
+        return res.status(400).json({
+            message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
+        });
     }
     const connection = await pool.getConnection();
     try {
@@ -55,16 +57,63 @@ app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
             }
         }
         await connection.commit();
-        res.json({ success: true, message: "Documento salvato con successo!" });
+        res.json({ success: true, message: "Contenuto salvato con successo!" });
     } catch (err) {
         await connection.rollback();
         console.error("Errore nell'endpoint add-edizione: ", err);
         if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(400).json({ message: "Errore: il numero di collocazione è già esistente." });
+            return res.status(400).json({ 
+                success: false,
+                message: "Errore: il numero di collocazione è già esistente." });
         }
-        res.status(500).json({ message: "Errore interno durante il salvataggio." });
+        res.status(500).json({ 
+            success: false,
+            message: "Errore interno durante il salvataggio." });
     } finally {
         connection.release();
+    }
+});
+
+//endpoint per cancellazione edizione
+app.post("/api/delete-edizione", async (req, res)=>{
+    const {collocazione}=req.body;
+    if(!collocazione){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
+    try{
+        const [immagini]=await pool.query(`SELECT i.url_immagine FROM immagini_edizioni i JOIN edizioni e ON i.edizione_id=e.id WHERE e.collocazione=?`, [collocazione]);
+        if(immagini.length>0){
+            const publicIds=immagini.map(img=>{
+                //estraggo il public_id dall'url dell'immagine ('.../v12345/campione.jpg'=>'campione')
+                const nomeFile=img.url_immagine.split('/').pop().split('.')[0];
+                return `archivio_musicale/edizioni/${nomeFile}`;
+            });
+            //cancello le immagini da cloudinary
+            await cloudinary.api.delete_resources(publicIds);
+        }
+        //cancello il contenuto dal DB
+        const [result]=await pool.query("DELETE FROM edizioni WHERE collocazione=?", [collocazione]);
+        //le immagni si cancellano
+        if(result.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Edizione non presente nel database."
+            });
+        }else{
+            return res.json({
+                success: true,
+                message: "Edizione eliminata con successo!"
+            });
+        }
+    }catch(err){
+        console.error("Errore durante la cancellazione: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante la cancellazione."
+        });
     }
 });
 
@@ -90,7 +139,7 @@ app.get("/api/show-edizioni", async (req, res) => {
     queryTotali += whereClause;
     queryContenuti += whereClause;
     //gestione ordinamento
-    queryContenuti += " ORDER BY e.collocazione ASC LIMIT ? OFFSET ?";
+    queryContenuti += " ORDER BY CAST(e.collocazione AS UNSIGNED) ASC LIMIT ? OFFSET ?";
     paramsContenuti.push(limite, inizio);
     try {
         const [risultatoTotale] = await pool.query(queryTotali, paramsTotali);
