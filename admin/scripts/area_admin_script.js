@@ -13,6 +13,8 @@ window.onload=async function() {
                     document.getElementById("element2").style.display="block";
                     document.getElementById("element3").style.display="block";
                     break;
+                case '2':
+                    break;
             }
         });
     });
