@@ -13,17 +13,17 @@
 <body>
   <header>
     <nav>
-            <input type="checkbox" id="menu-toggle">
-            <label for="menu-toggle" id="menu-icon">&#9776;</label>
-            <ul id="menu">
-                <li><a href="/index.html">Home</a></li>
-                <li><a href="/lista_edizioni.html">Catalogo</a></li>
-                <li id="logo"><a href="/index.html"><img src="/immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
-                <li><a href="#">Biografia</a></li>
-                <li><a href="#">Trovaci</a></li>
-                <li><a class="current" href="/admin/area_admin.html">Accedi</a></li>
-            </ul>
-        </nav>
+      <input type="checkbox" id="menu-toggle">
+      <label for="menu-toggle" id="menu-icon">&#9776;</label>
+      <ul id="menu">
+        <li><a href="/index.html">Home</a></li>
+        <li><a href="/lista_edizioni.html">Catalogo</a></li>
+        <li id="logo"><a href="/index.html"><img src="/immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
+        <li><a href="#">Biografia</a></li>
+        <li><a href="#">Trovaci</a></li>
+        <li><a class="current" href="/admin/area_admin.html">Accedi</a></li>
+      </ul>
+    </nav>
   </header>
   <main id="area-admin">
     <h1>Area amministratore</h1>
@@ -38,65 +38,110 @@
         <form id="aggiungi-edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
           <p id="message1">messaggio<!--messaggio--></p>
           <div>
-            <label for="n_collocazione" class="required">Collocazione: </label>
-            <input type="number" name="collocazione" id="n_collocazione" placeholder="1" required>
+            <label for="add-collocazione" class="required">Collocazione: </label>
+            <input type="number" name="collocazione" id="add-collocazione" placeholder="1" min="1" required>
           </div>
           <div>
-            <label for="link_rism">Link RISM: </label>
-            <input type="url" name="link_rism" id="link_rism"
-              placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107">
+            <label for="add-link_rism">Link RISM: </label>
+            <input type="url" name="link_rism" id="add-link_rism" placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107">
           </div>
           <div>
-            <label for="autore" class="required">Autore: </label>
-            <input type="text" name="autore" id="autore" placeholder="Autore" required>
+            <label for="add-autore" class="required">Autore: </label>
+            <input type="text" name="autore" id="add-autore" placeholder="Autore" required>
           </div>
           <div>
-            <label for="titolo" class="required">Titolo: </label>
-            <input type="text" name="titolo" id="titolo" placeholder="Titolo" required>
+            <label for="add-titolo" class="required">Titolo: </label>
+            <input type="text" name="titolo" id="add-titolo" placeholder="Titolo" required>
           </div>
           <div>
-            <label for="data_str">Data: </label>
-            <input type="text" name="data_str" id="data_str" placeholder="s.d. 1813ca">
+            <label for="add-data_str">Data: </label>
+            <input type="text" name="data_str" id="add-data_str" placeholder="s.d. 1813ca">
           </div>
           <div>
-            <label for="editore">Editore: </label>
-            <input type="text" name="editore" id="editore" placeholder="Editore">
+            <label for="add-editore">Editore: </label>
+            <input type="text" name="editore" id="add-editore" placeholder="Editore">
           </div>
           <div>
-            <label for="descrizione" class="text-label">Descrizione: </label>
-            <textarea name="descrizione" id="descrizione" placeholder="Descrizione"></textarea>
+            <label for="add-descrizione" class="text-label">Descrizione: </label>
+            <textarea name="descrizione" id="add-descrizione" placeholder="Descrizione"></textarea>
           </div>
           <div>
-            <label for="note" class="text-label">Note: </label>
-            <textarea name="note" id="note" placeholder="Note"></textarea>
+            <label for="add-note" class="text-label">Note: </label>
+            <textarea name="note" id="add-note" placeholder="Note"></textarea>
           </div>
           <div>
-            <label for="immagini">Immagini: </label>
-            <input type="file" name="immagini" id="immagini" accept="image/*" multiple>
+            <label for="add-immagini">Immagini: </label>
+            <input type="file" name="immagini" id="add-immagini" accept="image/*" multiple>
           </div>
           <input type="submit" value="Aggiungi contenuto">
         </form>
       </div>
       <div class="element" id="element2">
-            <h3>Eliminazione Edizioni e Manoscritti: </h3>
-            <form id="cancella-edizione-form" action="/api/delete-edizione" method="POST">
-              <p id="message2">messaggio<!--messaggio--></p>
-              <div>
-                <label for="collocazione">Collocazione: </label>
-                <input type="number" name="collocazione" id="collocazione" placeholder="1" min="1" required>
-              </div>
-              <input type="submit" value="Elimina contenuto">
-            </form>  
+        <h3>Eliminazione Edizioni e Manoscritti: </h3>
+        <form id="cancella-edizione-form" action="/api/delete-edizione" method="POST">
+          <p id="message2">messaggio<!--messaggio--></p>
+          <div>
+            <label for="delete-collocazione">Collocazione: </label>
+            <input type="number" name="collocazione" id="delete-collocazione" placeholder="1" min="1" required>
           </div>
+          <input type="submit" value="Elimina contenuto">
+        </form>
+      </div>
+      <div class="element" id="element3">
+        <h3>Modifica Edizioni e Manoscritti: </h3>
+        <p>Per modificare il <strong>numero di collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa</p>
+        <form id="cerca-edizione-form" action="/api/get-edizione/:edizione" method="GET">
+          <p id="message3">messaggio<!--messaggio--></p>
+          <div>
+            <label for="search-collocazione">Collocazione: </label>
+            <input type="number" id="search-collocazione" placeholder="1" min="1" required>
+          </div>
+          <input type="submit" value="Cerca contenuto">
+        </form>
+        <form id="modifica-edizione-form" action="/api/update-edizione" method="POST">
+          <p id="message4">messaggio<!--messaggio--></p>
+          <!--input nascosto per avere la collocazione nei campi del form-->
+          <input type="hidden" name="collocazione" id="update-collocazione" readonly>
+          <div>
+            <label for="update-link_rism">Link RISM: </label>
+            <input type="url" name="link_rism" id="update-link_rism" placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107">
+          </div>
+          <div>
+            <label for="update-autore" class="required">Autore: </label>
+            <input type="text" name="autore" id="update-autore" placeholder="Autore" required>
+          </div>
+          <div>
+            <label for="update-titolo" class="required">Titolo: </label>
+            <input type="text" name="titolo" id="update-titolo" placeholder="Titolo" required>
+          </div>
+          <div>
+            <label for="update-data_str">Data: </label>
+            <input type="text" name="data_str" id="update-data_str" placeholder="s.d. 1813ca">
+          </div>
+          <div>
+            <label for="update-editore">Editore: </label>
+            <input type="text" name="editore" id="update-editore" placeholder="Editore">
+          </div>
+          <div>
+            <label for="update-descrizione" class="text-label">Descrizione: </label>
+            <textarea name="descrizione" id="update-descrizione" placeholder="Descrizione"></textarea>
+          </div>
+          <div>
+            <label for="update-note" class="text-label">Note: </label>
+            <textarea name="note" id="update-note" placeholder="Note"></textarea>
+          </div>
+          <input type="submit" id="salva-btn" value="Salva modifiche" disabled>
+        </form>
+      </div>
     </div>
   </main>
   <footer>
     <p>&copy; 2025 Archivio musicale Luca Moretti. Tutti i diritti riservati</p>
-        <p>Trovaci sui social: <a href="https://www.facebook.com/share/15rkzqvaTg/" target="_blank">Facebook</a></p>
-        <address>
-            <p><span class="material-symbols-outlined">mail</span>mail</p>
-            <p><span class="material-symbols-outlined">call</span>Telefono</p>
-        </address>
+    <p>Trovaci sui social: <a href="https://www.facebook.com/share/15rkzqvaTg/" target="_blank">Facebook</a></p>
+    <address>
+      <p><span class="material-symbols-outlined">mail</span>mail</p>
+      <p><span class="material-symbols-outlined">call</span>Telefono</p>
+    </address>
   </footer>
 </body>
 

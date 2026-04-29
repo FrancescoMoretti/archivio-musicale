@@ -35,6 +35,7 @@ app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
         return res.status(400).json({
+            success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });
     }
@@ -109,7 +110,7 @@ app.post("/api/delete-edizione", async (req, res)=>{
             });
         }
     }catch(err){
-        console.error("Errore durante la cancellazione: ", err);
+        console.error("Errore nell'endpoint delete-edizione: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante la cancellazione."
@@ -188,6 +189,63 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Errore durante il recupero della risorsa."
+        });
+    }
+});
+
+//endpoint per recupero dati edizione (MODIFICA)
+app.get("/api/get-edizione/:collocazione", async (req, res)=>{
+    const { collocazione }=req.params;
+    try{
+        const [rows]=await pool.query("SELECT * FROM edizioni WHERE collocazione=?", [collocazione]);
+        if(rows.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Edizione/Manoscritto non trovato."
+            });
+        }else{
+            res.json({
+                success: true,
+                dati: rows[0]
+            });
+        }
+    }catch(err){
+        console.error("Errore nell'endpoint get-edizione: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Errore durante il recupero della risorsa."
+        });
+    }
+});
+
+//endpoint per aggiornamento edizione (MODIFICA)
+app.post("/api/update-edizione", async (req, res)=>{
+    const {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
+    if (!titolo || !autore) {
+        return res.status(400).json({
+            success: false,
+            message: "Campi obbligatori mancanti (autore, titolo)."
+        });
+    }
+    const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=? WHERE collocazione=?";
+    try{
+        const [result]=await pool.query(query, [link_rism, autore, titolo, data_str, editore, descrizione, note, collocazione]);
+        if(result.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Edizione/Manoscritto non trovato."
+            });
+        }else{
+            res.json({
+                success: true,
+                message: "Edizione/Manoscritto aggiornato con successo!"
+            });
+        }
+    }catch(err){
+        console.error("Errore nell'endpoint update-edizione: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Errore durante l'aggiornamento della risorsa."
         });
     }
 });

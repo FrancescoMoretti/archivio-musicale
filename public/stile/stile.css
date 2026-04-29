@@ -381,9 +381,18 @@ footer .material-symbols-outlined{
         background-color: var(--colorC);
         color: var(--carta2);
     }
+
+    form input:disabled{
+        border-color: var(--sfondoScuro);
+    }
     /*fine stile form*/
 #cancella-edizione-form div{
     justify-content: center;
+}
+
+#modifica-edizione-form{
+    display: none;
+    margin-top: 1em;
 }
 /*fine stile area_admin*/
 
