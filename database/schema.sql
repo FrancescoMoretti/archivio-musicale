@@ -14,7 +14,7 @@ CREATE TABLE utenti(
 
 CREATE TABLE edizioni(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    collocazione INT UNIQUE NOT NULL CHECK (collocazione>0),
+    collocazione VARCHAR(10) UNIQUE NOT NULL,
     link_rism VARCHAR(255),
     autore VARCHAR(255) NOT NULL,
     titolo VARCHAR(255) NOT NULL,
@@ -37,11 +37,12 @@ CREATE TABLE immagini_edizioni(
 
 CREATE TABLE stampe(
     id INT AUTO_INCREMENT PRIMARY KEY,
-    autore VARCHAR(255),
+    collocazione VARCHAR(10) UNIQUE NOT NULL,
+    autore VARCHAR(255) NOT NULL,
     titolo VARCHAR(255) NOT NULL,
     data_str VARCHAR(50),
     stampa VARCHAR(100),
-    dimensioni VARCHAR(100),
+    dimensioni VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
