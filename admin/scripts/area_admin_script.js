@@ -7,6 +7,7 @@ window.onload = async function () {
             document.getElementById("element2").style.display = "none";
             document.getElementById("element3").style.display = "none";
             document.getElementById("element4").style.display = "none";
+            document.getElementById("element5").style.display = "none";
             const selected = document.querySelector('input[name="tipo-form"]:checked').value;
             switch (selected) {
                 case '1':
@@ -16,6 +17,7 @@ window.onload = async function () {
                     break;
                 case '2':
                     document.getElementById("element4").style.display = "block";
+                    document.getElementById("element5").style.display = "block";
                     break;
             }
         });
@@ -71,17 +73,18 @@ window.onload = async function () {
         const form = event.target;
         const collocazione = document.getElementById("delete-collocazione-edizione").value;
         const message = document.getElementById("message2");
-        message.textContent = "Cancellazione in corso...";
-        message.style.visibility = "visible";
         //validazione client-side
         if (!collocazione) {
-            message.textContent = "Errore: Collocazione non inserito."
+            message.textContent = "Errore: Collocazione non inserita."
+            message.style.visibility = "visible";
             return;
         }
         //conferma
-        if (!confirm(`Sei sicuro di voler eliminare l'edizione/manoscritto ${collocazione}?`)) {
+        if (!confirm(`Sei sicuro di voler eliminare l'Edizione/Manoscritto ${collocazione}?`)) {
             return;
         }
+        message.textContent = "Cancellazione in corso...";
+        message.style.visibility = "visible";
         try {
             const res = await fetch("/api/delete-edizione", {
                 method: "POST",
@@ -228,6 +231,51 @@ window.onload = async function () {
             }
         } catch (err) {
             message.textContent = "Errore di rete: impossibile raggiungere il server.";
+        }
+    });
+
+    //fetch di cancellazione stampe
+    document.getElementById("cancella-stampa-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const collocazione=document.getElementById("delete-collocazione-stampa").value;
+        const message=document.getElementById("message6");
+        //validazione client-side
+        if(!collocazione){
+            message.textContent="Errore: Collocazione non inserita."
+            message.style.visibility="visible";
+            return;
+        }
+        //conferma
+        if(!confirm(`Sei sicuro di voler eliminre la Stampa/Foto ${collocazione}?`)){
+            return;
+        }
+        message.textContent = "Cancellazione in corso...";
+        message.style.visibility = "visible";
+        try{
+            const res=await fetch("/api/delete-stampa", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({collocazione})
+            });
+            const result=await res.json();
+            //gestione reindirizzamenti
+            if(res.status===401){
+                window.location.href="/login.html";
+                return;
+            }
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            if(res.ok && result.success){
+                message.textContent=result.message;
+                form.reset();
+            }else{
+                message.textContent=result.message || "Errore durante la cancellazione.";
+            }
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server."
         }
     });
 };

@@ -141,7 +141,7 @@
           <p id="message5">messaggio<!--messaggio--></p>
           <div>
             <label for="add-collocazione-stampa" class="required">Collocazione: </label>
-            <input type="text" name="collocazione" id="add-collocazione-stampa" placeholder="A/001" maxlength="10" required>
+            <input type="text" name="collocazione" id="add-collocazione-stampa" placeholder="B/001" maxlength="10" required>
           </div>
           <div>
             <label for="add-autore-stampa" class="required">Autore: </label>
@@ -168,6 +168,17 @@
             <input type="file" name="immagini" id="add-immagini-stampa" accept="image/*" multiple>
           </div>
           <input type="submit" value="Aggiungi contenuto">
+        </form>
+      </div>
+      <div class="element" id="element5">
+        <h3>Eliminazione Stampe e Foto: </h3>
+        <form id="cancella-stampa-form" action="/api/delete-stampa" method="POST">
+          <p id="message6">messaggio<!--messaggio--></p>
+          <div>
+            <label for="delete-collocazione-stampa">Collocazione: </label>
+            <input type="text" name="collocazione" id="delete-collocazione-stampa" placeholder="B/001" maxlength="10" required>
+          </div>
+          <input type="submit" value="Elimina contenuto">
         </form>
       </div>
     </div>
