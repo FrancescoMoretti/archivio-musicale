@@ -3,11 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="stile/stile.css">
+    <link rel="stylesheet" href="./stile/stile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts/lista_edizioni_script.js" defer></script>
-    <title>Edizioni e Manoscritti</title>
+    <title>Catalogo</title>
 </head>
 
 <body>
@@ -17,7 +16,7 @@
             <label for="menu-toggle" id="menu-icon">&#9776;</label>
             <ul id="menu">
                 <li><a href="/index.html">Home</a></li>
-                <li><a href="/catalogo.html">Catalogo</a></li>
+                <li><a class="current" href="/catalogo.html">Catalogo</a></li>
                 <li id="logo"><a href="/index.html"><img src="immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
                 <li><a href="#">Biografia</a></li>
                 <li><a href="#">Trovaci</a></li>
@@ -25,34 +24,18 @@
             </ul>
         </nav>
     </header>
-    <main>
-        <h1>Edizioni e Manoscritti</h1>
-        <section id="ricerca-sec">
-            <div>
-                <label for="search-bar">Ricerca: </label>
-                <input type="text" name="search-bar" id="search-bar" palceholder="Cerca un titolo o un autore">
+    <main id="catalogo">
+        <h1>Catalogo</h1>
+        <div class="grid">
+            <div class="element">
+                <a href="/lista_edizioni.html"><img src="immagini/catalogo/foto_metodo.jpg" alt="copertina catalogo Edizioni e Manoscritti"></a>
+                <a class="link" href="/lista_edizioni.html">Edizioni e Manoscritti</a>
             </div>
-        </section>
-        <section class="lista-contenuti">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Collocazione</th>
-                        <th>Autore</th>
-                        <th>Titolo</th>
-                        <th>Immagine</th>
-                    </tr>
-                </thead>
-                <tbody id="tabella">
-
-                </tbody>
-            </table>
-            <div id="paginazione">
-                <button id="prec-btn"><span class="material-symbols-outlined">arrow_back</span></button>
-                <span id="schermata">Pagina 1</span>
-                <button id="succ-btn"><span class="material-symbols-outlined">arrow_forward</span></button>
+            <div class="element">
+                <a href="/lista_stampe.html"><img src="immagini/catalogo/foto_stampa.jpg" alt="copertina catalogo Stampe e Foto"></a>
+                <a class="link" href="/lista_stampe.html">Stampe e Foto</a>
             </div>
-        </section>
+        </div>
     </main>
     <footer>
         <p>&copy; 2025 Archivio musicale Luca Moretti. Tutti i diritti riservati</p>

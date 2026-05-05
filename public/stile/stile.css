@@ -396,6 +396,52 @@ footer .material-symbols-outlined{
 }
 /*fine stile area_admin*/
 
+/*inizio stile pagina catalogo*/
+#catalogo .grid{
+    gap: 0 0;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0 20em 4em 20em;
+}
+
+#catalogo .grid .element{
+    position: relative;
+    aspect-ratio: 3/4;
+    margin: 0 15%;
+}
+
+#catalogo .grid .element img{
+    height: 100%;
+    display: block;
+}
+
+#catalogo .link{
+    /*posiziono sopra l'immagine*/
+    z-index: 1;
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    /*testo*/
+    font-family: "EB Garamond", serif;
+    font-weight: bold;
+    text-align: center;
+    font-size: 2em;
+    line-height: 0.75em;
+    color: var(--sfondoScuro);
+    /*sfondo*/
+    background-color: var(--carta2);
+    border-radius: 50%;
+    padding: 0.75em;
+    /*effetti*/
+    transition: color 0.3s ease-out;
+}
+
+#catalogo .link:hover{
+    color: var(--carta2);
+    background-color: var(--colorD);
+}
+/*fine stile pagina catalogo*/
+
 /*inizio stile pagine contenuti*/
 .articolo{
     visibility: hidden;

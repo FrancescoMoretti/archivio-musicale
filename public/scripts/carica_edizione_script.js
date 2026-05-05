@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
             inizializzaSlider();
         }
         //mostro la sezione con la scheda
-        document.querySelector('section.articolo').style.visibility = "visible";
+        document.querySelector('main.articolo').style.visibility = "visible";
     } catch (err) {
         console.error("Errore nel caricamento dell'edizione: ", err);
         //window.location.href="/404.html";
