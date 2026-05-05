@@ -296,15 +296,15 @@ app.post("/api/add-stampa", upload.array("immagini"), async (req, res)=>{
 
 //endpoint per cancellazione stampa
 app.post("/api/delete-stampa", async (req, res)=>{
-    const {id}=req.body;
-    if(!id){
+    const {collocazione}=req.body;
+    if(!collocazione){
         return res.status(400).json({
             success: false,
-            message: "Identificativo non valido."
+            message: "Collocazione non valida."
         });
     }
     try{
-        const [immagini]=await pool.query(`SELECT i.url_immagine FROM immagini_stampe i JOIN stampe s ON i.stampa_id=s.id WHERE s.id=?`, [id]);
+        const [immagini]=await pool.query(`SELECT i.url_immagine FROM immagini_stampe i JOIN stampe s ON i.stampa_id=s.id WHERE s.collocazione=?`, [collocazione]);
         if(immagini.length>0){
             const publicIds=immagini.map(img=>{
                 //estraggo il public_id dall'url dell'immagine
@@ -315,7 +315,7 @@ app.post("/api/delete-stampa", async (req, res)=>{
             await cloudinary.api.delete_resources(publicIds);
         }
         //cancello il contenuto dal DB
-        const [result]=await pool.query("DELETE FROM stampe WHERE id=?", [id]);
+        const [result]=await pool.query("DELETE FROM stampe WHERE collocazione=?", [collocazione]);
         //le immagini si cancellano a cascata
         if(result.affectedRows===0){
             return res.status(404).json({
@@ -345,7 +345,7 @@ app.get("/api/show-stampe", async (req, res)=>{
     //query per contare le righe che avrà la tabella
     let queryTotali=`SELECT COUNT(*) AS totali FROM stampe s`;
     //query per estrarre contenuti e url dell'immagine, uso left join per estrarre stampe senza immagine
-    let queryContenuti=`SELECT s.id, s.autore, s.titolo, i.url_immagine FROM stampe s LEFT JOIN immagini_stampe i ON s.id=i.stampa_id AND i.ordine=1`;
+    let queryContenuti=`SELECT s.id, s.collocazione, s.autore, s.titolo, i.url_immagine FROM stampe s LEFT JOIN immagini_stampe i ON s.id=i.stampa_id AND i.ordine=1`;
     let paramsContenuti=[];
     let paramsTotali=[];
     let whereClause="";//clausola where
@@ -359,7 +359,7 @@ app.get("/api/show-stampe", async (req, res)=>{
     queryTotali+=whereClause;
     queryContenuti+=whereClause;
     //gestione ordinamento
-    queryContenuti+=" ORDER BY CAST(s.id AS UNSIGNED) ASC LIMIT ? OFFSET ?";//spazio all'inizio
+    queryContenuti+=" ORDER BY s.collocazione ASC LIMIT ? OFFSET ?";//spazio all'inizio
     paramsContenuti.push(limite, inizio);
     try{
         const [risultatoTotale]=await pool.query(queryTotali, paramsTotali);
@@ -380,12 +380,12 @@ app.get("/api/show-stampe", async (req, res)=>{
 });
 
 //endpoint per lettura stampa
-app.get("/api/stampa/:id", async (req, res) => {
-    const id = req.params.id;
-    const queryContenuti = "SELECT * FROM stampe WHERE id=?";
+app.get("/api/stampa/:collocazione", async (req, res) => {
+    const collocazione = req.params.collocazione;
+    const queryContenuti = "SELECT * FROM stampe WHERE collocazione=?";
     const queryImmagini = "SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
     try {
-        const [stampaRisultato] = await pool.query(queryContenuti, [id]);
+        const [stampaRisultato] = await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
         if (stampaRisultato.length === 0) {
             return res.status(404).json({
@@ -395,7 +395,7 @@ app.get("/api/stampa/:id", async (req, res) => {
         }
         const content = stampaRisultato[0];
         //recupero le immagini della risorsa
-        const [immaginiRisultato] = await pool.query(queryImmagini, [id]);
+        const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
         const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
         res.json({
             success: true,
@@ -413,21 +413,20 @@ app.get("/api/stampa/:id", async (req, res) => {
 });
 
 //endpoint per recupero dati stampa (MODIFICA)
-app.get("/api/get-stampa/:id", async (req, res) => {
-    const { id } = req.params;
+app.get("/api/get-stampa/:collocazione", async (req, res) => {
+    const { collocazione } = req.params;
     try {
-        const [rows] = await pool.query("SELECT * FROM stampe WHERE id=?", [id]);
+        const [rows] = await pool.query("SELECT * FROM stampe WHERE collocazione=?", [collocazione]);
         if (rows.length === 0) {
             return res.status(404).json({
                 success: false,
                 message: "Stampa/Foto non trovata."
             });
-        } else {
-            res.json({
-                success: true,
-                dati: rows[0]
-            });
         }
+        res.json({
+            success: true,
+            dati: rows[0]
+        });
     } catch (err) {
         console.error("Errore nell'endpoint get-stampa: ", err);
         res.status(500).json({
@@ -439,16 +438,16 @@ app.get("/api/get-stampa/:id", async (req, res) => {
 
 //endpoint per aggiornamento stampa (MODIFICA)
 app.post("/api/update-stampa", async (req, res) => {
-    const { id, autore, titolo, data_str, stampa, dimensioni } = req.body;
+    const { collocazione, autore, titolo, data_str, stampa, dimensioni } = req.body;
     if (!autore || !titolo) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
     }
-    const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=? WHERE id=?";
+    const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=? WHERE collocazione=?";
     try {
-        const [result] = await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, id]);
+        const [result] = await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, collocazione]);
         if (result.affectedRows === 0) {
             return res.status(404).json({
                 success: false,
