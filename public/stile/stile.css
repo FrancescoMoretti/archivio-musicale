@@ -445,7 +445,7 @@ footer .material-symbols-outlined{
 /*inizio stile pagine contenuti*/
 .articolo{
     visibility: hidden;
-    padding-top: 2em;
+    /*padding-top: 2em;*/
 }
 
 .articolo .grid{
@@ -465,12 +465,6 @@ footer .material-symbols-outlined{
     text-align: justify;
     font-size: 1.2em;
     vertical-align: top;
-}
-
-#scheda h3{
-    text-align: left;
-    font-family: "Ubuntu", sans-serif;
-    margin-bottom: 0.75em;
 }
 
 #scheda ul{

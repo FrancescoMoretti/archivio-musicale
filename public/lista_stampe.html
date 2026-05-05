@@ -6,9 +6,8 @@
     <link rel="stylesheet" href="stile/stile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts/carica_edizione_script.js"></script>
-    <script src="scripts/slider.js" defer></script>
-    <title>Contenuto</title>
+    <script src="scripts/lista_stampe_script.js" defer></script>
+    <title>Stampe e Foto</title>
 </head>
 
 <body>
@@ -26,12 +25,34 @@
             </ul>
         </nav>
     </header>
-    <main class="articolo">
-        <h1 id="titolo"></h1>
-        <div class="grid">
-            <div class="element" id="immagini"></div>
-            <div id="scheda"></div>
-        </div>
+    <main>
+        <h1>stampe e Foto</h1>
+        <section id="ricerca-sec">
+            <div>
+                <label for="search-bar">Ricerca: </label>
+                <input type="text" name="search-bar" id="search-bar" palceholder="Cerca un titolo o un autore">
+            </div>
+        </section>
+        <section class="lista-contenuti">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Collocazione</th>
+                        <th>Autore</th>
+                        <th>Titolo</th>
+                        <th>Immagine</th>
+                    </tr>
+                </thead>
+                <tbody id="tabella">
+
+                </tbody>
+            </table>
+            <div id="paginazione">
+                <button id="prec-btn"><span class="material-symbols-outlined">arrow_back</span></button>
+                <span id="schermata">Pagina 1</span>
+                <button id="succ-btn"><span class="material-symbols-outlined">arrow_forward</span></button>
+            </div>
+        </section>
     </main>
     <footer>
         <p>&copy; 2025 Archivio musicale Luca Moretti. Tutti i diritti riservati</p>

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
+document.addEventListener("DOMContentLoaded", async function caricaStampa() {
     const params = new URLSearchParams(window.location.search);
     const collocazione = params.get("collocazione");
     const titolo=document.getElementById("titolo");
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         return;
     }
     try {
-        const res = await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`);
+        const res = await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`);
         const data = await res.json();
         //contenuto non trovato
         if (!data.success) {
@@ -24,18 +24,16 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         let stringaHTML = `
             <ul>
                 <li><span>Collocazione</span>: ${contenuto.collocazione}</li>
-        `;
-        if (contenuto.link_rism) {
-            stringaHTML += `
-                    <li><span><a href="${contenuto.link_rism}" target="_blank">Link RISM</a></span></li>
-            `;
-        }
-        stringaHTML += `
                 <li><span>Autore</span>: ${contenuto.autore}</li>
                 <li><span>Data</span>: ${contenuto.data_str || "/"}</li>
-                <li><span>Editore</span>: ${contenuto.editore || "/"}</li>
-                <li><span>Descrizione</span>: ${contenuto.descrizione || "/"}</li>
-                <li><span>Note</span>: ${contenuto.note || "/"}</li>
+        `;
+        if(contenuto.stampa){
+            stringaHTML+= `
+                    <li><span>Stampa</span>: ${contenuto.stampa}</li>
+            `;
+        }
+        stringaHTML+=`                
+                <li><span>Dimensioni</span>: ${contenuto.dimensioni || "/"}</li>
             </ul>
         `;
         scheda.innerHTML = stringaHTML;
@@ -57,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         //mostro la sezione con la scheda
         document.querySelector('main.articolo').style.visibility = "visible";
     } catch (err) {
-        console.error("Errore nel caricamento dell'edizione: ", err);
+        console.error("Errore nel caricamento della stampa: ", err);
         //window.location.href="/404.html";
     }
 });
