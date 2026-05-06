@@ -54,6 +54,7 @@ h3{
 p, q{
     font-family: "Ubuntu", sans-serif;
     text-align: justify;
+    line-height: 1.05em;
     font-size: 1.05em;
 }
 
@@ -295,10 +296,10 @@ footer .material-symbols-outlined{
 #area-admin .grid{
     grid-template-columns: repeat(2, 1fr);
     margin-top: 1em;
+    display: none;
 }
 
 #area-admin .grid .element{
-    display: none;
     background-color: var(--carta2);
     border-radius: 10%;
     margin: 0.5em 0;
@@ -349,6 +350,7 @@ footer .material-symbols-outlined{
         text-align: center;
         margin-top: 0;
         visibility: hidden;
+        min-height: 1.05em;
     }
 
     form input[type=text],
@@ -386,11 +388,9 @@ footer .material-symbols-outlined{
         border-color: var(--sfondoScuro);
     }
     /*fine stile form*/
-#cancella-edizione-form div{
-    justify-content: center;
-}
 
-#modifica-edizione-form{
+#modifica-edizione-form,
+#modifica-stampa-form{
     display: none;
     margin-top: 1em;
 }
@@ -445,7 +445,6 @@ footer .material-symbols-outlined{
 /*inizio stile pagine contenuti*/
 .articolo{
     visibility: hidden;
-    /*padding-top: 2em;*/
 }
 
 .articolo .grid{

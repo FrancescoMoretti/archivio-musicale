@@ -34,11 +34,11 @@
       <input type="radio" name="tipo-form" id="radio2" value="2">
       <label for="radio2">Stampe e Foto</label>
     </div>
-    <div class="grid">
-      <div class="element" id="element1">
+    <div class="grid" id="edizione-grid">
+      <div class="element">
         <h3>Aggiunta Edizioni e Manoscritti: </h3>
         <form id="aggiungi-edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
-          <p id="message1">messaggio<!--messaggio--></p>
+          <p><!--messaggio--></p>
           <div>
             <label for="add-collocazione-edizione" class="required">Collocazione: </label>
             <input type="text" name="collocazione" id="add-collocazione-edizione" placeholder="A/001" maxlength="10" required>
@@ -78,10 +78,10 @@
           <input type="submit" value="Aggiungi contenuto">
         </form>
       </div>
-      <div class="element" id="element2">
+      <div class="element">
         <h3>Eliminazione Edizioni e Manoscritti: </h3>
         <form id="cancella-edizione-form" action="/api/delete-edizione" method="POST">
-          <p id="message2">messaggio<!--messaggio--></p>
+          <p><!--messaggio--></p>
           <div>
             <label for="delete-collocazione-edizione">Collocazione: </label>
             <input type="text" name="collocazione" id="delete-collocazione-edizione" placeholder="A/001" maxlength="10" required>
@@ -89,11 +89,11 @@
           <input type="submit" value="Elimina contenuto">
         </form>
       </div>
-      <div class="element" id="element3">
+      <div class="element">
         <h3>Modifica Edizioni e Manoscritti: </h3>
-        <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa</p>
+        <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
         <form id="cerca-edizione-form" action="/api/get-edizione/:edizione" method="GET">
-          <p id="message3">messaggio<!--messaggio--></p>
+          <p><!--messaggio--></p>
           <div>
             <label for="search-collocazione-edizione">Collocazione: </label>
             <input type="text" id="search-collocazione-edizione" placeholder="A/001" maxlength="10" required>
@@ -101,7 +101,7 @@
           <input type="submit" value="Cerca contenuto">
         </form>
         <form id="modifica-edizione-form" action="/api/update-edizione" method="POST">
-          <p id="message4">messaggio<!--messaggio--></p>
+          <p><!--messaggio--></p>
           <!--input nascosto per avere la collocazione nei campi del form-->
           <input type="hidden" name="collocazione" id="update-collocazione-edizione" readonly>
           <div>
@@ -132,13 +132,15 @@
             <label for="update-note-edizione" class="text-label">Note: </label>
             <textarea name="note" id="update-note-edizione" placeholder="Note"></textarea>
           </div>
-          <input type="submit" id="salva-btn" value="Salva modifiche" disabled>
+          <input type="submit" value="Salva modifiche" disabled>
         </form>
       </div>
-      <div class="element" id="element4">
+    </div>
+    <div class="grid" id="stampa-grid">
+      <div class="element">
         <h3>Aggiunta Stampe e Foto:</h3>
         <form id="aggiungi-stampa-form" action="/api/add-stampa" method="POST" enctype="multipart/form-data">
-          <p id="message5">messaggio<!--messaggio--></p>
+          <p><!--messaggio--></p>
           <div>
             <label for="add-collocazione-stampa" class="required">Collocazione: </label>
             <input type="text" name="collocazione" id="add-collocazione-stampa" placeholder="B/001" maxlength="10" required>
@@ -170,15 +172,53 @@
           <input type="submit" value="Aggiungi contenuto">
         </form>
       </div>
-      <div class="element" id="element5">
+      <div class="element">
         <h3>Eliminazione Stampe e Foto: </h3>
         <form id="cancella-stampa-form" action="/api/delete-stampa" method="POST">
-          <p id="message6">messaggio<!--messaggio--></p>
+          <p><!--messaggio--></p>
           <div>
             <label for="delete-collocazione-stampa">Collocazione: </label>
             <input type="text" name="collocazione" id="delete-collocazione-stampa" placeholder="B/001" maxlength="10" required>
           </div>
           <input type="submit" value="Elimina contenuto">
+        </form>
+      </div>
+      <div class="element">
+        <h3>Modifica Stampe e Foto: </h3>
+        <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
+        <form id="cerca-stampa-form" action="/api/get-stampa/:stampa" method="GET">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="search-collocazione-stampa">Collocazione: </label>
+            <input type="text" id="search-collocazione-stampa" placeholder="B/001" maxlength="10" required>
+          </div>
+          <input type="submit" value="Cerca contenuto">
+        </form>
+        <form id="modifica-stampa-form" action="/api/update-stampa" method="POST">
+          <p><!--messaggio--></p>
+          <!--input nascosto per avere la collocazione nei campi del form-->
+          <input type="hidden" name="collocazione" id="update-collocazione-stampa" readonly>
+          <div>
+            <label for="update-autore-stampa" class="required">Autore: </label>
+            <input type="text" name="autore" id="update-autore-stampa" placeholder="Autore" maxlength="255" required>
+          </div>
+          <div>
+            <label for="update-titolo-stampa" class="required">Titolo: </label>
+            <input type="text" name="titolo" id="update-titolo-stampa" placeholder="Titolo" maxlength="255" required>
+          </div>
+          <div>
+            <label for="update-data_str-stampa">Data: </label>
+            <input type="text" name="data_str" id="update-data_str-stampa" placeholder="s.d. 1813ca" maxlength="50">
+          </div>
+          <div>
+            <label for="update-stampa-stampa">Stampa: </label>
+            <input type="text" name="stampa" id="update-stampa-stampa" placeholder="Stampa" maxlength="100">
+          </div>
+          <div>
+            <label for="update-dimensioni-stampa">Dimensioni: </label>
+            <input type="text" name="dimensioni" id="update-dimensioni-stampa" placeholder="Altezza: **cm; larghezza: **cm" maxlength="50">
+          </div>
+          <input type="submit" value="Salva modifiche" disabled>
         </form>
       </div>
     </div>
