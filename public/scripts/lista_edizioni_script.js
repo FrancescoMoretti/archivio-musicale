@@ -1,5 +1,6 @@
 let schermata = 1;//contatore per la schermata che sto mostrando
 const righe = 5;//righe di tabella per ogni pagina
+const altezzaCellaImmagine = 70;//cella imagine è alta 70px
 let totaleContenuti = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -61,7 +62,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     function mostraPagina(lista_da_mostrare, totale) {
         const tabella = document.getElementById("tabella");
         const tab = document.querySelector('.lista-contenuti table');
-        tabella.style.visibility="hidden";//nascondo il corpo della tabella mentre lo popolo
         tabella.innerHTML = "";
         lista_da_mostrare.forEach(edizione => {
             const tr = document.createElement("tr");
@@ -76,21 +76,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (edizione.url_immagine) {
                 const img = document.createElement("img");
                 const miniaturaUrl = edizione.url_immagine.replace('/upload/', '/upload/w_100,c_thumb/');//w_100,c_thumb servono per scaricare l'immagine in versione miniatura
-
                 img.src = miniaturaUrl;
                 img.alt = `Copertina di ${edizione.titolo}`;
                 img.loading = "lazy";
-                //stile immagini per limitazione ingombro
-                img.style.width = "50px";
-                img.style.height = "auto";
-                img.style.maxHeight = "75px";
-                img.style.borderRadius = "4px";
-                img.style.objectFit = "cover";
                 tdImmagine.appendChild(img);
             } else {
-                tdImmagine.textContent = "Nessuna Img";
-                tdImmagine.style.fontSize = "small";
-                tdImmagine.style.color = "#555";
+                tdImmagine.className="no-img";
+                tdImmagine.textContent = "No Img";
             }
             tr.appendChild(tdCollocazione);
             tr.appendChild(tdAutore);
@@ -102,8 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             tabella.appendChild(tr);
         });
         //adatto tabella al contenuto
-        tab.style.minHeight = 'auto';
-        tabella.style.visibility="visible";//mostro il corpo della tabella
+        tabella.style.height = `${tabella.rows.length*altezzaCellaImmagine}px`;
         //aggiorno indice pagina
         document.getElementById("schermata").textContent = `Pagina ${schermata}`;
         //gestione bottoni

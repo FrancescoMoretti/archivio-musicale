@@ -221,16 +221,13 @@ footer .material-symbols-outlined{
 }
     /*inizio stile tabella*/
     table{
+        width: 60%;
         border-collapse: collapse;
         border: 2px solid var(--sfondoScuro);
         margin: auto;
         margin-top: 1em;
         font-family: "Ubuntu", sans-serif;
     }
-
-    /*table th{
-        padding: 0 0.5em;
-    }*/
 
     table th,
     table td{
@@ -240,6 +237,7 @@ footer .material-symbols-outlined{
 
     table tbody{
         cursor: pointer;
+        min-height: 350px;/*(70*5)px prenotati per la tabella*/
     }
 
     table th{
@@ -252,6 +250,26 @@ footer .material-symbols-outlined{
 
     table tr:nth-child(even){
         background-color: var(--carta2);
+    }
+
+    /*colonna immagine*/
+    table td:last-child{
+        width: 75px;
+        height: 70px;
+    }
+
+    table td img{
+        width: 50px;
+        max-height: 66px;
+        border-radius: 4px;
+        object-fit: cover;
+        display: block;
+        margin: auto;
+    }
+
+    table .no-img{
+        font-size: small;
+        color: var(--colorC);
     }
     /*fine stile tabella*/
 .lista-contenuti #paginazione{
