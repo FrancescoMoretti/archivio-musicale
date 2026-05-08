@@ -620,7 +620,7 @@ app.post('/api/logout', (req, res)=>{
 });
 
 app.use((req, res)=>{
-    //così rimane il nome dle file non trovato nell'url
+    //così rimane il nome del file non trovato nell'url
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
