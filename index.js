@@ -2,6 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
+
+const pool = require('./src/db');
+const { upload, cloudinary } = require('./src/cloudinaryConfig');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,13 +15,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));// Serve i file statici dalla cartella public
+app.use(cookieParser());
 
-app.use('/admin', express.static('admin'));
-
-const pool = require('./src/db');
-const { upload, cloudinary } = require('./src/cloudinaryConfig');
-
+//funzione di upload su cloudinary
 const uploadToCloudinary = (buffer, folder) => {
     return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -29,15 +31,151 @@ const uploadToCloudinary = (buffer, folder) => {
     });
 };
 
+//middleware di verifica del token JWT
+const autenticaToken = (req, res, next)=>{
+    const token=req.cookies.token;//recupero il token
+    //se il token non c'è => mando alla pagina di login
+    if(!token){
+        //se era chiamata a endpoint
+        if(req.path.startsWith('/api/')){
+            return res.status(401).json({
+                success: false,
+                message: "Token mancante, effettua il login..."
+            });//401: non autorizzato
+        }
+        return res.status(302).redirect('/accedi');//302: redirect
+    }
+    try{
+        //token presente => verifica
+        const payload=jwt.verify(token, process.env.JWT_SECRET);
+        //token valido
+        req.utente=payload;//salvo i dati (id, ruolo) nella richiesta
+        next();//procedo al prossimo passaggio
+    }catch(err){
+        //token non valido
+        res.clearCookie('token');//consumo il token
+        //se il token è scaduto
+        if(err.name==="TokenExpiredError"){
+            //se era chiamata a endpoint
+            if(req.path.startsWith('/api/')){
+                return res.status(401).json({
+                    success: false,
+                    message: "Token scaduto, effettua di nuovo il login..."
+                });//401: non autorizzato
+            }
+            //se era accesso a pagina HTML
+            return res.status(302).redirect('/accedi');//302: redirect
+        }
+        //se il token è stato manomesso
+        if(err.name==="JsonWebTokenError"){
+            //se era chiamata a endpoint
+            if(req.path.startsWith('/api/')){
+                return res.status(403).json({
+                    success: false,
+                    message: "Token non valido."
+                });//403: forbidden
+            }
+            //se era accesso a pagina HTML
+            return res.status(403).redirect('/403.html');//403: forbidden
+        }
+        //altri errori
+        return res.status(302).redirect('/accedi');
+    }
+};
+
+//rotta segreta per gestire login
+app.get('/accedi', (req, res)=>{
+    const token = req.cookies.token;//recupero il token
+    //se il token c'è
+    if(token){
+        try{
+            //verifico il token
+            jwt.verify(token, process.env.JWT_SECRET);
+            //se il token è valido
+            return res.redirect('/admin/area_admin.html');
+        }catch(err){
+            //se il token è scaduto o manomesso
+            res.clearCookie("token");
+        }
+    }
+    //se non c'è il token o è scaduto servo il file di login
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+//endpoint per login
+app.post('/api/login', async (req, res)=>{
+    const {email, password} = req.body;
+    if(!email || !password){
+        return res.status(400).json({
+            success: false,
+            message: "Email o password mancanti."
+        });//400: richiesta mal formata
+    }
+    const query="SELECT id, password, ruolo FROM utenti WHERE email=? AND (ruolo='admin' OR ruolo='editor')";
+    try{
+        const [rows]=await pool.query(query, [email]);
+        //se l'utente non esiste
+        if(rows.length===0){
+            return res.status(401).json({
+                success: false,
+                message: "Credenziali non valide."
+            });
+        }
+        const user=rows[0];
+        //verifica della password
+        const match=await bcrypt.compare(password, user.password);
+        //se non corrisponde
+        if(!match){
+            return res.status(401).json({
+                success: false,
+                message: "Credenziali non valide."
+            });
+        }
+        //se corrisponde
+        //definizione del payload con i campi della tabella
+        const payload={
+            id: user.id,
+            email: email,
+            ruolo: user.ruolo// 'admin' || 'editor' || 'viewer'
+        };
+        //generazione del token
+        const token=jwt.sign(payload, process.env.JWT_SECRET, {
+            algorithm: "HS256",
+            expiresIn: "1h"
+        });
+        //generazione del cookie
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 3600000,//1 ora (in millisecondi)
+            sameSite: "Lax"
+        });
+        res.json({
+            success: true,
+            message: "Login effettuato!",
+            ruolo: user.ruolo
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint login: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il login."
+        });
+    }
+});
+
+app.use(express.static('public'));// Serve i file statici dalla cartella public
+app.use('/admin', autenticaToken, express.static('admin'));
+
 //endpoint per inserimento edizione
-app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
+app.post("/api/add-edizione", autenticaToken, upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
-        });
+        });//400: richiesta mal formata
     }
     //preparazione query
     const queryEdizione = `INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -74,7 +212,7 @@ app.post("/api/add-edizione", upload.array("immagini"), async (req, res) => {
 });
 
 //endpoint per cancellazione edizione
-app.post("/api/delete-edizione", async (req, res)=>{
+app.post("/api/delete-edizione", autenticaToken, async (req, res)=>{
     const {collocazione}=req.body;
     if(!collocazione){
         return res.status(400).json({
@@ -192,7 +330,7 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
 });
 
 //endpoint per recupero dati edizione (MODIFICA)
-app.get("/api/get-edizione/:collocazione", async (req, res)=>{
+app.get("/api/get-edizione/:collocazione", autenticaToken, async (req, res)=>{
     const { collocazione }=req.params;
     try{
         const [rows]=await pool.query("SELECT * FROM edizioni WHERE collocazione=?", [collocazione]);
@@ -216,7 +354,7 @@ app.get("/api/get-edizione/:collocazione", async (req, res)=>{
 });
 
 //endpoint per aggiornamento edizione (MODIFICA)
-app.post("/api/update-edizione", async (req, res)=>{
+app.post("/api/update-edizione", autenticaToken, async (req, res)=>{
     const {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     if (!titolo || !autore) {
         return res.status(400).json({
@@ -247,7 +385,7 @@ app.post("/api/update-edizione", async (req, res)=>{
 });
 
 //endpoint per inserimento stampa
-app.post("/api/add-stampa", upload.array("immagini"), async (req, res)=>{
+app.post("/api/add-stampa", autenticaToken, upload.array("immagini"), async (req, res)=>{
     const {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
     const files=req.files;//immagini
     if(!collocazione || !autore || !titolo){
@@ -295,7 +433,7 @@ app.post("/api/add-stampa", upload.array("immagini"), async (req, res)=>{
 });
 
 //endpoint per cancellazione stampa
-app.post("/api/delete-stampa", async (req, res)=>{
+app.post("/api/delete-stampa", autenticaToken, async (req, res)=>{
     const {collocazione}=req.body;
     if(!collocazione){
         return res.status(400).json({
@@ -413,7 +551,7 @@ app.get("/api/stampa/:collocazione", async (req, res) => {
 });
 
 //endpoint per recupero dati stampa (MODIFICA)
-app.get("/api/get-stampa/:collocazione", async (req, res) => {
+app.get("/api/get-stampa/:collocazione", autenticaToken, async (req, res) => {
     const { collocazione } = req.params;
     try {
         const [rows] = await pool.query("SELECT * FROM stampe WHERE collocazione=?", [collocazione]);
@@ -437,7 +575,7 @@ app.get("/api/get-stampa/:collocazione", async (req, res) => {
 });
 
 //endpoint per aggiornamento stampa (MODIFICA)
-app.post("/api/update-stampa", async (req, res) => {
+app.post("/api/update-stampa", autenticaToken, async (req, res) => {
     const { collocazione, autore, titolo, data_str, stampa, dimensioni } = req.body;
     if (!autore || !titolo) {
         return res.status(400).json({
@@ -467,7 +605,22 @@ app.post("/api/update-stampa", async (req, res) => {
     }
 });
 
+//endpoint per logout
+app.post('/api/logout', (req, res)=>{
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        path: '/'//rimuovo per tutto il sito
+    });
+    return res.json({
+        success: true,
+        message: "Logout effettuato con successo"
+    });
+});
+
 app.use((req, res)=>{
+    //così rimane il nome dle file non trovato nell'url
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 

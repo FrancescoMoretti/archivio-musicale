@@ -107,8 +107,9 @@ header nav{
     margin: 0 2em;
 }
 
-#menu::before{
-    /*elemento fantasma per pareggiare link a destra e a sinistra del logo*/
+/*elementi fantasma per avere menù più compatto*/
+#menu::before,
+#menu::after{
     content: "";
     flex: 1;
 }
@@ -367,12 +368,13 @@ footer .material-symbols-outlined{
     form p{
         text-align: center;
         margin-top: 0;
-        visibility: hidden;
         min-height: 1.05em;
     }
 
     form input[type=text],
-    form input[type=url]{
+    form input[type=url],
+    form input[type=email],
+    form input[type=password]{
         width: 100%;
     }
 
@@ -413,6 +415,23 @@ footer .material-symbols-outlined{
     margin-top: 1em;
 }
 /*fine stile area_admin*/
+
+/*inizio stile pagina login*/
+#login form{
+    display: block;
+    width: 30%;
+    margin: auto;
+    overflow: hidden;
+}
+
+#login #icona-occhio-chiuso{
+    display: none;
+}
+
+#login .icona{
+    cursor: pointer;
+}
+/*fine stile pagina login*/
 
 /*inizio stile pagina catalogo*/
 #catalogo .grid{

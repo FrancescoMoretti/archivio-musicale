@@ -3,12 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="stile/stile.css">
+    <link rel="stylesheet" href="./stile/stile.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts/carica_edizione_script.js" defer></script>
-    <script src="scripts/slider.js" defer></script>
-    <title>Contenuto</title>
+    <script src="scripts/login_script.js" defer></script>
+    <title>Login</title>
 </head>
 
 <body>
@@ -25,12 +24,22 @@
             </ul>
         </nav>
     </header>
-    <main class="articolo">
-        <h1 id="titolo"></h1>
-        <div class="grid">
-            <div class="element" id="immagini"></div>
-            <div id="scheda"></div>
-        </div>
+    <main id="login">
+        <h1>Accedi</h1>
+        <form id="login-form" action="/api/login" method="POST">
+            <p><!--messaggio--></p>
+            <div>
+                <label for="email">Email: </label>
+                <input type="email" id="email" name="email" placeholder="mario.rossi@mail.it" required>
+            </div>
+            <div>
+                <label for="password">Password: </label>
+                <input type="password" id="password" name="password" placeholder="password" required>
+                <span id="icona-occhio-aperto" class="material-symbols-outlined icona">Visibility</span>
+                <span id="icona-occhio-chiuso" class="material-symbols-outlined icona">visibility_off</span>
+            </div>
+            <input type="submit" value="Accedi">
+        </form>
     </main>
     <footer>
         <p>&copy; 2025 Archivio musicale Luca Moretti. Tutti i diritti riservati</p>

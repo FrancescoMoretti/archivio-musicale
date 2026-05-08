@@ -1,4 +1,4 @@
-window.onload = async function () {
+document.addEventListener("DOMContentLoaded", async function () {
     //gestione form con radio button
     const radioBtn = document.querySelectorAll('input[name="tipo-form"]');
     radioBtn.forEach(btn => {
@@ -313,7 +313,7 @@ window.onload = async function () {
     });
 
     //fetch di modifica stampe (MODIFICA)
-    document.getElementById("modifica-stampa-form").addEventListener("submit", async(event)=>{
+    document.getElementById("modifica-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
@@ -349,4 +349,24 @@ window.onload = async function () {
             message.textContent="Errore di rete: impossibile raggiungere il server."
         }
     });
-};
+
+    //fetch per logout
+    document.getElementById("logout-btn").addEventListener("click", async ()=>{
+        try{
+            const res=await fetch("/api/logout", {
+                method: "POST",
+                credentials: "include"
+            });
+            const result=await res.json();
+            if(res.ok && result.success){
+                window.location.href='/accedi';
+            }else{
+                console.error("Errore durante il logout.");
+            }
+        }catch(err){
+            console.error("Errore durante il logout: ", err);
+            //anche in caso di fallimento faccio il redirect
+            window.location.href='/accedi';
+        }
+    });
+});
