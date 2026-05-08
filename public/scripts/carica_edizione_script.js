@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         }
         const contenuto = data.content;//dati della risorsa
         const listaImmagini = data.immagini || [];//array di URL a cloudinary
+        //cambio il titolo della pagina per SEO
+        document.title=`${contenuto.titolo} - ${contenuto.autore} | Archivio musicale Luca Moretti`;
         //popolazione della scheda dell'articolo
         titolo.textContent=contenuto.titolo;
         let stringaHTML = `

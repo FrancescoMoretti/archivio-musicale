@@ -70,7 +70,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             const tdAutore = document.createElement("td");
             tdAutore.textContent = edizione.autore;
             const tdTitolo = document.createElement("td");
-            tdTitolo.textContent = edizione.titolo;
+            //aggiungo link per SEO
+            const linkTitolo = document.createElement("a");
+            linkTitolo.href=`/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}`
+            linkTitolo.textContent=edizione.titolo;
+            tdTitolo.appendChild(linkTitolo);
             //GESTIONE COLONNA IMMAGINE
             const tdImmagine = document.createElement("td");
             if (edizione.url_immagine) {

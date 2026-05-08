@@ -70,7 +70,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             const tdAutore = document.createElement("td");
             tdAutore.textContent = stampa.autore;
             const tdTitolo = document.createElement("td");
-            tdTitolo.textContent = stampa.titolo;
+            //aggiungo link per SEO
+            const linkTitolo=document.createElement("a");
+            linkTitolo.href=`/stampa.html?collocazione=${encodeURIComponent(stampa.titolo)}`;
+            linkTitolo.textContent=stampa.titolo;
+            tdTitolo.appendChild(linkTitolo);
             //GESTIONE COLONNA IMMAGINE
             const tdImmagine = document.createElement("td");
             if (stampa.url_immagine) {

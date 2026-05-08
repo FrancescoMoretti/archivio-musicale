@@ -262,6 +262,11 @@ footer .material-symbols-outlined{
         height: 70px;
     }
 
+    /*titoli=>link*/
+    table td a{
+        color: var(--sfondoScuro);
+    }
+
     table td img{
         width: 50px;
         max-height: 66px;

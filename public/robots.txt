@@ -1,0 +1,11 @@
+User-agent: *
+
+#blocco cartella admin, le pagine di login, 403 e 404
+Disallow: /admin/
+Disallow: /accedi
+Disallow: /login.html
+Disallow: /403.html
+Disallow: /404.html
+
+#permetto l'indicizzazione di tutte le altre pagine
+Allow: /
