@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const form = event.target;
         const message = form.querySelector('p');
         message.textContent = "Caricamento in corso...";
-        message.style.visibility = "visible";
         //validazione client-side
         const collocazione = form.elements["collocazione"].value.trim();
         const autore = form.elements["autore"].value.trim();
@@ -70,7 +69,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         //validazione client-side
         if (!collocazione) {
             message.textContent = "Errore: Collocazione non inserita."
-            message.style.visibility = "visible";
             return;
         }
         //conferma
@@ -78,7 +76,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
         message.textContent = "Cancellazione in corso...";
-        message.style.visibility = "visible";
         try {
             const res = await fetch("/api/delete-edizione", {
                 method: "POST",
@@ -115,9 +112,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         const collocazione = document.getElementById("search-collocazione-edizione").value;
         const message = cercaForm.querySelector('p');
         const message2 = modificaForm.querySelector('p');
-        message2.style.visibility="hidden";
+        message2.textContent="";
         message.textContent = "Ricerca in corso...";
-        message.style.visibility = "visible";
         salvaBtn.disabled = true;
         modificaForm.style.display = "none";
         modificaForm.reset();
@@ -152,7 +148,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const message = form.querySelector('p');
         const salvaBtn = form.querySelector('input[type="submit"]');
         message.textContent = "Aggiornamento del contenuto in corso...";
-        message.style.visibility = "visible";
         const dati = {
             collocazione: document.getElementById("update-collocazione-edizione").value,
             link_rism: document.getElementById("update-link_rism-edizione").value,
@@ -175,7 +170,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 form.reset();
                 salvaBtn.disabled = true;
                 const cercaForm=document.getElementById("cerca-edizione-form");
-                cercaForm.querySelector('p').style.visibility="hidden";
+                cercaForm.querySelector('p').textContent="";
                 cercaForm.reset();
             } else {
                 message.textContent = result.message || "Errore durante l'aggiornamento.";
@@ -192,7 +187,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const form = event.target;
         const message = form.querySelector('p');
         message.textContent = "Caricamento in corso...";
-        message.style.visibility = "visible";
         //validazione client-side
         const collocazione = form.elements["collocazione"].value.trim();
         const autore = form.elements["autore"].value.trim();
@@ -239,7 +233,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         //validazione client-side
         if(!collocazione){
             message.textContent="Errore: Collocazione non inserita."
-            message.style.visibility="visible";
             return;
         }
         //conferma
@@ -247,7 +240,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             return;
         }
         message.textContent = "Cancellazione in corso...";
-        message.style.visibility = "visible";
         try{
             const res=await fetch("/api/delete-stampa", {
                 method: "POST",
@@ -284,9 +276,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         const collocazione = document.getElementById("search-collocazione-stampa").value;
         const message = cercaForm.querySelector('p');
         const message2 = modificaForm.querySelector('p');
-        message2.style.visibility="hidden";
+        message2.textContent="";
         message.textContent = "Ricerca in corso...";
-        message.style.visibility = "visible";
         salvaBtn.disabled = true;
         modificaForm.style.display = "none";
         modificaForm.reset();
@@ -319,7 +310,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         const message=form.querySelector('p');
         const salvaBtn=form.querySelector('input[type="submit"]');
         message.textContent="Aggiornamento del contenuto in corso...";
-        message.style.visibility="visible";
         const dati={
             collocazione: document.getElementById("update-collocazione-stampa").value,
             autore: document.getElementById("update-autore-stampa").value,
@@ -340,7 +330,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 form.reset();
                 salvaBtn.disabled=true;
                 const cercaForm=document.getElementById("cerca-stampa-form");
-                cercaForm.querySelector('p').style.visibility="hidden";
+                cercaForm.querySelector('p').textContent="";
                 cercaForm.reset();
             }else{
                 message.textContent=result.message || "Errore durante l'aggiornamento.";
