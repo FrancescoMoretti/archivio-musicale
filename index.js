@@ -196,6 +196,20 @@ app.post('/api/login', async (req, res)=>{
     }
 });
 
+//endpoint per logout (UTENTI)
+app.post('/api/logout', (req, res)=>{
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        path: '/'//rimuovo per tutto il sito
+    });
+    return res.json({
+        success: true,
+        message: "Logout effettuato con successo"
+    });
+});
+
 //endoint per dettagli sugli utenti (UTENTI)
 app.get('/api/me', autenticaToken, (req, res)=>{
     //req.utente viene popolato da autenticaToken
@@ -272,20 +286,6 @@ app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
             message: "Errore durante l'aggiornamento della password."
         });
     }
-});
-
-//endpoint per logout (UTENTI)
-app.post('/api/logout', (req, res)=>{
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
-        path: '/'//rimuovo per tutto il sito
-    });
-    return res.json({
-        success: true,
-        message: "Logout effettuato con successo"
-    });
 });
 
 //fine endpoint per UTENTI
