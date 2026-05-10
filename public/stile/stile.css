@@ -289,18 +289,18 @@ footer .material-symbols-outlined{
 }
 /*fine stile pagine lista*/
 
-/*inizio stile area_admin*/
-#area-admin #radio-div{
+/*inizio stile area riservata*/
+.area-riservata #radio-div{
     display: inline;
     width: 40%;
     margin: 0 auto;
 }
 
-#area-admin #radio-div input[name="tipo-form"]{
+.area-riservata #radio-div input[name="tipo-form"]{
     display: none;
 }
 
-#area-admin #radio-div label{
+.area-riservata #radio-div label{
     width: auto;
     padding: 0.20em 1em;
     cursor: pointer;
@@ -314,19 +314,19 @@ footer .material-symbols-outlined{
     font-weight: bold;
 }
 
-#area-admin #radio-div label:hover,
-#area-admin #radio-div input[type=radio]:checked+label{
+.area-riservata #radio-div label:hover,
+.area-riservata #radio-div input[type=radio]:checked+label{
     background-color: var(--colorC);
     color: var(--carta2);
 }
 
-#area-admin .grid{
+.area-riservata .grid{
     grid-template-columns: repeat(2, 1fr);
     margin-top: 1em;
     display: none;
 }
 
-#area-admin .grid .element{
+.area-riservata .grid .element{
     background-color: var(--carta2);
     border-radius: 10%;
     margin: 0.5em 0;
@@ -390,7 +390,8 @@ footer .material-symbols-outlined{
     form input[type=button],
     form input[type=reset],
     form input::file-selector-button,
-    button{
+    button,
+    .area-riservata a{
         width: auto;
         padding: 0.20em 1em;
         font-size: 1em;
@@ -400,6 +401,7 @@ footer .material-symbols-outlined{
         background-color: var(--carta2);
         color: var(--sfondoScuro);
         border-radius: 35%;
+        border: var(--sfondoScuro) solid 2px;
         transition: color 0.3s ease-out;
     }
 
@@ -407,7 +409,8 @@ footer .material-symbols-outlined{
     form input[type=button]:hover,
     form input[type=reset]:hover,
     form input::file-selector-button:hover,
-    button:hover{
+    button:hover,
+    .area-riservata a:hover{
         background-color: var(--colorC);
         color: var(--carta2);
     }
@@ -424,22 +427,35 @@ footer .material-symbols-outlined{
 }
 /*fine stile area_admin*/
 
-/*inizio stile pagina login*/
-#login form{
+/*inizio stile pagina login e area personale*/
+#login form,
+#cambia-password-div{
     display: block;
-    width: 30%;
+    width: 40%;
     margin: auto;
     overflow: hidden;
+    background-color: var(--carta2);
+    border-radius: 10%;
+    padding: 0 1em 1em 1em;
 }
 
-#login #icona-occhio-chiuso{
+#login form{
+    padding-top: 1em;
+}
+
+#icona-occhio-chiuso,
+#icona-occhio-chiuso2,
+#icona-occhio-chiuso3{
     display: none;
 }
 
-#login .icona{
+#login .icona,
+#cambia-password-form .icona{
     cursor: pointer;
 }
-/*fine stile pagina login*/
+
+
+/*fine stile pagina login e area personale*/
 
 /*inizio stile pagina catalogo*/
 #catalogo .grid{

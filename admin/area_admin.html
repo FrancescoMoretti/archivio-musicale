@@ -2,230 +2,38 @@
 <html lang="it">
 
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="/stile/stile.css">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="scripts/area_admin_script.js" defer></script>
-  <title>Area amministratore</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/stile/stile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/scripts/user_detail_script.js" defer></script>
+    <script src="/scripts/logout_script.js" defer></script>
+    <title>Area admin | Archivio musicale Luca Moretti</title>
 </head>
 
 <body>
-  <header>
-    <nav>
-      <input type="checkbox" id="menu-toggle">
-      <label for="menu-toggle" id="menu-icon">&#9776;</label>
-      <ul id="menu">
-        <li><a href="/">Home</a></li>
-        <li><a href="/catalogo.html">Catalogo</a></li>
-        <li id="logo"><a href="/"><img src="/immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
-        <li><a href="#">Biografia</a></li>
-        <li><a href="#">Trovaci</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main id="area-admin">
-    <h1>Area amministratore</h1>
-    <div>
-      <button id="logout-btn">Logout</button>
-    </div>
-    <h2>Gestione dei contenuti</h2>
-    <div id="radio-div">
-      <input type="radio" name="tipo-form" id="radio1" value="1">
-      <label for="radio1">Edizioni e Manoscritti</label>
-      <input type="radio" name="tipo-form" id="radio2" value="2">
-      <label for="radio2">Stampe e Foto</label>
-    </div>
-    <div class="grid" id="edizione-grid">
-      <div class="element">
-        <h3>Aggiunta Edizioni e Manoscritti: </h3>
-        <form id="aggiungi-edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
-          <p><!--messaggio--></p>
-          <div>
-            <label for="add-collocazione-edizione" class="required">Collocazione: </label>
-            <input type="text" name="collocazione" id="add-collocazione-edizione" placeholder="A/001" maxlength="10" required>
-          </div>
-          <div>
-            <label for="add-link_rism">Link RISM: </label>
-            <input type="url" name="link_rism" id="add-link_rism" placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107" maxlength="255">
-          </div>
-          <div>
-            <label for="add-autore-edizione" class="required">Autore: </label>
-            <input type="text" name="autore" id="add-autore-edizione" placeholder="Autore" maxlength="255" required>
-          </div>
-          <div>
-            <label for="add-titolo-edizione" class="required">Titolo: </label>
-            <input type="text" name="titolo" id="add-titolo-edizione" placeholder="Titolo" maxlength="255" required>
-          </div>
-          <div>
-            <label for="add-data_str-edizione">Data: </label>
-            <input type="text" name="data_str" id="add-data_str-edizione" placeholder="s.d. 1813ca" maxlength="50">
-          </div>
-          <div>
-            <label for="add-editore-edizione">Editore: </label>
-            <input type="text" name="editore" id="add-editore-edizione" placeholder="Editore" maxlength="255">
-          </div>
-          <div>
-            <label for="add-descrizione-edizione" class="text-label">Descrizione: </label>
-            <textarea name="descrizione" id="add-descrizione-edizione" placeholder="Descrizione"></textarea>
-          </div>
-          <div>
-            <label for="add-note-edizione" class="text-label">Note: </label>
-            <textarea name="note" id="add-note-edizione" placeholder="Note"></textarea>
-          </div>
-          <div>
-            <label for="add-immagini-edizione">Immagini: </label>
-            <input type="file" name="immagini" id="add-immagini-edizione" accept="image/*" multiple>
-          </div>
-          <input type="submit" value="Aggiungi contenuto">
-        </form>
-      </div>
-      <div class="element">
-        <h3>Eliminazione Edizioni e Manoscritti: </h3>
-        <form id="cancella-edizione-form" action="/api/delete-edizione" method="POST">
-          <p><!--messaggio--></p>
-          <div>
-            <label for="delete-collocazione-edizione">Collocazione: </label>
-            <input type="text" name="collocazione" id="delete-collocazione-edizione" placeholder="A/001" maxlength="10" required>
-          </div>
-          <input type="submit" value="Elimina contenuto">
-        </form>
-      </div>
-      <div class="element">
-        <h3>Modifica Edizioni e Manoscritti: </h3>
-        <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
-        <form id="cerca-edizione-form" action="/api/get-edizione/:edizione" method="GET">
-          <p><!--messaggio--></p>
-          <div>
-            <label for="search-collocazione-edizione">Collocazione: </label>
-            <input type="text" id="search-collocazione-edizione" placeholder="A/001" maxlength="10" required>
-          </div>
-          <input type="submit" value="Cerca contenuto">
-        </form>
-        <form id="modifica-edizione-form" action="/api/update-edizione" method="POST">
-          <p><!--messaggio--></p>
-          <!--input nascosto per avere la collocazione nei campi del form-->
-          <input type="hidden" name="collocazione" id="update-collocazione-edizione" readonly>
-          <div>
-            <label for="update-link_rism-edizione">Link RISM: </label>
-            <input type="url" name="link_rism" id="update-link_rism-edizione" placeholder="https://opac.rism.info/id/rismid/rism1001256281?sid=40029107" maxlength="255">
-          </div>
-          <div>
-            <label for="update-autore-edizione" class="required">Autore: </label>
-            <input type="text" name="autore" id="update-autore-edizione" placeholder="Autore" maxlength="255" required>
-          </div>
-          <div>
-            <label for="update-titolo-edizione" class="required">Titolo: </label>
-            <input type="text" name="titolo" id="update-titolo-edizione" placeholder="Titolo" maxlength="255" required>
-          </div>
-          <div>
-            <label for="update-data_str-edizione">Data: </label>
-            <input type="text" name="data_str" id="update-data_str-edizione" placeholder="s.d. 1813ca" maxlength="50">
-          </div>
-          <div>
-            <label for="update-editore-edizione">Editore: </label>
-            <input type="text" name="editore" id="update-editore-edizione" placeholder="Editore" maxlength="255">
-          </div>
-          <div>
-            <label for="update-descrizione-edizione" class="text-label">Descrizione: </label>
-            <textarea name="descrizione" id="update-descrizione-edizione" placeholder="Descrizione"></textarea>
-          </div>
-          <div>
-            <label for="update-note-edizione" class="text-label">Note: </label>
-            <textarea name="note" id="update-note-edizione" placeholder="Note"></textarea>
-          </div>
-          <input type="submit" value="Salva modifiche" disabled>
-        </form>
-      </div>
-    </div>
-    <div class="grid" id="stampa-grid">
-      <div class="element">
-        <h3>Aggiunta Stampe e Foto:</h3>
-        <form id="aggiungi-stampa-form" action="/api/add-stampa" method="POST" enctype="multipart/form-data">
-          <p><!--messaggio--></p>
-          <div>
-            <label for="add-collocazione-stampa" class="required">Collocazione: </label>
-            <input type="text" name="collocazione" id="add-collocazione-stampa" placeholder="B/001" maxlength="10" required>
-          </div>
-          <div>
-            <label for="add-autore-stampa" class="required">Autore: </label>
-            <input type="text" name="autore" id="add-autore-stampa" placeholder="Autore" maxlength="255" required>
-          </div>
-          <div>
-            <label for="add-titolo-stampa" class="required">Titolo: </label>
-            <input type="text" name="titolo" id="add-titolo-stampa" placeholder="Titolo" maxlength="255" required>
-          </div>
-          <div>
-            <label for="add-data_str-stampa">Data: </label>
-            <input type="text" name="data_str" id="add-data_str-stampa" placeholder="s.d. 1813ca" maxlength="50">
-          </div>
-          <div>
-            <label for="add-stampa-stampa">Stampa: </label>
-            <input type="text" name="stampa" id="add-stampa-stampa" placeholder="Stampa" maxlength="100">
-          </div>
-          <div>
-            <label for="add-dimensioni-stampa">Dimensioni: </label>
-            <input type="text" name="dimensioni" id="add-dimensioni-stampa" placeholder="Altezza: **cm; larghezza: **cm" maxlength="50">
-          </div>
-          <div>
-            <label for="add-immagini-stampa">Immagini: </label>
-            <input type="file" name="immagini" id="add-immagini-stampa" accept="image/*" multiple>
-          </div>
-          <input type="submit" value="Aggiungi contenuto">
-        </form>
-      </div>
-      <div class="element">
-        <h3>Eliminazione Stampe e Foto: </h3>
-        <form id="cancella-stampa-form" action="/api/delete-stampa" method="POST">
-          <p><!--messaggio--></p>
-          <div>
-            <label for="delete-collocazione-stampa">Collocazione: </label>
-            <input type="text" name="collocazione" id="delete-collocazione-stampa" placeholder="B/001" maxlength="10" required>
-          </div>
-          <input type="submit" value="Elimina contenuto">
-        </form>
-      </div>
-      <div class="element">
-        <h3>Modifica Stampe e Foto: </h3>
-        <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
-        <form id="cerca-stampa-form" action="/api/get-stampa/:stampa" method="GET">
-          <p><!--messaggio--></p>
-          <div>
-            <label for="search-collocazione-stampa">Collocazione: </label>
-            <input type="text" id="search-collocazione-stampa" placeholder="B/001" maxlength="10" required>
-          </div>
-          <input type="submit" value="Cerca contenuto">
-        </form>
-        <form id="modifica-stampa-form" action="/api/update-stampa" method="POST">
-          <p><!--messaggio--></p>
-          <!--input nascosto per avere la collocazione nei campi del form-->
-          <input type="hidden" name="collocazione" id="update-collocazione-stampa" readonly>
-          <div>
-            <label for="update-autore-stampa" class="required">Autore: </label>
-            <input type="text" name="autore" id="update-autore-stampa" placeholder="Autore" maxlength="255" required>
-          </div>
-          <div>
-            <label for="update-titolo-stampa" class="required">Titolo: </label>
-            <input type="text" name="titolo" id="update-titolo-stampa" placeholder="Titolo" maxlength="255" required>
-          </div>
-          <div>
-            <label for="update-data_str-stampa">Data: </label>
-            <input type="text" name="data_str" id="update-data_str-stampa" placeholder="s.d. 1813ca" maxlength="50">
-          </div>
-          <div>
-            <label for="update-stampa-stampa">Stampa: </label>
-            <input type="text" name="stampa" id="update-stampa-stampa" placeholder="Stampa" maxlength="100">
-          </div>
-          <div>
-            <label for="update-dimensioni-stampa">Dimensioni: </label>
-            <input type="text" name="dimensioni" id="update-dimensioni-stampa" placeholder="Altezza: **cm; larghezza: **cm" maxlength="50">
-          </div>
-          <input type="submit" value="Salva modifiche" disabled>
-        </form>
-      </div>
-    </div>
-  </main>
-  <footer>
+    <header>
+        <nav>
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" id="menu-icon">&#9776;</label>
+            <ul id="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/catalogo.html">Catalogo</a></li>
+                <li id="logo"><a href="/"><img src="/immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
+                <li><a href="#">Biografia</a></li>
+                <li><a href="#">Trovaci</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="area-riservata">
+        <h1 id="titolo">Area admin: </h1>
+        <div>
+            <a href="/private/area_riservata.html">Area editor</a>
+            <a href="/private/area_personale.html">Area personale</a>
+            <button id="logout-btn">Logout</button>
+        </div>
+    </main>
+    <footer>
         <address>
             <p><span class="material-symbols-outlined">link_2</span><a href="https://www.facebook.com/share/15rkzqvaTg/" target="_blank" rel="noopener">Facebook</a>, <a href="https://www.instagram.com/archivio_musicale_luca_moretti" target="_blank" rel="noopener">Instagram</a>, <a href="https://rism.info/library_collections/2023/06/01/the-archivio-musicale-luca-moretti-in-rism.html" target="_blank" rel="noopener">RISM</a></p>
             <p><span class="material-symbols-outlined">mail</span><a href="mailto:#">mail</a></p>

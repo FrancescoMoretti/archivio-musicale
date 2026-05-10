@@ -22,12 +22,19 @@ document.addEventListener("DOMContentLoaded", function(){
             const result=await res.json();
             //se il login è avvenuto correttamente
             if(res.ok && result.success){
-                //se il ruolo è admin o editor
-                if(result.ruolo==='admin' || result.ruolo==='editor'){
-                    //area admin
-                    window.location.href="/admin/area_admin.html";
-                }else{
-                    //area utente (non esiste)
+                switch(result.ruolo){
+                    case 'superadmin':
+                        window.location.href="/admin/area_admin.html";
+                    break;
+                    case 'admin':
+                        window.location.href="/admin/area_admin.html";
+                    break;
+                    case 'editor':
+                        window.location.href="/private/area_riservata.html";    
+                    break;
+                    default:
+                        //nulla
+                    break;
                 }
             }else{
                 //se il login non è avvenuto
@@ -36,20 +43,5 @@ document.addEventListener("DOMContentLoaded", function(){
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server."
         }
-    });
-
-    //gestione delle icone per vedere/nascondere la password
-    const password=document.getElementById("password");
-    const occhioAperto=document.getElementById("icona-occhio-aperto");
-    const occhioChiuso=document.getElementById("icona-occhio-chiuso");
-    occhioAperto.addEventListener("click", function(){
-        password.type="text";
-        occhioAperto.style.display="none";
-        occhioChiuso.style.display="block";
-    });
-    occhioChiuso.addEventListener("click", function(){
-        password.type="password";
-        occhioChiuso.style.display="none";
-        occhioAperto.style.display="block";
     });
 });

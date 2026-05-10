@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/stile/stile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/scripts/user_detail_script.js" defer></script>
+    <script src="/scripts/logout_script.js" defer></script>
+    <script src="/scripts/show_password_script.js" defer></script>
+    <script src="scripts/area_personale_script.js" defer></script>
+    <title>Area riservata | Archivio musicale Luca Moretti</title>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" id="menu-icon">&#9776;</label>
+            <ul id="menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/catalogo.html">Catalogo</a></li>
+                <li id="logo"><a href="/"><img src="/immagini/logo_archivio_piccolo.webp" alt="Logo archivio musicale"></a></li>
+                <li><a href="#">Biografia</a></li>
+                <li><a href="#">Trovaci</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="area-riservata">
+        <h1 id="titolo">Area personale: </h1>
+        <div>
+            <a href="/private/area_riservata.html">Area editor</a>
+            <button id="logout-btn">Logout</button>
+        </div>
+        <h2>Gestione del profilo</h2>
+        <div id="cambia-password-div">
+            <h3>Aggiornamento Password</h3>
+            <form id="cambia-password-form">
+                <p><!--messaggio--></p>
+                <div>
+                    <label for="password">Password attuale: </label>
+                    <input type="password" id="password" name="password" placeholder="password" required>
+                    <span id="icona-occhio-aperto" class="material-symbols-outlined icona">Visibility</span>
+                    <span id="icona-occhio-chiuso" class="material-symbols-outlined icona">visibility_off</span>
+                </div>
+                <div>
+                    <label for="password2">Nuova password: </label>
+                    <input type="password" id="password2" name="password2" placeholder="nuova password" required>
+                    <span id="icona-occhio-aperto2" class="material-symbols-outlined icona">Visibility</span>
+                    <span id="icona-occhio-chiuso2" class="material-symbols-outlined icona">visibility_off</span>
+                </div>
+                <div>
+                    <label for="password3">Ripeti nuova password: </label>
+                    <input type="password" id="password3" name="password3" placeholder="ripeti nuova password" required>
+                    <span id="icona-occhio-aperto3" class="material-symbols-outlined icona">Visibility</span>
+                    <span id="icona-occhio-chiuso3" class="material-symbols-outlined icona">visibility_off</span>
+                </div>
+                <input type="submit" value="Aggiorna password">
+            </form>
+        </div>
+    </main>
+    <footer>
+        <address>
+            <p><span class="material-symbols-outlined">link_2</span><a href="https://www.facebook.com/share/15rkzqvaTg/"
+                    target="_blank" rel="noopener">Facebook</a>, <a
+                    href="https://www.instagram.com/archivio_musicale_luca_moretti" target="_blank"
+                    rel="noopener">Instagram</a>, <a
+                    href="https://rism.info/library_collections/2023/06/01/the-archivio-musicale-luca-moretti-in-rism.html"
+                    target="_blank" rel="noopener">RISM</a></p>
+            <p><span class="material-symbols-outlined">mail</span><a href="mailto:#">mail</a></p>
+            <p><span class="material-symbols-outlined">cookie</span><a href="/privacy.html">Privacy & Cookie Policy</a>
+            </p>
+        </address>
+        <p>&copy; 2026 Archivio musicale Luca Moretti. Tutti i diritti riservati.</p>
+    </footer>
+</body>
+
+</html>

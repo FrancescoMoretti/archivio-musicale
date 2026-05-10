@@ -8,8 +8,11 @@ CREATE TABLE utenti(
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    ruolo ENUM('admin', 'editor', 'viewer') NOT NULL DEFAULT 'viewer',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    nome VARCHAR(30) NOT NULL,
+    ruolo ENUM('superadmin', 'admin', 'editor', 'viewer') NOT NULL DEFAULT 'viewer',
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES utenti(id) ON DELETE SET NULL
 );
 
 CREATE TABLE edizioni(

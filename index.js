@@ -49,7 +49,7 @@ const autenticaToken = (req, res, next)=>{
         //token presente => verifica
         const payload=jwt.verify(token, process.env.JWT_SECRET);
         //token valido
-        req.utente=payload;//salvo i dati (id, ruolo) nella richiesta
+        req.utente=payload;//salvo i dati (id, nome, ruolo) nella richiesta
         next();//procedo al prossimo passaggio
     }catch(err){
         //token non valido
@@ -83,6 +83,28 @@ const autenticaToken = (req, res, next)=>{
     }
 };
 
+//middleware di verifica dei ruoli nel token
+const autorizzaRuoli=(...ruoliAmmessi)=>{
+    return (req, res, next)=>{
+        if(!req.utente){
+            return res.status(401).redirect('/accedi');
+        }
+        if(!ruoliAmmessi.includes(req.utente.ruolo)){
+            //se era chiamata a endpoint
+            if(req.path.startsWith('/api/')){
+                return res.status(403).json({
+                    success: false,
+                    message: "Stai tentando di accedere a funzioni per cui non hai i permessi."
+                });
+            }
+            //se era accesso a pagina HTML
+            return res.status(403).redirect('/403.html');
+        }
+        //se va tutto bene
+        next();
+    };
+};
+
 //rotta segreta per gestire login
 app.get('/accedi', (req, res)=>{
     const token = req.cookies.token;//recupero il token
@@ -90,9 +112,23 @@ app.get('/accedi', (req, res)=>{
     if(token){
         try{
             //verifico il token
-            jwt.verify(token, process.env.JWT_SECRET);
+            const payload=jwt.verify(token, process.env.JWT_SECRET);
             //se il token è valido
-            return res.redirect('/admin/area_admin.html');
+            //gestisco redirect
+            switch(payload.ruolo){
+                case 'superadmin':
+                    return res.redirect('/admin/area_admin.html');
+                break;
+                case 'admin':
+                    return res.redirect('/admin/area_admin.html');
+                break;
+                case 'editor':
+                    return res.redirect('/private/area_riservata.html');
+                break;
+                default:
+                    //nulla
+                break;
+            }
         }catch(err){
             //se il token è scaduto o manomesso
             res.clearCookie("token");
@@ -111,7 +147,7 @@ app.post('/api/login', async (req, res)=>{
             message: "Email o password mancanti."
         });//400: richiesta mal formata
     }
-    const query="SELECT id, password, ruolo FROM utenti WHERE email=? AND (ruolo='admin' OR ruolo='editor')";
+    const query="SELECT id, password, nome, ruolo FROM utenti WHERE email=? AND (ruolo='superadmin' OR ruolo='admin' OR ruolo='editor')";//unici ruoli definiti: superadmin, admin, editor
     try{
         const [rows]=await pool.query(query, [email]);
         //se l'utente non esiste
@@ -136,7 +172,8 @@ app.post('/api/login', async (req, res)=>{
         const payload={
             id: user.id,
             email: email,
-            ruolo: user.ruolo// 'admin' || 'editor' || 'viewer'
+            nome: user.nome,
+            ruolo: user.ruolo// 'superadmin' || 'admin' || 'editor'
         };
         //generazione del token
         const token=jwt.sign(payload, process.env.JWT_SECRET, {
@@ -164,11 +201,25 @@ app.post('/api/login', async (req, res)=>{
     }
 });
 
+//endoint per dettagli sugli utenti
+app.get('/api/me', autenticaToken, (req, res)=>{
+    //req.utente viene popolato da autenticaToken
+    res.json({
+        success: true,
+        utente: {
+            nome: req.utente.nome,
+            ruolo: req.utente.ruolo
+        }
+    });
+});
+
+
+app.use('/admin', autenticaToken, autorizzaRuoli('admin', 'superadmin'), express.static('admin'));
+app.use('/private', autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), express.static('private'));
 app.use(express.static('public'));// Serve i file statici dalla cartella public
-app.use('/admin', autenticaToken, express.static('admin'));
 
 //endpoint per inserimento edizione
-app.post("/api/add-edizione", autenticaToken, upload.array("immagini"), async (req, res) => {
+app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
@@ -212,7 +263,7 @@ app.post("/api/add-edizione", autenticaToken, upload.array("immagini"), async (r
 });
 
 //endpoint per cancellazione edizione
-app.post("/api/delete-edizione", autenticaToken, async (req, res)=>{
+app.post("/api/delete-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.body;
     if(!collocazione){
         return res.status(400).json({
@@ -330,7 +381,7 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
 });
 
 //endpoint per recupero dati edizione (MODIFICA)
-app.get("/api/get-edizione/:collocazione", autenticaToken, async (req, res)=>{
+app.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const { collocazione }=req.params;
     try{
         const [rows]=await pool.query("SELECT * FROM edizioni WHERE collocazione=?", [collocazione]);
@@ -354,7 +405,7 @@ app.get("/api/get-edizione/:collocazione", autenticaToken, async (req, res)=>{
 });
 
 //endpoint per aggiornamento edizione (MODIFICA)
-app.post("/api/update-edizione", autenticaToken, async (req, res)=>{
+app.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     if (!titolo || !autore) {
         return res.status(400).json({
@@ -385,7 +436,7 @@ app.post("/api/update-edizione", autenticaToken, async (req, res)=>{
 });
 
 //endpoint per inserimento stampa
-app.post("/api/add-stampa", autenticaToken, upload.array("immagini"), async (req, res)=>{
+app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     const {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
     const files=req.files;//immagini
     if(!collocazione || !autore || !titolo){
@@ -433,7 +484,7 @@ app.post("/api/add-stampa", autenticaToken, upload.array("immagini"), async (req
 });
 
 //endpoint per cancellazione stampa
-app.post("/api/delete-stampa", autenticaToken, async (req, res)=>{
+app.post("/api/delete-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.body;
     if(!collocazione){
         return res.status(400).json({
@@ -551,7 +602,7 @@ app.get("/api/stampa/:collocazione", async (req, res) => {
 });
 
 //endpoint per recupero dati stampa (MODIFICA)
-app.get("/api/get-stampa/:collocazione", autenticaToken, async (req, res) => {
+app.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
     const { collocazione } = req.params;
     try {
         const [rows] = await pool.query("SELECT * FROM stampe WHERE collocazione=?", [collocazione]);
@@ -575,7 +626,7 @@ app.get("/api/get-stampa/:collocazione", autenticaToken, async (req, res) => {
 });
 
 //endpoint per aggiornamento stampa (MODIFICA)
-app.post("/api/update-stampa", autenticaToken, async (req, res) => {
+app.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
     const { collocazione, autore, titolo, data_str, stampa, dimensioni } = req.body;
     if (!autore || !titolo) {
         return res.status(400).json({
@@ -601,6 +652,72 @@ app.post("/api/update-stampa", autenticaToken, async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Errore durante l'aggiornamento della risorsa."
+        });
+    }
+});
+
+//endpoint per cambio password (SUPERADMIN/ADMIN/EDITOR)
+app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
+    const {oldPsw, newPsw, confirmPsw}=req.body;
+    const userId=req.utente.id;//estratto dal JWT
+    //validazione dati
+    if(!oldPsw || !newPsw || !confirmPsw){
+        return res.status(400).json({
+            success: false,
+            message: "Inserisci la vecchia password, la nuova password e ripetere la nuova password."
+        });
+    }
+    if(newPsw!==confirmPsw){
+        return res.status(400).json({
+            success: false,
+            message: "Le nuove password non corrispondono."
+        });
+    }
+    try{
+        //recupero vecchia password
+        const [rows]=await pool.query("SELECT password FROM utenti WHERE id=?", [userId]);
+        if(rows.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Utente non trovato."
+            });
+        }
+        //controllo vecchia password
+        const match=await bcrypt.compare(oldPsw, rows[0].password);
+        if(!match){
+            return res.status(401).json({
+                success: false,
+                message: "La password attuale è errata."
+            });
+        }
+        if(oldPsw===newPsw){
+            return res.status(400).json({
+                success: false,
+                message: "La nuova password coincide con la password attuale."
+            });
+        }
+        //genero l'hash della nuova password
+        const salt=await bcrypt.genSalt(10);
+        const hashPsw=await bcrypt.hash(newPsw, salt);
+        //salvo l'hash della nuova password
+        const [risultato]=await pool.query("UPDATE utenti SET password=? WHERE id=?", [hashPsw, userId]);
+        if(risultato.affectedRows!==1){
+            return res.status(404).json({
+                success: false,
+                message: "Impossibile aggiornare la password."
+            });
+        }
+        //password aggiornata => consumo il token e richiedo nuovo login
+        res.clearCookie('token');
+        res.json({
+            success: true,
+            message: "Password aggiornata con successo! Sarà richiesto di ripetere login."
+        });
+    }catch(err){
+        console.error("Errore nell'ednpoint cambia-password: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore durante l'aggiornamento della password."
         });
     }
 });

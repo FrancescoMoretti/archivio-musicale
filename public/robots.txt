@@ -1,7 +1,8 @@
 User-agent: *
 
-#blocco cartella admin, le pagine di login, 403 e 404
+#blocco cartelle admin e private, le pagine di login, 403 e 404
 Disallow: /admin/
+Disallow: /private/
 Disallow: /accedi
 Disallow: /login.html
 Disallow: /403.html

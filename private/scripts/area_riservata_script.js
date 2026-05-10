@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async function () {
+document.addEventListener("DOMContentLoaded", function () {    
     //gestione form con radio button
     const radioBtn = document.querySelectorAll('input[name="tipo-form"]');
     radioBtn.forEach(btn => {
@@ -337,26 +337,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             }
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server."
-        }
-    });
-
-    //fetch per logout
-    document.getElementById("logout-btn").addEventListener("click", async ()=>{
-        try{
-            const res=await fetch("/api/logout", {
-                method: "POST",
-                credentials: "include"
-            });
-            const result=await res.json();
-            if(res.ok && result.success){
-                window.location.href='/accedi';
-            }else{
-                console.error("Errore durante il logout.");
-            }
-        }catch(err){
-            console.error("Errore durante il logout: ", err);
-            //anche in caso di fallimento faccio il redirect
-            window.location.href='/accedi';
         }
     });
 });
