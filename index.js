@@ -17,19 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-//funzione di upload su cloudinary
-const uploadToCloudinary = (buffer, folder) => {
-    return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-            { folder: `archivio_musicale/${folder}` },
-            (error, result) => {
-                if (error) reject(error);
-                else resolve(result.secure_url);
-            }
-        );
-        stream.end(buffer);
-    });
-};
+
 
 //middleware di verifica del token JWT
 const autenticaToken = (req, res, next)=>{
@@ -83,7 +71,7 @@ const autenticaToken = (req, res, next)=>{
     }
 };
 
-//middleware di verifica dei ruoli nel token
+//middleware di verifica del ruolo nel token JWT
 const autorizzaRuoli=(...ruoliAmmessi)=>{
     return (req, res, next)=>{
         if(!req.utente){
@@ -213,10 +201,14 @@ app.get('/api/me', autenticaToken, (req, res)=>{
     });
 });
 
-
+//servo file statici dalla cartella /admin solo ai superadmin o admin
 app.use('/admin', autenticaToken, autorizzaRuoli('admin', 'superadmin'), express.static('admin'));
+
+//servo file statici dalla cartella /provate solo ai superadmin, admin o editor
 app.use('/private', autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), express.static('private'));
-app.use(express.static('public'));// Serve i file statici dalla cartella public
+
+// Serve i file statici dalla cartella public
+app.use(express.static('public'));
 
 //endpoint per inserimento edizione
 app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res) => {
@@ -744,3 +736,17 @@ app.use((req, res)=>{
 app.listen(PORT, () => {
     console.log(`Server in esecuzione sulla porta ${PORT}`);
 });
+
+//funzione di upload su cloudinary
+const uploadToCloudinary = (buffer, folder) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: `archivio_musicale/${folder}` },
+            (error, result) => {
+                if (error) reject(error);
+                else resolve(result.secure_url);
+            }
+        );
+        stream.end(buffer);
+    });
+};
