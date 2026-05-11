@@ -29,6 +29,7 @@ const autenticaToken = (req, res, next)=>{
                 message: "Token mancante, effettua il login..."
             });//401: non autorizzato
         }
+        //se era accesso a pagina HTML
         return res.status(302).redirect('/accedi');//302: redirect
     }
     try{
@@ -268,7 +269,7 @@ app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
         //salvo l'hash della nuova password
         const [risultato]=await pool.query("UPDATE utenti SET password=? WHERE id=?", [hashPsw, userId]);
         if(risultato.affectedRows!==1){
-            return res.status(404).json({
+            return res.status(500).json({
                 success: false,
                 message: "Impossibile aggiornare la password."
             });
@@ -284,6 +285,66 @@ app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
         return res.status(500).json({
             success: false,
             message: "Errore durante l'aggiornamento della password."
+        });
+    }
+});
+
+//endpoint per creazione utenti (UTENTI)
+app.post('/api/add-utente', autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    const {email, password, nome, ruolo} = req.body;//dati del nuovo utente, presi dalla richiesta
+    const userRuolo=req.utente.ruolo;//ruolo di chi invia la richiesta, preso dal token
+    const userId=req.utente.id;//id di chi invia la richiesta, preso dal token
+    //validazione dei dati
+    if(!email || !password || !nome || !ruolo){
+        return res.status(400).json({
+            success: false,
+            message: "Tutti i campi devono essere riempiti."
+        });
+    }
+    //controllo ruolo
+    //admin può creare solo editor
+    if(userRuolo==="admin" && ruolo!=="editor"){
+        return res.status(403).json({
+            success: false,
+            message: "Permessi insufficienti, puoi solo nominare editor."
+        });
+    }
+    //non possono essere creati altri superadmin
+    if(ruolo==='superadmin'){
+        return res.status(403).json({
+            success: false,
+            message: "Impossibile creare altri superadmin."
+        });
+    }
+    try{
+        //controllo se la mail esiste già
+        const [esistente]=await pool.query("SELECT id FROM utenti WHERE email=?", [email]);
+        if(esistente.length>0){
+            return res.status(400).json({
+                success: false,
+                message: "Email già associata a un utente esistente."
+            });
+        }
+        //hash della password
+        const salt=await bcrypt.genSalt(10);
+        const hashPsw=await bcrypt.hash(password, salt);
+        //inserisco l'utente nel db
+        const [risultato]=await pool.query("INSERT INTO utenti (email, password, nome, ruolo, created_by) VALUES (?, ?, ?, ?, ?)", [email, hashPsw, nome, ruolo, userId]);
+        if(risultato.affectedRows!==1){
+            return res.status(500).json({
+                success: false,
+                message: "Impossibile aggiungere l'utente."
+            });
+        }
+        res.status(201).json({
+            success: true,
+            message: `Utente ${nome} creato con successo come ${ruolo}!`
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint add-utente: ", err);
+        res.status(500).json({
+            success: false,
+            message: "Errore durante l'inserimento dell'utente."
         });
     }
 });
@@ -319,7 +380,7 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
             }
         }
         await connection.commit();
-        res.json({ success: true, message: "Contenuto salvato con successo!" });
+        res.status(201).json({ success: true, message: "Contenuto salvato con successo!" });
     } catch (err) {
         await connection.rollback();
         console.error("Errore nell'endpoint add-edizione: ", err);
@@ -536,7 +597,7 @@ app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin'
             }
         }
         await connection.commit();
-        res.json({
+        res.status(201).json({
             success: true,
             message: "Contenuto salvato con successo!"
         });

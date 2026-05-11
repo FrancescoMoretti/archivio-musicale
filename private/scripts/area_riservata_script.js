@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const form = event.target;
         const message = form.querySelector('p');
-        message.textContent = "Caricamento in corso...";
         //validazione client-side
         const collocazione = form.elements["collocazione"].value.trim();
         const autore = form.elements["autore"].value.trim();
@@ -31,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
             message.textContent = "Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
+        message.textContent = "Caricamento in corso...";
         //preparazione dati
         const formData = new FormData(form);
         try {
@@ -41,10 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             const result = await res.json();
             //gestione reindirizzamenti
-            if (res.status === 401) {
-                window.location.href = "/login.html";
-                return;
-            }
             if (res.status === 403) {
                 window.location.href = "/403.html";
                 return;
@@ -64,9 +60,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cancella-edizione-form").addEventListener("submit", async (event) => {
         event.preventDefault();
         const form = event.target;
-        const collocazione = document.getElementById("delete-collocazione-edizione").value;
         const message = form.querySelector('p');
         //validazione client-side
+        const collocazione = document.getElementById("delete-collocazione-edizione").value.trim();
         if (!collocazione) {
             message.textContent = "Errore: Collocazione non inserita."
             return;
@@ -79,15 +75,12 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const res = await fetch("/api/delete-edizione", {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ collocazione })
             });
             const result = await res.json();
             //gestione reindirizzamenti
-            if (res.status === 401) {
-                window.location.href = "/login.html";
-                return;
-            }
             if (res.status === 403) {
                 window.location.href = "/403.html";
                 return;
@@ -107,11 +100,16 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cerca-edizione-form").addEventListener("submit", async (event) => {
         event.preventDefault();
         const cercaForm = event.target;
-        const modificaForm = document.getElementById("modifica-edizione-form");
-        const salvaBtn = modificaForm.querySelector('input[type="submit"]');
-        const collocazione = document.getElementById("search-collocazione-edizione").value;
         const message = cercaForm.querySelector('p');
+        //validazione client-side
+        const collocazione = document.getElementById("search-collocazione-edizione").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: Collocazione non inserita."
+            return;
+        }
+        const modificaForm = document.getElementById("modifica-edizione-form");
         const message2 = modificaForm.querySelector('p');
+        const salvaBtn = modificaForm.querySelector('input[type="submit"]');
         message2.textContent="";
         message.textContent = "Ricerca in corso...";
         salvaBtn.disabled = true;
@@ -120,6 +118,11 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const res = await fetch(`/api/get-edizione/${encodeURIComponent(collocazione)}`);
             const result = await res.json();
+            //gestione reindirizzamenti
+            if (res.status === 403) {
+                window.location.href = "/403.html";
+                return;
+            }
             if (res.ok && result.success) {
                 message.textContent = "Contenuto trovato!";
                 //popolamento del form di modifica
@@ -146,25 +149,39 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const form = event.target;
         const message = form.querySelector('p');
+        //validazione client-side
+        const collocazione=document.getElementById("update-collocazione-edizione").value.trim();
+        const autore=document.getElementById("update-autore-edizione").value.trim();
+        const titolo=document.getElementById("update-titolo-edizione").value.trim();
+        if(!autore || !titolo){
+            message.textContent="Errore: Autore e titolo sono campi obbligatori.";
+            return;
+        }
         const salvaBtn = form.querySelector('input[type="submit"]');
         message.textContent = "Aggiornamento del contenuto in corso...";
         const dati = {
-            collocazione: document.getElementById("update-collocazione-edizione").value,
-            link_rism: document.getElementById("update-link_rism-edizione").value,
-            autore: document.getElementById("update-autore-edizione").value,
-            titolo: document.getElementById("update-titolo-edizione").value,
-            data_str: document.getElementById("update-data_str-edizione").value,
-            editore: document.getElementById("update-editore-edizione").value,
-            descrizione: document.getElementById("update-descrizione-edizione").value,
-            note: document.getElementById("update-note-edizione").value
+            collocazione: collocazione,
+            link_rism: document.getElementById("update-link_rism-edizione").value.trim(),
+            autore: autore,
+            titolo: titolo,
+            data_str: document.getElementById("update-data_str-edizione").value.trim(),
+            editore: document.getElementById("update-editore-edizione").value.trim(),
+            descrizione: document.getElementById("update-descrizione-edizione").value.trim(),
+            note: document.getElementById("update-note-edizione").value.trim()
         };
         try {
             const res = await fetch("/api/update-edizione", {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dati)
             });
             const result = await res.json();
+            //gestione reindirizzamenti
+            if (res.status === 403) {
+                window.location.href = "/403.html";
+                return;
+            }
             if (res.ok && result.success) {
                 message.textContent = result.message;
                 form.reset();
@@ -205,10 +222,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             const result = await res.json();
             //gestione reindirizzamenti
-            if (res.status === 401) {
-                window.location.href = "/login.html";
-                return;
-            }
             if (res.status === 403) {
                 window.location.href = "/403.html";
                 return;
@@ -243,15 +256,12 @@ document.addEventListener("DOMContentLoaded", function () {
         try{
             const res=await fetch("/api/delete-stampa", {
                 method: "POST",
+                credentials: "include",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({collocazione})
             });
             const result=await res.json();
             //gestione reindirizzamenti
-            if(res.status===401){
-                window.location.href="/login.html";
-                return;
-            }
             if(res.status===403){
                 window.location.href="/403.html";
                 return;
@@ -271,11 +281,16 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cerca-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const cercaForm=event.target;
-        const modificaForm=document.getElementById("modifica-stampa-form");
-        const salvaBtn=modificaForm.querySelector('input[type="submit"]');
-        const collocazione = document.getElementById("search-collocazione-stampa").value;
         const message = cercaForm.querySelector('p');
+        //validazione client-side
+        const collocazione = document.getElementById("search-collocazione-stampa").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: Collocazione non inserita";
+            return;
+        }
+        const modificaForm=document.getElementById("modifica-stampa-form");
         const message2 = modificaForm.querySelector('p');
+        const salvaBtn=modificaForm.querySelector('input[type="submit"]');
         message2.textContent="";
         message.textContent = "Ricerca in corso...";
         salvaBtn.disabled = true;
@@ -284,6 +299,11 @@ document.addEventListener("DOMContentLoaded", function () {
         try{
             const res= await fetch(`/api/get-stampa/${encodeURIComponent(collocazione)}`);
             const result=await res.json();
+            //gestione reindirizzamenti
+            if (res.status === 403) {
+                window.location.href = "/403.html";
+                return;
+            }
             if(res.ok && result.success){
                 message.textContent="Contenuto trovato!";
                 //popolamento del form di modifica
@@ -308,23 +328,37 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
+        //validazione client-side
+        const collocazione=document.getElementById("update-collocazione-stampa").value.trim();
+        const autore=document.getElementById("update-autore-stampa").value.trim();
+        const titolo=document.getElementById("update-titolo-stampa").value.trim();
+        if(!autore || !titolo){
+            message.textContent="Errore: Autore e titolo sono campi obbligatori.";
+            return;
+        }
         const salvaBtn=form.querySelector('input[type="submit"]');
         message.textContent="Aggiornamento del contenuto in corso...";
         const dati={
-            collocazione: document.getElementById("update-collocazione-stampa").value,
-            autore: document.getElementById("update-autore-stampa").value,
-            titolo: document.getElementById("update-titolo-stampa").value,
-            data_str: document.getElementById("update-data_str-stampa").value,
-            stampa: document.getElementById("update-stampa-stampa").value,
-            dimensioni: document.getElementById("update-dimensioni-stampa").value
+            collocazione: collocazione,
+            autore: autore,
+            titolo: titolo,
+            data_str: document.getElementById("update-data_str-stampa").value.trim(),
+            stampa: document.getElementById("update-stampa-stampa").value.trim(),
+            dimensioni: document.getElementById("update-dimensioni-stampa").value.trim()
         };
         try{
             const res=await fetch("/api/update-stampa", {
                 method: "POST",
+                credentials: "include",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dati)
             });
             const result=await res.json();
+            //gestione reindirizzamenti
+            if (res.status === 403) {
+                window.location.href = "/403.html";
+                return;
+            }
             if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();

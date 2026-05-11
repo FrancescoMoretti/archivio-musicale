@@ -13,7 +13,7 @@
     <title>Area riservata | Archivio musicale Luca Moretti</title>
 </head>
 
-<body>
+<body id="area-personale">
     <header>
         <nav>
             <input type="checkbox" id="menu-toggle">
@@ -29,7 +29,7 @@
     </header>
     <main class="area-riservata">
         <h1 id="titolo">Area personale: </h1>
-        <div>
+        <div id="pulsantiera">
             <a href="/private/area_riservata.html">Area editor</a>
             <button id="logout-btn">Logout</button>
         </div>
@@ -40,19 +40,19 @@
                 <p><!--messaggio--></p>
                 <div>
                     <label for="password">Password attuale: </label>
-                    <input type="password" id="password" name="password" placeholder="password" required>
+                    <input type="password" id="password" name="password" placeholder="password" maxlength="255" required>
                     <span id="icona-occhio-aperto" class="material-symbols-outlined icona">Visibility</span>
                     <span id="icona-occhio-chiuso" class="material-symbols-outlined icona">visibility_off</span>
                 </div>
                 <div>
                     <label for="password2">Nuova password: </label>
-                    <input type="password" id="password2" name="password2" placeholder="nuova password" required>
+                    <input type="password" id="password2" name="password2" placeholder="nuova password" maxlength="255" required>
                     <span id="icona-occhio-aperto2" class="material-symbols-outlined icona">Visibility</span>
                     <span id="icona-occhio-chiuso2" class="material-symbols-outlined icona">visibility_off</span>
                 </div>
                 <div>
                     <label for="password3">Ripeti nuova password: </label>
-                    <input type="password" id="password3" name="password3" placeholder="ripeti nuova password" required>
+                    <input type="password" id="password3" name="password3" placeholder="ripeti nuova password" maxlength="255" required>
                     <span id="icona-occhio-aperto3" class="material-symbols-outlined icona">Visibility</span>
                     <span id="icona-occhio-chiuso3" class="material-symbols-outlined icona">visibility_off</span>
                 </div>

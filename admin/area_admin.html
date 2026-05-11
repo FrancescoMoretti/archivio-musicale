@@ -8,10 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/scripts/user_detail_script.js" defer></script>
     <script src="/scripts/logout_script.js" defer></script>
+    <script src="scripts/area_admin_script.js" defer></script>
     <title>Area admin | Archivio musicale Luca Moretti</title>
 </head>
 
-<body>
+<body id="area-admin">
     <header>
         <nav>
             <input type="checkbox" id="menu-toggle">
@@ -27,10 +28,41 @@
     </header>
     <main class="area-riservata">
         <h1 id="titolo">Area admin: </h1>
-        <div>
+        <div id="pulsantiera">
             <a href="/private/area_riservata.html">Area editor</a>
             <a href="/private/area_personale.html">Area personale</a>
             <button id="logout-btn">Logout</button>
+        </div>
+        <h2>Gestione degli utenti</h2>
+        <div class="grid">
+            <div class="element">
+                <h3>Aggiunta Utente: </h3>
+                <form id="aggiungi-utente-form" action="/api/add-utente" method="POST">
+                    <p><!--messaggio--></p>
+                    <div>
+                        <label for="add-nome-utente" class="required">Nome: </label>
+                        <input type="text" name="nome" id="add-nome-utente" placeholder="Mario" maxlength="30" required>
+                    </div>
+                    <div>
+                        <label for="add-ruolo-utente" class="required">Ruolo: </label>
+                        <select id="add-ruolo-utente" name="ruolo" required>    
+                            <option value="" disabled selected hidden>ruolo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="add-email-utente" class="required">Email: </label>
+                        <input type="email" name="email" id="add-email-utente" placeholder="mario.rossi@mail.it" maxlength="100" required>
+                    </div>
+                    <div>
+                        <label for="add-password-utente" class="required">Password: </label>
+                        <input type="text" name="password" id="add-password-utente" placeholder="password.facile.123" maxlength="255" required>
+                    </div>
+                    <div id="small-div">
+                        <small>Comunica questa password all'utente, potrà cambiarla dopo il primo accesso.</small>
+                    </div>
+                    <input type="submit" value="Crea utente">
+                </form>
+            </div>
         </div>
     </main>
     <footer>

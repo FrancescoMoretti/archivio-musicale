@@ -10,6 +10,7 @@ CREATE TABLE utenti(
     password VARCHAR(255) NOT NULL,
     nome VARCHAR(30) NOT NULL,
     ruolo ENUM('superadmin', 'admin', 'editor', 'viewer') NOT NULL DEFAULT 'viewer',
+    psw_cambiata BOOLEAN DEFAULT 0,
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES utenti(id) ON DELETE SET NULL

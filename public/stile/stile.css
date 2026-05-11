@@ -8,6 +8,7 @@ Font sans-serif: "Ubuntu";
 :root{
     --bianco: #fff;
     --carta1: #faebd7;/*antiquewhite*/
+    --placeholder: #777;
     --colorC: #555;
     --colorD: #444;
     --sfondoScuro: #222;
@@ -379,6 +380,10 @@ footer .material-symbols-outlined{
         min-height: 1.05em;
     }
 
+    form input::placeholder{
+        color: var(--placeholder);
+    }
+
     form input[type=text],
     form input[type=url],
     form input[type=email],
@@ -418,6 +423,21 @@ footer .material-symbols-outlined{
     form input:disabled{
         border-color: var(--sfondoScuro);
     }
+
+    #small-div{
+        margin-top: -1em;
+    }
+
+        /*inizio stile select*/
+    #add-ruolo-utente:invalid{
+        color: var(--placeholder);
+    }
+
+    #add-ruolo-utente option{
+        color: var(--sfondoScuro);
+    }
+        /*fine stile select*/
+
     /*fine stile form*/
 
 #modifica-edizione-form,
