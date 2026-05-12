@@ -1,5 +1,21 @@
 document.addEventListener("DOMContentLoaded", function(){
-    document.querySelector('main').querySelector('.grid').style.display="grid";
+    //gestione form con radio button
+    const radioBtn = document.querySelectorAll('input[name="tipo-form"');
+    radioBtn.forEach(btn=>{
+        btn.addEventListener("change", function(){
+            document.getElementById("utenti-grid").style.display="none";
+            document.getElementById("monitoraggio-grid").style.display="none";
+            const selected=document.querySelector('input[name="tipo-form"]:checked').value;
+            switch(selected){
+                case '1':
+                    document.getElementById("utenti-grid").style.display="grid";
+                break;
+                case '2':
+                    document.getElementById("monitoraggio-grid").style.display="grid";
+                break;
+            }
+        });
+    });
     
     //fetch di aggiunta utente
     document.getElementById("aggiungi-utente-form").addEventListener("submit", async (event)=>{

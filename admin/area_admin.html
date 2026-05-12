@@ -33,8 +33,14 @@
             <a href="/private/area_personale.html">Area personale</a>
             <button id="logout-btn">Logout</button>
         </div>
-        <h2>Gestione degli utenti</h2>
-        <div class="grid">
+        <h2>Cosa vuoi fare?</h2>
+        <div id="radio-div">
+            <input type="radio" name="tipo-form" id="radio1" value="1">
+            <label for="radio1">Gestione degli utenti</label>
+            <input type="radio" name="tipo-form" id="radio2" value="2">
+            <label for="radio2">Monitoraggio dei contenuti</label>
+        </div>
+        <div class="grid" id="utenti-grid">
             <div class="element">
                 <h3>Aggiunta Utenti: </h3>
                 <form id="aggiungi-utente-form" action="/api/add-utente" method="POST">
@@ -92,6 +98,11 @@
                         <!--corpo della tabella-->
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="grid" id="monitoraggio-grid">
+            <div class="element">
+                <h3>Monitoraggio dei contenuti: </h3>
             </div>
         </div>
     </main>

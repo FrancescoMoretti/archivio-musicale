@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
             switch (selected) {
                 case '1':
                     document.getElementById("edizione-grid").style.display="grid";
-                    break;
+                break;
                 case '2':
                     document.getElementById("stampa-grid").style.display="grid";
-                    break;
+                break;
             }
         });
     });
