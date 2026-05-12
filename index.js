@@ -36,7 +36,7 @@ const autenticaToken = (req, res, next)=>{
         //token presente => verifica
         const payload=jwt.verify(token, process.env.JWT_SECRET);
         //token valido
-        req.utente=payload;//salvo i dati (id, nome, ruolo) nella richiesta
+        req.utente=payload;//salvo i dati del token nella richiesta
         next();//procedo al prossimo passaggio
     }catch(err){
         //token non valido
@@ -143,7 +143,7 @@ app.post("/api/login", async (req, res)=>{
             message: "Email o password mancanti."
         });//400: richiesta mal formata
     }
-    const query="SELECT id, password, nome, ruolo FROM utenti WHERE email=? AND (ruolo='superadmin' OR ruolo='admin' OR ruolo='editor')";//unici ruoli definiti: superadmin, admin, editor
+    const query="SELECT id, password, nome, ruolo, psw_cambiata FROM utenti WHERE email=? AND (ruolo='superadmin' OR ruolo='admin' OR ruolo='editor')";//unici ruoli definiti: superadmin, admin, editor
     try{
         const [rows]=await pool.query(query, [email]);
         //se l'utente non esiste
@@ -169,7 +169,8 @@ app.post("/api/login", async (req, res)=>{
             id: user.id,
             email: email,
             nome: user.nome,
-            ruolo: user.ruolo// 'superadmin' || 'admin' || 'editor'
+            ruolo: user.ruolo,// 'superadmin' || 'admin' || 'editor'
+            pswCambiata: user.psw_cambiata
         };
         //generazione del token
         const token=jwt.sign(payload, process.env.JWT_SECRET, {
@@ -218,7 +219,8 @@ app.get("/api/me", autenticaToken, (req, res)=>{
         success: true,
         utente: {
             nome: req.utente.nome,
-            ruolo: req.utente.ruolo
+            ruolo: req.utente.ruolo,
+            pswCambiata: req.utente.pswCambiata
         }
     });
 });
@@ -267,7 +269,7 @@ app.post("/api/cambia-password", autenticaToken, async (req, res)=>{
         const salt=await bcrypt.genSalt(10);
         const hashPsw=await bcrypt.hash(newPsw, salt);
         //salvo l'hash della nuova password
-        const [risultato]=await pool.query("UPDATE utenti SET password=? WHERE id=?", [hashPsw, userId]);
+        const [risultato]=await pool.query("UPDATE utenti SET password=?, psw_cambiata=1 WHERE id=?", [hashPsw, userId]);
         if(risultato.affectedRows!==1){
             return res.status(500).json({
                 success: false,
