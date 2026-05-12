@@ -11,14 +11,14 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
     }
     try {
         const res = await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`);
-        const data = await res.json();
+        const result = await res.json();
         //contenuto non trovato
-        if (!data.success) {
+        if (!res.ok || !result.success) {
             window.location.href = "/404.html";
             return;
         }
-        const contenuto = data.content;//dati della risorsa
-        const listaImmagini = data.immagini || [];//array di URL a cloudinary
+        const contenuto = result.content;//dati della risorsa
+        const listaImmagini = result.immagini || [];//array di URL a cloudinary
         //cambio il titolo della pagina per SEO
         document.title=`${contenuto.titolo} - ${contenuto.autore} | Archivio musicale Luca Moretti`;
         //popolazione della scheda dell'articolo

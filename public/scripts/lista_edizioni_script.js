@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const precBtn = document.getElementById("prec-btn");
     const succBtn = document.getElementById("succ-btn");
     const searchBar = document.getElementById("search-bar");
+    const tbody=document.querySelector('tbody');
 
     //chiamata iniziale
     await caricaContenuti(schermata, righe, searchBar.value);
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     //funzione principale che carica contenuti dal server
     async function caricaContenuti(pagina, limite, filtro = "") {
-        const tabella = document.getElementById("tabella");
+        const tbody=document.querySelector("tbody");
         const offset = (pagina - 1) * limite;
         //costruisco URL con i parametri
         let url = `/api/show-edizioni?limit=${limite}&offset=${offset}`;
@@ -43,26 +44,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const res = await fetch(url);
             const result = await res.json();
-            if (!result.success) {
-                tabella.innerHTML = "<tr><td colspan='4'>" + result.message + "</td></tr>";
+            //aggiornamento contenuti
+            if(res.ok && result.success){
+                totaleContenuti = result.totali;
+                mostraPagina(result.contenuti, result.totali);
+            }else{
+                tbody.innerHTML = "<tr><td colspan='4'>" + result.message + "</td></tr>";
                 totaleContenuti = 0;
                 mostraPagina([], 0)//aggiorno visualizzazione
                 return;
             }
-            //aggiornamento contenuti
-            totaleContenuti = result.totali;
-            mostraPagina(result.contenuti, result.totali);
         } catch (err) {
-            tabella.innerHTML = "<tr><td colspan='4'>Errore di rete</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='4'>Errore di rete</td></tr>";
             totaleContenuti = 0;
             mostraPagina([], 0)
         }
     }
 
     function mostraPagina(lista_da_mostrare, totale) {
-        const tabella = document.getElementById("tabella");
-        const tab = document.querySelector('.lista-contenuti table');
-        tabella.innerHTML = "";
+        tbody.innerHTML = "";
         lista_da_mostrare.forEach(edizione => {
             const tr = document.createElement("tr");
             const tdCollocazione = document.createElement("td");
@@ -95,10 +95,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             tr.addEventListener("click", () => {
                 window.location.href = `/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}`;
             });
-            tabella.appendChild(tr);
+            tbody.appendChild(tr);
         });
         //adatto tabella al contenuto
-        tabella.style.height = `${tabella.rows.length*altezzaCellaImmagine}px`;
+        tbody.style.height = `${tbody.rows.length*altezzaCellaImmagine}px`;
         //aggiorno indice pagina
         document.getElementById("schermata").textContent = `Pagina ${schermata}`;
         //gestione bottoni

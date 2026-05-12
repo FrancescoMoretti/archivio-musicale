@@ -240,7 +240,7 @@ footer .material-symbols-outlined{
         padding: 0.2em 0.5em;
     }
 
-    table tbody{
+    .lista-contenuti table tbody{
         cursor: pointer;
         min-height: 350px;/*(70*5)px prenotati per la tabella*/
     }
@@ -258,7 +258,7 @@ footer .material-symbols-outlined{
     }
 
     /*colonna immagine*/
-    table td:last-child{
+    .lista-contenuti table td:last-child{
         width: 75px;
         height: 70px;
     }
@@ -374,6 +374,10 @@ footer .material-symbols-outlined{
         justify-content: left;
     }
 
+    form div:has(input[type="number"]){
+        display: block;
+    }
+
     form p{
         text-align: center;
         margin-top: 0;
@@ -445,7 +449,11 @@ footer .material-symbols-outlined{
     display: none;
     margin-top: 1em;
 }
-/*fine stile area_admin*/
+
+.area-riservata .element table{
+    display: none;
+}
+/*fine stile area riservata*/
 
 /*inizio stile pagina login e area personale*/
 #login form,

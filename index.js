@@ -23,7 +23,7 @@ const autenticaToken = (req, res, next)=>{
     //se il token non c'è => mando alla pagina di login
     if(!token){
         //se era chiamata a endpoint
-        if(req.path.startsWith('/api/')){
+        if(req.path.startsWith("/api/")){
             return res.status(401).json({
                 success: false,
                 message: "Token mancante, effettua il login..."
@@ -44,7 +44,7 @@ const autenticaToken = (req, res, next)=>{
         //se il token è scaduto
         if(err.name==="TokenExpiredError"){
             //se era chiamata a endpoint
-            if(req.path.startsWith('/api/')){
+            if(req.path.startsWith("/api/")){
                 return res.status(401).json({
                     success: false,
                     message: "Token scaduto, effettua di nuovo il login..."
@@ -56,7 +56,7 @@ const autenticaToken = (req, res, next)=>{
         //se il token è stato manomesso
         if(err.name==="JsonWebTokenError"){
             //se era chiamata a endpoint
-            if(req.path.startsWith('/api/')){
+            if(req.path.startsWith("/api/")){
                 return res.status(403).json({
                     success: false,
                     message: "Token non valido."
@@ -78,7 +78,7 @@ const autorizzaRuoli=(...ruoliAmmessi)=>{
         }
         if(!ruoliAmmessi.includes(req.utente.ruolo)){
             //se era chiamata a endpoint
-            if(req.path.startsWith('/api/')){
+            if(req.path.startsWith("/api/")){
                 return res.status(403).json({
                     success: false,
                     message: "Stai tentando di accedere a funzioni per cui non hai i permessi."
@@ -102,7 +102,7 @@ app.use(express.static('public'));
 //inizio endpoint per UTENTI: SUPERADMIN, ADMIN, EDITOR
 
 //rotta segreta per gestire login (UTENTI)
-app.get('/accedi', (req, res)=>{
+app.get("/accedi", (req, res)=>{
     const token = req.cookies.token;//recupero il token
     //se il token c'è
     if(token){
@@ -135,7 +135,7 @@ app.get('/accedi', (req, res)=>{
 });
 
 //endpoint per login (UTENTI)
-app.post('/api/login', async (req, res)=>{
+app.post("/api/login", async (req, res)=>{
     const {email, password} = req.body;
     if(!email || !password){
         return res.status(400).json({
@@ -183,7 +183,7 @@ app.post('/api/login', async (req, res)=>{
             maxAge: 3600000,//1 ora (in millisecondi)
             sameSite: "Lax"
         });
-        res.json({
+        return res.json({
             success: true,
             message: "Login effettuato!",
             ruolo: user.ruolo
@@ -198,7 +198,7 @@ app.post('/api/login', async (req, res)=>{
 });
 
 //endpoint per logout (UTENTI)
-app.post('/api/logout', (req, res)=>{
+app.post("/api/logout", (req, res)=>{
     res.clearCookie('token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -212,9 +212,9 @@ app.post('/api/logout', (req, res)=>{
 });
 
 //endoint per dettagli sugli utenti (UTENTI)
-app.get('/api/me', autenticaToken, (req, res)=>{
+app.get("/api/me", autenticaToken, (req, res)=>{
     //req.utente viene popolato da autenticaToken
-    res.json({
+    return res.json({
         success: true,
         utente: {
             nome: req.utente.nome,
@@ -224,7 +224,7 @@ app.get('/api/me', autenticaToken, (req, res)=>{
 });
 
 //endpoint per cambio password (UTENTI)
-app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
+app.post("/api/cambia-password", autenticaToken, async (req, res)=>{
     const {oldPsw, newPsw, confirmPsw}=req.body;
     const userId=req.utente.id;//estratto dal JWT
     //validazione dati
@@ -276,7 +276,7 @@ app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
         }
         //password aggiornata => consumo il token e richiedo nuovo login
         res.clearCookie('token');
-        res.json({
+        return res.json({
             success: true,
             message: "Password aggiornata con successo! Sarà richiesto di ripetere login."
         });
@@ -290,7 +290,7 @@ app.post('/api/cambia-password', autenticaToken, async (req, res)=>{
 });
 
 //endpoint per creazione utenti (UTENTI)
-app.post('/api/add-utente', autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+app.post("/api/add-utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
     const {email, password, nome, ruolo} = req.body;//dati del nuovo utente, presi dalla richiesta
     const userRuolo=req.utente.ruolo;//ruolo di chi invia la richiesta, preso dal token
     const userId=req.utente.id;//id di chi invia la richiesta, preso dal token
@@ -336,15 +336,116 @@ app.post('/api/add-utente', autenticaToken, autorizzaRuoli('superadmin', 'admin'
                 message: "Impossibile aggiungere l'utente."
             });
         }
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             message: `Utente ${nome} creato con successo come ${ruolo}!`
         });
     }catch(err){
         console.error("Errore nell'endpoint add-utente: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante l'inserimento dell'utente."
+        });
+    }
+});
+
+//endpoint per lista degli utenti (UTENTI)
+app.get("/api/show-utenti", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    let query=`SELECT u.id, u.email, u.nome, u.ruolo, u.created_at, c.email AS email_creatore FROM utenti u LEFT JOIN utenti c ON u.created_by=c.id`;
+    try{
+        const [rows]=await pool.query(query);
+        if(rows.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Nessun utente trovato."
+            });
+        }
+        return res.json({
+            success: true,
+            utenti: rows,
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint show-utenti: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore durante il recupero degli utenti."
+        });
+    }
+});
+
+//endpoint per cancellazione utenti (UTENTI)
+app.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    const {id}=req.body;//id dell'utente da eliminare
+    const userRuolo=req.utente.ruolo;//ruolo dell'utente che sta facendo la richiesta
+    const userId=req.utente.id;//id dell'utente che sta facendo la richiesta
+    const ruoliSuperadmin=['admin', 'editor'];//ruoli eliminabili da superadmin
+    const ruoliAdmin=['editor'];//ruoli eliminabili da admin
+    let cancellazionePermessa=false;
+    if(!id){
+        return res.status(400).json({
+            success: false,
+            message: "Identificativo non valido."
+        });
+    }
+    if(id===userId){
+        return res.status(400).json({
+            success: false,
+            message: "Non puoi eliminare te stesso."
+        });
+    }
+    try{
+        //recupero il ruolo dell'utente che si vuole eliminare
+        const [rows]=await pool.query("SELECT ruolo FROM utenti WHERE id=?", [id]);
+        //non ho recuperato il ruolo
+        if(rows.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Utente non trovato."
+            });
+        }
+        //ho recuperato il ruolo
+        const ruolo=rows[0].ruolo;//ruolo dell'utente da eliminare
+        switch(userRuolo){
+            case 'superadmin':
+                if(ruoliSuperadmin.includes(ruolo)){
+                    cancellazionePermessa=true;
+                }
+            break;
+            case 'admin':
+                if(ruoliAdmin.includes(ruolo)){
+                    cancellazionePermessa=true;
+                }
+            break;
+            default:
+                //nulla
+            break;
+        }
+        if(cancellazionePermessa){
+            //cancello l'utente
+            const [risultato]=await pool.query("DELETE FROM utenti WHERE id=?", [id]);
+            //cancellazione non avvenuta
+            if(risultato.affectedRows===0){
+                return res.status(500).json({
+                    success: false,
+                    message: "Impossibile eliminare l'utente."
+                });
+            }
+            //cancellazione avvenuta
+            return res.json({
+                success: true,
+                message: "Utente eliminato con successo!"
+            });
+        }else{
+            return res.status(400).json({
+                success: false,
+                message: "Non hai i permessi per cancellare questo utente."
+            });
+        }
+    }catch(err){
+        console.error("Errore nell'endpoint delete-utente: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore durante la cancellazione dell'utente."
         });
     }
 });
@@ -380,7 +481,7 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
             }
         }
         await connection.commit();
-        res.status(201).json({ success: true, message: "Contenuto salvato con successo!" });
+        return res.status(201).json({ success: true, message: "Contenuto salvato con successo!" });
     } catch (err) {
         await connection.rollback();
         console.error("Errore nell'endpoint add-edizione: ", err);
@@ -389,7 +490,7 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
                 success: false,
                 message: "Errore: collocazione è già esistente." });
         }
-        res.status(500).json({ 
+        return res.status(500).json({ 
             success: false,
             message: "Errore interno durante il salvataggio." });
     } finally {
@@ -468,14 +569,14 @@ app.get("/api/show-edizioni", async (req, res) => {
         const [risultatoTotale] = await pool.query(queryTotali, paramsTotali);
         const totali = risultatoTotale[0].totali;
         const [righe] = await pool.query(queryContenuti, paramsContenuti);
-        res.json({
+        return res.json({
             success: true,
             contenuti: righe,
             totali: totali
         });
     } catch (err) {
         console.error("Errore nell'endpoint show-edizioni: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante il recupero delle edizioni."
         });
@@ -500,7 +601,7 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
         //recupero le immagini della risorsa
         const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
         const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
-        res.json({
+        return res.json({
             success: true,
             content: content,
             immagini: listaUrlImmagini,
@@ -508,7 +609,7 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
         });
     } catch (err) {
         console.error("Errore nell'endpoint edizione: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante il recupero della risorsa."
         });
@@ -526,13 +627,13 @@ app.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('super
                 message: "Edizione/Manoscritto non trovato."
             });
         }
-        res.json({
+        return res.json({
             success: true,
             dati: rows[0]
         });
     }catch(err){
         console.error("Errore nell'endpoint get-edizione: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante il recupero della risorsa."
         });
@@ -557,13 +658,13 @@ app.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
                 message: "Contenuto non trovato."
             });
         }
-        res.json({
+        return res.json({
             success: true,
             message: "Contenuto aggiornato con successo!"
         });
     }catch(err){
         console.error("Errore nell'endpoint update-edizione: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante l'aggiornamento della risorsa."
         });
@@ -597,7 +698,7 @@ app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin'
             }
         }
         await connection.commit();
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             message: "Contenuto salvato con successo!"
         });
@@ -609,7 +710,7 @@ app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin'
                 success: false,
                 message: "Errore: il numero identificativo è già esistente." });
         }
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore interno durante il salvataggio."
         });
@@ -689,14 +790,14 @@ app.get("/api/show-stampe", async (req, res)=>{
         const [risultatoTotale]=await pool.query(queryTotali, paramsTotali);
         const totali=risultatoTotale[0].totali;
         const [righe]=await pool.query(queryContenuti, paramsContenuti);
-        res.json({
+        return res.json({
             success: true,
             contenuti: righe,
             totali: totali
         });
     }catch(err){
         console.error("Errore nell'endpoint show-stampe: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante il recupero delle stampe."
         });
@@ -721,7 +822,7 @@ app.get("/api/stampa/:collocazione", async (req, res) => {
         //recupero le immagini della risorsa
         const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
         const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
-        res.json({
+        return res.json({
             success: true,
             content: content,
             immagini: listaUrlImmagini,
@@ -729,7 +830,7 @@ app.get("/api/stampa/:collocazione", async (req, res) => {
         });
     } catch (err) {
         console.error("Errore nell'endpoint stampa: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante il recupero della risorsa."
         });
@@ -747,13 +848,13 @@ app.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('superad
                 message: "Stampa/Foto non trovata."
             });
         }
-        res.json({
+        return res.json({
             success: true,
             dati: rows[0]
         });
     } catch (err) {
         console.error("Errore nell'endpoint get-stampa: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante il recupero della risorsa."
         });
@@ -778,13 +879,13 @@ app.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
                 message: "Stampa/Foto non trovata."
             });
         }
-        res.json({
+        return res.json({
             success: true,
             message: "Stampa/Foto aggiornata con successo!"
         });
     } catch (err) {
         console.error("Errore nell'endpoint update-stampa: ", err);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: "Errore durante l'aggiornamento della risorsa."
         });

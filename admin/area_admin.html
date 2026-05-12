@@ -36,7 +36,7 @@
         <h2>Gestione degli utenti</h2>
         <div class="grid">
             <div class="element">
-                <h3>Aggiunta Utente: </h3>
+                <h3>Aggiunta Utenti: </h3>
                 <form id="aggiungi-utente-form" action="/api/add-utente" method="POST">
                     <p><!--messaggio--></p>
                     <div>
@@ -62,6 +62,36 @@
                     </div>
                     <input type="submit" value="Crea utente">
                 </form>
+            </div>
+            <div class="element">
+                <h3>Eliminazione Utenti: </h3>
+                <form id="cancella-utente-form" action="/api/delete-utente" method="POST">
+                    <p><!--messaggio--></p>
+                    <div>
+                        <label for="delete-id-utente" class="required">Identificativo utente: </label>
+                        <input type="number" name="id" id="delete-id-utente" placeholder="1" min="1" required>
+                    </div>
+                    <input type="submit" value="Elimina utente">
+                </form>
+            </div>
+            <div class="element">
+                <h3>Lista Utenti: </h3>
+                <button id="mostra-utenti-btn">Mostra utenti</button>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Identificativo</th>
+                            <th>Email</th>
+                            <th>Nome</th>
+                            <th>Ruolo</th>
+                            <th>Creato il</th>
+                            <th>Creato da</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!--corpo della tabella-->
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
