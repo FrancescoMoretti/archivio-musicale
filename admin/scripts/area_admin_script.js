@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
     //fetch per lista utenti
     document.getElementById("mostra-utenti-btn").addEventListener("click", async ()=>{
-        const tabella=document.querySelector('table');
+        const tabella=document.getElementById("utenti-grid").querySelector('table');
         tabella.style.display="table";
         const tbody=tabella.querySelector('tbody');
         try{
@@ -97,9 +97,15 @@ document.addEventListener("DOMContentLoaded", function(){
                             <td>${utente.email_creatore}</td>
                         `;
                     }else{
-                        stringaHTML+=`
-                            <td>Sistema</td>
-                        `;
+                        if(utente.ruolo==='superadmin'){
+                            stringaHTML+=`
+                                <td>Sistema</td>
+                            `;
+                        }else{
+                            stringaHTML+=`
+                                <td>Utente eliminato</td>
+                            `;
+                        }
                     }
                     riga.innerHTML=stringaHTML;
                     tbody.appendChild(riga);
@@ -151,6 +157,81 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server."
+        }
+    });
+
+    //fetch per monitoraggio contenuti
+    document.getElementById("monitoraggio-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const tabella=document.getElementById("monitoraggio-grid").querySelector('table');
+        tabella.style.display="table";
+        const tbody=tabella.querySelector("tbody");
+        const filtro=document.getElementById("search-bar").value;
+        //validazione client-side
+        if(!filtro || !filtro.trim()){
+            tbody.innerHTML="<tr><td colspan='7'>Cerca un contenuto o un utente.</td></tr>";
+            return;
+        }
+        
+        try{
+            //metto il filtro nei parametri dell'url
+            const res=await fetch(`/api/monitor-contenuti?filtro=${encodeURIComponent(filtro)}`, {
+                method: "GET",
+                credentials: "include",
+            });
+            const result=await res.json();
+            //gestione reindirizzamenti
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            //aggiorno contenuti
+            if(res.ok && result.success){
+                tbody.innerHTML="";//pulisco tabella
+                result.contenuti.forEach(contenuto=>{
+                    const riga=document.createElement('tr');//creo riga
+                    const dataCreazione=new Date(contenuto.created_at).toLocaleDateString('it-IT');//formattazione della data
+                    let stringaHTML=`
+                        <td>${contenuto.collocazione}</td>
+                        <td>${contenuto.titolo}</td>
+                        <td>${contenuto.autore}</td>
+                        <td>${dataCreazione}</td>
+                    `;
+                    //utente creatore
+                    if(contenuto.created_by){
+                        stringaHTML+=`<td>${contenuto.created_by}</td>`;
+                    }else{
+                        stringaHTML+=`<td>Utente eliminato</td>`;
+                    }
+                    //data e utente di modifica
+                    if(contenuto.updated_at!==contenuto.created_at){
+                        //se è stato modificato dopo la creazione
+                        const dataModifica=new Date(contenuto.updated_at).toLocaleDateString('it-IT');//formattazione della data
+                        stringaHTML+=`<td>${dataModifica}</td>`;
+                        if(contenuto.updated_by){
+                            //se esiste l'utente che ha fatto la modifica
+                            stringaHTML+=`<td>${contenuto.updated_by}</td>`;
+                        }else{
+                            //se non esiste più l'utente che ha fatto la modifica
+                            stringaHTML+=`<td>Utente eliminato</td>`;
+                        }
+                    }else{
+                        //se non è mai stato modificato dopo la creazione
+                        stringaHTML+=`
+                            <td>/</td>
+                            <td>/</td>
+                        `;
+                    }
+                    riga.innerHTML=stringaHTML;
+                    tbody.appendChild(riga);
+                });
+            }else{
+                tbody.innerHTML="<tr><td colspan='7'>"+result.message+"</td></tr>";
+                return;
+            }
+        }catch(err){
+            tbody.innerHTML="<tr><td colspan='7'>Errore di rete: impossibile raggiungere il server.</td></tr>";
         }
     });
 });

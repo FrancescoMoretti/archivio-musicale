@@ -334,6 +334,24 @@ footer .material-symbols-outlined{
     padding: 0 1.5em 1em 1.5em;
 }
 
+.area-riservata #monitoraggio-grid{
+    grid-template-columns: repeat(1, 1fr);
+    width: 60%;
+    margin: 1em auto;
+}
+
+.area-riservata #monitoraggio-grid #monitoraggio-form div{
+    display: block;
+}
+
+.area-riservata #monitoraggio-grid input[type="text"]{
+    width: 50%;
+}
+
+.area-riservata #monitoraggio-grid table{
+    width: 100%;
+}
+
     /*inizio stile form*/
     form{
         font-family: "Ubuntu", sans-serif;

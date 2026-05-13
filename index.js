@@ -452,6 +452,45 @@ app.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', 'adm
     }
 });
 
+//endpoint per monitoraggio contenuti (UTENTI)
+app.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    const {filtro}=req.query;
+    //gestione filtro
+    if(!filtro || !filtro.trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Cerca un contenuto o un utente."
+        });
+    }
+    const filtroLike=`%${filtro}%`;
+    const query=`SELECT r.collocazione, r.titolo, r.autore, r.created_at, c.email AS created_by, r.updated_at, m.email AS updated_by FROM(
+        SELECT collocazione, autore, titolo, created_at, created_by, updated_at, updated_by FROM edizioni
+        UNION ALL
+        SELECT collocazione, autore, titolo, created_at, created_by, updated_at, updated_by FROM stampe
+    ) AS r LEFT JOIN utenti c ON r.created_by=c.id LEFT JOIN utenti m ON r.updated_by=m.id
+    WHERE r.collocazione LIKE ? OR r.titolo LIKE ? OR r.autore LIKE ? OR c.email LIKE ? OR m.email LIKE ?
+    ORDER BY r.updated_at DESC`;
+    try{
+        const [rows]=await pool.query(query, [filtroLike, filtroLike, filtroLike, filtroLike, filtroLike]);
+        if(rows.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Nessun contenuto o utente trovato."
+            });
+        }
+        return res.json({
+            success: true,
+            contenuti: rows
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint monitor-contenuti: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore durante la ricerca dei contenuti e degli utenti."
+        });
+    }
+});
+
 //fine endpoint per UTENTI
 
 //inizio endpoint per gestione CONTENUTI
@@ -459,6 +498,7 @@ app.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', 'adm
 //endpoint per inserimento edizione (CONTENUTI)
 app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
+    const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
         return res.status(400).json({
@@ -467,12 +507,12 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
         });//400: richiesta mal formata
     }
     //preparazione query
-    const queryEdizione = `INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const queryEdizione = `INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const queryImmagine = `INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
-        const [result] = await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note]);
+        const [result] = await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, userId]);
         const edizioneId = result.insertId;//id dell'edizione inserita
         //caricamento immagini su cloudinary
         if (files && files.length > 0) {
@@ -645,15 +685,16 @@ app.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('super
 //endpoint per aggiornamento edizione (MODIFICA) (CONTENUTI)
 app.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
+    const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     if (!titolo || !autore) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
     }
-    const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=? WHERE collocazione=?";
+    const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=?, updated_by=? WHERE collocazione=?";
     try{
-        const [result]=await pool.query(query, [link_rism, autore, titolo, data_str, editore, descrizione, note, collocazione]);
+        const [result]=await pool.query(query, [link_rism, autore, titolo, data_str, editore, descrizione, note, userId, collocazione]);
         if(result.affectedRows===0){
             return res.status(404).json({
                 success: false,
@@ -676,6 +717,7 @@ app.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
 //endpoint per inserimento stampa (CONTENUTI)
 app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     const {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
+    const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
     if(!collocazione || !autore || !titolo){
         return res.status(400).json({
@@ -684,12 +726,12 @@ app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin'
         });
     }
     //preparazione query
-    const queryStampa=`INSERT INTO stampe(collocazione, autore, titolo, data_str, stampa, dimensioni) VALUES (?, ?, ?, ?, ?, ?)`;
+    const queryStampa=`INSERT INTO stampe(collocazione, autore, titolo, data_str, stampa, dimensioni, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const queryImmagine=`INSERT INTO immagini_stampe(stampa_id, url_immagine, ordine) VALUES (?, ?, ?)`;
     const connection=await pool.getConnection();
     try{
         await connection.beginTransaction();
-        const [result]=await connection.execute(queryStampa, [collocazione, autore, titolo, data_str, stampa, dimensioni]);
+        const [result]=await connection.execute(queryStampa, [collocazione, autore, titolo, data_str, stampa, dimensioni, userId]);
         const stampaId = result.insertId;//id della stampa inserita
         //caricamento delle immagini su cloudinary
         if(files && files.length>0){
@@ -866,15 +908,16 @@ app.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('superad
 //endpoint per aggiornamento stampa (MODIFICA) (CONTENUTI)
 app.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
     const { collocazione, autore, titolo, data_str, stampa, dimensioni } = req.body;
+    const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     if (!autore || !titolo) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
     }
-    const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=? WHERE collocazione=?";
+    const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=?, updated_by=? WHERE collocazione=?";
     try {
-        const [result] = await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, collocazione]);
+        const [result] = await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, userId, collocazione]);
         if (result.affectedRows === 0) {
             return res.status(404).json({
                 success: false,
