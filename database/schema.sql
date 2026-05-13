@@ -27,7 +27,11 @@ CREATE TABLE edizioni(
     descrizione TEXT,
     note TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_by INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT,
+    FOREIGN KEY (created_by) REFERENCES utenti(id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES utenti(id) ON DELETE SET NULL
 );
 
 CREATE TABLE immagini_edizioni(
@@ -48,7 +52,11 @@ CREATE TABLE stampe(
     stampa VARCHAR(100),
     dimensioni VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    created_by INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT,
+    FOREIGN KEY (created_by) REFERENCES utenti(id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES utenti(id) ON DELETE SET NULL
 );
 
 CREATE TABLE immagini_stampe(
