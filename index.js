@@ -19,6 +19,13 @@ app.use(cookieParser());
 
 //middleware di verifica del token JWT
 const autenticaToken = (req, res, next)=>{
+    //evito che le pagine protette possano essere raggiunte con "<-" senza il controllo del token
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    //no-store: non salvo copia della pagina nella memoria temporanea
+    //no-cache & must-revalidate: obbligo il browser a fare una richiesta al server per verificare la validità dle token
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    //Pragma & Expires: servono per retrocompatibilità con browser vecchi
     const token=req.cookies.token;//recupero il token
     //se il token non c'è => mando alla pagina di login
     if(!token){

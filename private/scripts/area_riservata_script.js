@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {    
+document.addEventListener("DOMContentLoaded", function () {
     //gestione form con radio button
     const radioBtn = document.querySelectorAll('input[name="tipo-form"]');
     radioBtn.forEach(btn => {
