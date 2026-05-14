@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if (res.ok && result.success) {
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if (res.ok && result.success) {
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if (res.ok && result.success) {
@@ -179,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if (res.ok && result.success) {
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if (res.ok && result.success) {
@@ -301,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result=await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if(res.ok && result.success){
@@ -356,7 +356,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const result=await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
-                window.location.href = "/403.html";
+                window.location.href="/403.html";
                 return;
             }
             if(res.ok && result.success){
