@@ -58,6 +58,5 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         document.querySelector('main.articolo').style.visibility = "visible";
     } catch (err) {
         console.error("Errore nel caricamento della stampa: ", err);
-        //window.location.href="/404.html";
     }
 });

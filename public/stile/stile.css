@@ -41,7 +41,7 @@ h1, h2, h3, h4, h5, h6{
 }
 
 h1{
-    font-size: 2em;
+    font-size: 2.5em;
 }
 
 h2{
@@ -195,6 +195,36 @@ footer .material-symbols-outlined{
     overflow: hidden;
 }
 /*fine stile grid layout*/
+
+/*inizio stile home (index.html)*/
+#welcome-sec q{
+    display: block;
+    text-align: center;
+    color: var(--colorC);
+    margin-top: -1em;
+    font-style: italic;
+    quotes: none;
+}
+
+#welcome-sec img{
+    width: 25%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    object-position: center;
+    border-radius: 50%;
+    border: 3px solid var(--colorC);
+    display: block;
+    margin: 1em auto;
+}
+
+#contatore-div p{
+    text-align: center;
+    font-family: "EB Garamond", serif;
+    font-size: 1.75em;
+    font-weight: bold;
+    margin: auto;
+}
+/*fine stile home (index.html)*/
 
 /*inizio stile pagine lista*/
 #ricerca-sec{

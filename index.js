@@ -502,6 +502,29 @@ app.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin', '
 
 //inizio endpoint per gestione CONTENUTI
 
+//endpoint per conteggio reperti
+app.get("/api/conta-reperti", async (req, res)=>{
+    try{
+        const [risultato]=await pool.query("SELECT (SELECT COUNT(*) FROM edizioni) + (SELECT COUNT(*) FROM stampe) AS somma_reperti");
+        if(risultato[0].somma_reperti<=0){
+            return res.status(404).json({
+                success: false,
+                message: ""//messaggio vuoto
+            })
+        }
+        return res.json({
+            success: true,
+            message: `L'archivio ospita: ${risultato[0].somma_reperti} reperti.`
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint conta-reperti: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore durante il conteggio dei reperti."
+        });
+    }
+});
+
 //endpoint per inserimento edizione (CONTENUTI)
 app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res) => {
     const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
