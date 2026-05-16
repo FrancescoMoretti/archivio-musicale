@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS immagini_edizioni;
 DROP TABLE IF EXISTS edizioni;
 DROP TABLE IF EXISTS immagini_stampe;
 DROP TABLE IF EXISTS stampe;
+DROP TABLE IF EXISTS eventi;
+DROP TABLE IF EXISTS immagini_eventi;
 DROP TABLE IF EXISTS utenti;
 
 CREATE TABLE utenti(
@@ -66,4 +68,28 @@ CREATE TABLE immagini_stampe(
     ordine INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (stampa_id) REFERENCES stampe(id) ON DELETE CASCADE
+);
+
+CREATE TABLE eventi(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    codice VARCHAR(10) UNIQUE NOT NULL,
+    link_evento VARCHAR(255),
+    titolo VARCHAR(100) NOT NULL,
+    descrizione TEXT NOT NULL,
+    data_inizio DATE NOT NULL,
+    data_fine DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_by INT,
+    FOREIGN KEY (created_by) REFERENCES utenti(id) ON DELETE SET NULL,
+    FOREIGN KEY (updated_by) REFERENCES utenti(id) ON DELETE SET NULL
+);
+
+CREATE TABLE immagini_eventi(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    evento_id INT NOT NULL,
+    url_immagine VARCHAR(255) NOT NULL,
+    ordine INT DEFAULT 0,
+    FOREIGN KEY (evento_id) REFERENCES eventi(id) ON DELETE CASCADE
 );

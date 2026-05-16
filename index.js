@@ -527,7 +527,7 @@ app.get("/api/conta-reperti", async (req, res)=>{
 
 //endpoint per inserimento edizione (CONTENUTI)
 app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res) => {
-    const { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
+    let { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files = req.files;//immagini
     if (!collocazione || !titolo || !autore) {
@@ -536,6 +536,23 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });//400: richiesta mal formata
     }
+    //setto a null eventuali valori facoltativi vuoti
+    if(!link_rism || link_rism.trim()===""){
+        link_rism=null;
+    }
+    if(!data_str || data_str.trim()===""){
+        data_str=null;
+    }
+    if(!editore || editore.trim()===""){
+        editore=null;
+    }
+    if(!descrizione || descrizione.trim()===""){
+        descrizione=null;
+    }
+    if(!note || note.trim()===""){
+        note=null;
+    }
+    let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryEdizione = `INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const queryImmagine = `INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
@@ -548,7 +565,8 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
         if (files && files.length > 0) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                const imageUrl = await uploadToCloudinary(file.buffer, "edizioni");
+                const {imageUrl, publicId} = await uploadToCloudinary(file.buffer, "edizioni");
+                publicIds.push(publicId);
                 await connection.execute(queryImmagine, [edizioneId, imageUrl, i + 1]);
             }
         }
@@ -556,6 +574,16 @@ app.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admi
         return res.status(201).json({ success: true, message: "Contenuto salvato con successo!" });
     } catch (err) {
         await connection.rollback();
+        try{
+            if(publicIds.length>0){
+                for(let i=0; i<publicIds.length; i++){
+                    await cloudinary.uploader.destroy(publicIds[i]);
+                }
+                console.log("Pulizia delle immagini parzialmente caricate su Cloudinary completata.");
+            }
+        }catch(cloudinaryErr){
+            console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+        }
         console.error("Errore nell'endpoint add-edizione: ", err);
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ 
@@ -746,15 +774,26 @@ app.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
 
 //endpoint per inserimento stampa (CONTENUTI)
 app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
-    const {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
+    let {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
     if(!collocazione || !autore || !titolo){
         return res.status(400).json({
             success: false,
-            message: "Campi obbligatri mancanti (collocazione, autore, titolo)."
+            message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });
     }
+    //setto a null eventuali valori facoltativi vuoti
+    if(!data_str || data_str.trim()===""){
+        data_str=null;
+    }
+    if(!stampa || stampa.trim()===""){
+        stampa=null;
+    }
+    if(!dimensioni || dimensioni.trim()===""){
+        dimensioni=null;
+    }
+    let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryStampa=`INSERT INTO stampe(collocazione, autore, titolo, data_str, stampa, dimensioni, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     const queryImmagine=`INSERT INTO immagini_stampe(stampa_id, url_immagine, ordine) VALUES (?, ?, ?)`;
@@ -767,7 +806,8 @@ app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin'
         if(files && files.length>0){
             for(let i=0; i<files.length; i++){
                 const file=files[i];
-                const imageUrl=await uploadToCloudinary(file.buffer, "stampe");
+                const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "stampe");
+                publicIds.push(publicId);
                 await connection.execute(queryImmagine, [stampaId, imageUrl, i+1]);
             }
         }
@@ -778,6 +818,16 @@ app.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin'
         });
     }catch(err){
         await connection.rollback();
+        try{
+            if(publicIds.length>0){
+                for(let i=0; i<publicIds.length; i++){
+                    await cloudinary.uploader.destroy(publicIds[i]);
+                }
+                console.log("Pulizia delle immagini parzialmente caricate su Cloudinary completata.");
+            }
+        }catch(cloudinaryErr){
+            console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+        }
         console.error("Errore nell'endpoint add-stampa: ", err);
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ 
@@ -964,6 +1014,76 @@ app.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
             success: false,
             message: "Errore durante l'aggiornamento della risorsa."
         });
+    }
+});
+
+//endpoint per inserimento evento (CONTENUTO)
+app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
+    let {codice, link_evento, titolo, descrizione, data_inizio, data_fine}=req.body;
+    const userId=req.utente.id;//id dell'utente che sta creando il contenuto
+    const files=req.files;//immagini
+    if(!codice || !titolo || !descrizione || !data_inizio){
+        return res.status(400).json({
+            success: false,
+            message: "Campi obbligatori mancanti (codice, titolo, descrizione e data di inizio)."
+        });
+    }
+    //setto a null eventuali valori facoltativi vuoti
+    if(!link_evento || link_evento.trim()===""){
+        link_evento=null;
+    }
+    if(!data_fine || data_fine.trim()===""){
+        data_fine=null;
+    }
+    let publicIds=[];//id pubblici delle immagini caricate su cloudinary
+    //preparazione query
+    const queryEvento=`INSERT INTO eventi(codice, link_evento, titolo, descrizione, data_inizio, data_fine, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const queryImmagine=`INSERT INTO immagini_eventi(evento_id, url_immagine, ordine) VALUES (?, ?, ?)`;
+    const connection=await pool.getConnection();
+    try{
+        await connection.beginTransaction();
+        const [result]=await connection.execute(queryEvento, [codice, link_evento, titolo, descrizione, data_inizio, data_fine, userId]);
+        const eventoId=result.insertId;//id dell'evento inserito
+        //caricamento delle immagini su cloudinary
+        if(files && files.length>0){
+            for(let i=0; i<files.length; i++){
+                const file=files[i];
+                const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "eventi");
+                publicIds.push(publicId);
+                await connection.execute(queryImmagine, [eventoId, imageUrl, i+1]);
+            }
+        }
+        await connection.commit();
+        return res.status(201).json({
+            success: true,
+            message: "Evento salvato con successo!"
+        });
+    }catch(err){
+        await connection.rollback();
+        try{
+            if(publicIds.length>0){
+                for(let i=0; i<publicIds.length; i++){
+                    await cloudinary.uploader.destroy(publicIds[i]);
+                }
+                console.log("Pulizia delle immagini parzialmente caricate su Cloudinary completata.");
+            }
+        }catch(cloudinaryErr){
+            console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+        }
+        console.error("Errore nell'endpoint add-evento: ", err);
+        if(err.code==='ER_DUP_ENTRY'){
+            return res.status(400).json({
+                success: false,
+                message: "Errore: il codice è già esistente."
+            });
+        }
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il salvataggio."
+        });
+    }
+    finally{
+        connection.release();
     }
 });
 
