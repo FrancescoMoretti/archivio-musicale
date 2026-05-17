@@ -46,12 +46,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dati)
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
@@ -73,12 +73,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 method: "GET",
                 credentials: "include"
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             //aggiornamento contenuti
             if(res.ok && result.success){
                 tbody.innerHTML="";//pulisco tabella
@@ -143,12 +143,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({id: idInviato})
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
@@ -180,12 +180,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 method: "GET",
                 credentials: "include",
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             //aggiorno contenuti
             if(res.ok && result.success){
                 tbody.innerHTML="";//pulisco tabella

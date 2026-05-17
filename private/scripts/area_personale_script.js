@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 headers: {"Content-Type": 'application/json'},
                 body: JSON.stringify({oldPsw, newPsw, confirmPsw})
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if(res.ok && result.success){
                 alert(result.message);//avviso che vene richiesto di rifare il login
                 window.location.href("/accedi");
