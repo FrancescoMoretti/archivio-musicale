@@ -34,7 +34,6 @@ main {
     flex: 1; /*occupa tutto lo spazio che avanza tra header e footer */
 }
 
-
 h1, h2, h3, h4, h5, h6{
     font-family: "EB Garamond", serif;
     text-align: center;
@@ -312,6 +311,7 @@ footer .material-symbols-outlined{
         color: var(--colorC);
     }
     /*fine stile tabella*/
+
 .lista-contenuti #paginazione{
     text-align: center;
     font-family: "Ubuntu", sans-serif;
@@ -389,7 +389,7 @@ footer .material-symbols-outlined{
 
     form label{
         font-weight: bold;
-        font-size: 1.10;
+        font-size: 1.10em;
         padding-right: 0.25em;
         white-space: nowrap;
     }
@@ -401,6 +401,7 @@ footer .material-symbols-outlined{
     form input,
     form select{
         font-size: 1.05em;
+        font-family: "Ubuntu", sans-serif;
     }
 
     form textarea{
@@ -481,14 +482,26 @@ footer .material-symbols-outlined{
     }
 
         /*inizio stile select*/
-    #add-ruolo-utente:invalid{
-        color: var(--placeholder);
-    }
+        #add-ruolo-utente:invalid{
+            color: var(--placeholder);
+        }
 
-    #add-ruolo-utente option{
-        color: var(--sfondoScuro);
-    }
+        #add-ruolo-utente option{
+            color: var(--sfondoScuro);
+        }
         /*fine stile select*/
+
+        /*inizio stile input type="date"*/
+        /*placeholder data*/
+        form input[type=date]::-webkit-datetime-edit{
+            color: var(--placeholder);
+        }
+
+        /*data selezionata*/
+        form input[type=date].has-value::-webkit-datetime-edit{
+            color: var(--sfondoScuro);
+        }
+        /*fine stile input type="date"*/
 
     /*fine stile form*/
 
@@ -529,8 +542,6 @@ footer .material-symbols-outlined{
 #cambia-password-form .icona{
     cursor: pointer;
 }
-
-
 /*fine stile pagina login e area personale*/
 
 /*inizio stile pagina catalogo*/

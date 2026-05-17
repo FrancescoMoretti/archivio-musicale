@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("change", function () {
             document.getElementById("edizione-grid").style.display = "none";
             document.getElementById("stampa-grid").style.display = "none";
+            document.getElementById("evento-grid").style.display = "none";
             const selected = document.querySelector('input[name="tipo-form"]:checked').value;
             switch (selected) {
                 case '1':
@@ -12,6 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 break;
                 case '2':
                     document.getElementById("stampa-grid").style.display="grid";
+                break;
+                case '3':
+                    document.getElementById("evento-grid").style.display="grid";
                 break;
             }
         });
@@ -30,6 +34,11 @@ document.addEventListener("DOMContentLoaded", function () {
             message.textContent = "Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
+        const data_fine=form.elements["data_fine"].value.trim();
+        if(data_fine && new Date(data_fine)< new Date(data_inizio)){
+            message.textContent="Errore: La data di fine è antecedente alla data di inizio."
+            return;
+        }
         message.textContent = "Caricamento in corso...";
         //preparazione dati
         const formData = new FormData(form);
@@ -39,12 +48,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 credentials: "include",
                 body: formData
             });
-            const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if (res.ok && result.success) {
                 message.textContent = result.message;
                 form.reset();
@@ -79,12 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ collocazione })
             });
-            const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if (res.ok && result.success) {
                 message.textContent = result.message;
                 form.reset();
@@ -117,12 +126,12 @@ document.addEventListener("DOMContentLoaded", function () {
         modificaForm.reset();
         try {
             const res = await fetch(`/api/get-edizione/${encodeURIComponent(collocazione)}`);
-            const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if (res.ok && result.success) {
                 message.textContent = "Contenuto trovato!";
                 //popolamento del form di modifica
@@ -176,12 +185,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dati)
             });
-            const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if (res.ok && result.success) {
                 message.textContent = result.message;
                 form.reset();
@@ -220,12 +229,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 credentials: "include",
                 body: formData
             });
-            const result = await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if (res.ok && result.success) {
                 message.textContent = result.message;
                 form.reset();
@@ -260,12 +269,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({collocazione})
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
@@ -298,12 +307,12 @@ document.addEventListener("DOMContentLoaded", function () {
         modificaForm.reset();
         try{
             const res= await fetch(`/api/get-stampa/${encodeURIComponent(collocazione)}`);
-            const result=await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if(res.ok && result.success){
                 message.textContent="Contenuto trovato!";
                 //popolamento del form di modifica
@@ -353,12 +362,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dati)
             });
-            const result=await res.json();
             //gestione reindirizzamenti
             if (res.status === 403) {
                 window.location.href="/403.html";
                 return;
             }
+            const result=await res.json();
             if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
@@ -372,5 +381,66 @@ document.addEventListener("DOMContentLoaded", function () {
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server."
         }
+    });
+
+    //fetch di aggiunta eventi (INSERIMENTO)
+    document.getElementById("aggiungi-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        message.textContent="Caricamento in corso...";
+        //validazione client-side
+        const codice=form.elements["codice"].value.trim();
+        const titolo=form.elements["titolo"].value.trim();
+        const data_inizio=form.elements["data_inizio"].value.trim();
+        const descrizione=form.elements["descrizione"].value.trim();
+        if(!codice || !titolo || !data_inizio || !descrizione){
+            message.textContent="Errore: Codice, titolo, data iniziale e descrizione sono obbligatori.";
+            return;
+        }
+        //preparazione dati
+        const formData= new FormData(form);
+        try{
+            const res=await fetch("/api/add-evento", {
+                method: "POST",
+                credentials: "include",
+                body: formData
+            });
+            //gestione reindirizzamenti
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            const result=await res.json();
+            if(res.ok && result.success){
+                message.textContent=result.message;
+                form.reset();
+            }else{
+                message.textContent=result.message || "Errore durante il salvataggio.";
+            }
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+        }
+    });
+
+    //data_inizio<data_fine
+    document.getElementById("add-data_inizio-evento").addEventListener("change", (event)=>{
+        const dataInizio=event.target.value;
+        const inputDataFine=document.getElementById("add-data_fine-evento");
+        inputDataFine.min=dataInizio;//setto l'attributo min per la data di fine alla data di inizio
+        if(inputDataFine.value && inputDataFine.value<dataInizio){
+            inputDataFine.value="";
+        }
+    });
+
+    //stile input type="date"
+    document.querySelectorAll('form input[type="date"]').forEach(input=>{
+        input.addEventListener("change", ()=>{
+            if(input.value){
+                input.classList.add('has-value');
+            }else{
+                input.classList.remove('has-value');
+            }
+        });
     });
 });

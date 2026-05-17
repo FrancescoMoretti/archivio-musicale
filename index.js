@@ -1035,6 +1035,13 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
     if(!data_fine || data_fine.trim()===""){
         data_fine=null;
     }
+    //controllo data_finale>data_iniziale
+    if(data_fine && new Date(data_fine)< new Date(data_inizio)){
+        return res.status(400).json({
+            status: false,
+            message: "La data di fine è antecedente alla data di inizio."
+        });
+    }
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryEvento=`INSERT INTO eventi(codice, link_evento, titolo, descrizione, data_inizio, data_fine, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
