@@ -1106,7 +1106,10 @@ const uploadToCloudinary = (buffer, folder) => {
             { folder: `archivio_musicale/${folder}` },
             (error, result) => {
                 if (error) reject(error);
-                else resolve(result.secure_url);
+                else resolve({
+                    imageUrl: result.secure_url,
+                    publicId: result.public_id
+                });
             }
         );
         stream.end(buffer);
