@@ -1,7 +1,6 @@
 let schermata = 1;//contatore per la schermata che sto mostrando
 const righe = 5;//righe di tabella per ogni pagina
-const altezzaCellaImmagine = 70;//cella imagine è alta 70px
-let totaleContenuti = 0;
+const altezzaCellaImmagine = 4.3;//cella imagine è alta 4.3em
 let timeoutRicerca=null;
 
 document.addEventListener("DOMContentLoaded", async ()=>{
@@ -31,20 +30,20 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     const tbody=document.querySelector('tbody');
 
     //chiamata iniziale
-    await caricaContenuti(schermata, righe, searchBar.value);
+    await caricaContenuti();
 
     //gestione bottone precedente
     precBtn.addEventListener("click", async () => {//se non sono alla prima pagina posso andare indietro
         if (schermata > 1) {
             schermata--;
-            await caricaContenuti(schermata, righe, searchBar.value);
+            await caricaContenuti();
         }
     });
 
     //gestione bottone successivo
     succBtn.addEventListener("click", async () => {
         schermata++;
-        await caricaContenuti(schermata, righe, searchBar.value);
+        await caricaContenuti();
     });
 
     //gestione barra di ricerca
@@ -52,37 +51,32 @@ document.addEventListener("DOMContentLoaded", async ()=>{
         clearTimeout(timeoutRicerca);//se l'utente sta ancora scrivendo cancello il timer
         timeoutRicerca=setTimeout(async ()=>{
             schermata = 1;//torno alla prima pagina
-            await caricaContenuti(schermata, righe, searchBar.value);
+            await caricaContenuti();
         }, 300);//prima di eseguire aspetto 300ms
     });
 
     //funzione principale che carica contenuti dal server
-    async function caricaContenuti(pagina, limite, filtro = "") {
-        const offset = (pagina - 1) * limite;
+    async function caricaContenuti() {
+        const offset = (schermata - 1) * righe;
         //costruisco URL con i parametri
-        let url = `${endpoint}?limit=${limite}&offset=${offset}`;
-        if (filtro) {
-            url += `&filtro=${encodeURIComponent(filtro)}`;
+        let url = `${endpoint}?limit=${righe}&offset=${offset}`;
+        if (searchBar.value) {
+            url += `&filtro=${encodeURIComponent(searchBar.value)}`;
         }
         try {
             const res = await fetch(url);
             const result = await res.json();
             //aggiornamento contenuti
             if(res.ok && result.success){
-                totaleContenuti = result.totali;
                 mostraPagina(result.contenuti, result.totali);
             }else{
                 tbody.innerHTML = "<tr><td colspan='4'>" + result.message + "</td></tr>";
-                totaleContenuti = 0;
-                //mostraPagina([], 0)//aggiorno visualizzazione
                 precBtn.style.visibility="hidden";
                 succBtn.style.visibility="hidden";
                 return;
             }
         } catch (err) {
             tbody.innerHTML = "<tr><td colspan='4'>Errore di rete</td></tr>";
-            totaleContenuti = 0;
-            //mostraPagina([], 0)
             precBtn.style.visibility="hidden";
             succBtn.style.visibility="hidden";
         }
@@ -90,6 +84,14 @@ document.addEventListener("DOMContentLoaded", async ()=>{
 
     function mostraPagina(lista_da_mostrare, totale) {
         tbody.innerHTML = "";
+        //se non ci sono elementi da mostrare
+        if(lista_da_mostrare.length===0){
+            tbody.innerHTML="<tr><td colspan='4'>Nessun contenuto trovato.</td></tr>";
+            precBtn.style.visibility="hidden";
+            succBtn.style.visibility="hidden";
+            tbody.style.height="auto";
+            return;
+        }
         lista_da_mostrare.forEach(contenuto => {
             const tr = document.createElement("tr");
             const tdCollocazione = document.createElement("td");
@@ -125,7 +127,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             tbody.appendChild(tr);
         });
         //adatto tabella al contenuto
-        tbody.style.height = `${tbody.rows.length*altezzaCellaImmagine}px`;
+        tbody.style.height = `${tbody.rows.length*altezzaCellaImmagine}em`;
         //aggiorno indice pagina
         document.getElementById("schermata").textContent = `Pagina ${schermata}`;
         //gestione bottoni
