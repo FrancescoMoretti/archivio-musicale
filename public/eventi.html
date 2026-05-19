@@ -10,42 +10,37 @@
     <link rel="icon" type="image/png" sizes="16x16" href="immagini/favicon_io/favicon-16x16.png">
     <link rel="manifest" href="immagini/favicon_io/site.webmanifest">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="scripts/home_script.js" defer></script>
     <script src="scripts/eventi_script.js" defer></script>
-    <title>Home | Archivio musicale Luca Moretti</title>
+    <title>Eventi | Archivio musicale Luca Moretti</title>
 </head>
 
-<body id="index">
+<body id="eventi">
     <header>
         <nav>
             <input type="checkbox" id="menu-toggle">
             <label for="menu-toggle" id="menu-icon">&#9776;</label>
             <ul id="menu">
-                <li><a class="current" href="/">Home</a></li>
+                <li><a href="/">Home</a></li>
                 <li><a href="/catalogo.html">Catalogo</a></li>
                 <li id="logo"><a href="/"><img src="immagini/logo_archivio_rettangolare.webp" alt="Logo Archivio musicale Luca Moretti"></a></li>
                 <li><a href="/biografia.html">Biografia</a></li>
-                <li><a href="/eventi.html">Eventi</a></li>
+                <li><a class="current" href="/eventi.html">Eventi</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <section id="welcome-sec">
-            <h1>Archivio musicale Luca Moretti</h1>
-            <q>Spartiti, immagini, programmi, documenti e tutto ciò che può... "raccontare di musica"</q>
-            <img src="immagini/logo_archivio_rettangolare.jpeg" alt="Logo Archivio musicale Luca Moretti">
-            <div id="contatore-div">
-                <p><!--L'archivio ospita: * reperti.--></p>
-            </div>
-        </section>
-        <section>
-            <h2>Ultime aggiunte: </h2>
+        <h1>Eventi</h1>
+        <section id="contatti-sec">
+            <h2>Contatti: </h2>
+            <address>
+                Per organizzare un'evento, scrivi a: <a href="mailto:archiviomusicalelucamoretti@gmail.com?subject=Organizzazione%20evento">archiviomusicalelucamoretti@gmail.com</a>.
+            </address>
         </section>
         <section id="eventi-sec">
-            <h2>Eventi: </h2>
             <p><!--messaggio--></p>
             <!--qui vengono caricati gli articoli sugli eventi-->
         </section>
+        <button id="show-more-btn">Mostra altri</button>
     </main>
     <footer>
         <address>

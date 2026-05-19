@@ -7,13 +7,14 @@ Font sans-serif: "Ubuntu";
 /*stile generale*/
 :root{
     --bianco: #fff;
-    --carta1: #faebd7;/*antiquewhite*/
     --placeholder: #777;
     --colorC: #555;
     --colorD: #444;
     --sfondoScuro: #222;
     --grigioChiaro: #cbcac5;
+    --carta1: #faebd7;/*antiquewhite*/
     --carta2: #ffe4c4;/*bisque*/
+    --carta3: #fcdcadc1;
 }
 
 ::selection{
@@ -44,14 +45,14 @@ h1{
 }
 
 h2{
-    font-size: 1.75em;
+    font-size: 2em;
 }
 
 h3{
     font-size: 1.5em;
 }
 
-p, q{
+p, q, address{
     font-family: "Ubuntu", sans-serif;
     text-align: justify;
     line-height: 1.05em;
@@ -61,6 +62,7 @@ p, q{
 a{
     font-family: "Ubuntu", sans-serif;
     text-decoration: none;
+    color: var(--sfondoScuro);
 }
 
 ul{
@@ -477,7 +479,7 @@ footer .material-symbols-outlined{
         border-color: var(--sfondoScuro);
     }
 
-    #small-div{
+    form div:has(small){/*suggerimenti nei form*/
         margin-top: -1em;
     }
 
@@ -663,6 +665,92 @@ footer .material-symbols-outlined{
     }
     /*fine stile slider*/
 /*fine stile pagine contenuti*/
+
+/*inizio stile pagina eventi*/
+#eventi #contatti-sec address{
+    font-style: normal;
+    text-align: center;
+}
+
+#eventi #contatti-sec address a{
+    font-weight: bold;
+}
+
+#eventi-sec p:not(article p){
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+    font-family: "EB Garamond";
+}
+
+#show-more-btn{
+    display: none;
+    margin: 0 auto 2em auto;
+}
+
+#eventi-sec article{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 4em;
+    column-gap: 1em;
+    background-color: var(--carta2);
+    padding: 2em;
+    border-radius: 15%;
+}
+
+#eventi-sec article:nth-child(odd){
+    background-color: var(--carta3);
+}
+
+#eventi-sec article h3{
+    grid-column: span 4;
+    margin: 0;
+}
+
+#eventi-sec article p{
+    grid-column: span 4;
+}
+
+#eventi-sec article .collegamenti{
+    grid-column: span 4;
+}
+
+#eventi-sec article a{
+    color: var(--sfondoScuro);
+    transition: 0.3s ease-out;
+    font-weight: bold;
+    margin: 0 2em 0 2em
+}
+
+#eventi-sec article a:hover{
+    color: var(--colorD);
+}
+
+#eventi-sec article img{
+    border-radius: 5%;
+    transition: 0.3s ease-out;
+    max-width: 20em;
+    max-height: 20em;
+    margin: auto;
+}
+
+#eventi-sec article img:hover{
+    transform: scale(1.05);
+}
+
+    /*inizio articoli 1 immagine*/
+    #eventi-sec .one-img-article p{
+        grid-column: span 3;
+    }
+    /*fine articoli 1 immagine*/
+
+    /*inizio articoli 2 immagini*/
+    #eventi-sec .two-img-article p{
+        grid-column: span 2;
+    }
+    /*fine articoli 2 immagini*/
+
+/*fine stile pagina eventi*/
 
 /*inizio stile pagina privacy*/
 #informativa{

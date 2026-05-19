@@ -34,11 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
             message.textContent = "Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
-        const data_fine=form.elements["data_fine"].value.trim();
-        if(data_fine && new Date(data_fine)< new Date(data_inizio)){
-            message.textContent="Errore: La data di fine è antecedente alla data di inizio."
-            return;
-        }
         message.textContent = "Caricamento in corso...";
         //preparazione dati
         const formData = new FormData(form);

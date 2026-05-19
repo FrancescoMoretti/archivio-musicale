@@ -1019,7 +1019,7 @@ app.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
 
 //endpoint per inserimento evento (CONTENUTO)
 app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
-    let {codice, link_evento, titolo, descrizione, data_inizio, data_fine}=req.body;
+    let {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
     if(!codice || !titolo || !descrizione || !data_inizio){
@@ -1031,6 +1031,12 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
     //setto a null eventuali valori facoltativi vuoti
     if(!link_evento || link_evento.trim()===""){
         link_evento=null;
+    }
+    if(!link_facebook || link_facebook.trim()===""){
+        link_facebook=null;
+    }
+    if(!link_instagram || link_instagram.trim()===""){
+        link_instagram=null;
     }
     if(!data_fine || data_fine.trim()===""){
         data_fine=null;
@@ -1044,12 +1050,12 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
     }
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
-    const queryEvento=`INSERT INTO eventi(codice, link_evento, titolo, descrizione, data_inizio, data_fine, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const queryEvento=`INSERT INTO eventi(codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const queryImmagine=`INSERT INTO immagini_eventi(evento_id, url_immagine, ordine) VALUES (?, ?, ?)`;
     const connection=await pool.getConnection();
     try{
         await connection.beginTransaction();
-        const [result]=await connection.execute(queryEvento, [codice, link_evento, titolo, descrizione, data_inizio, data_fine, userId]);
+        const [result]=await connection.execute(queryEvento, [codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine, userId]);
         const eventoId=result.insertId;//id dell'evento inserito
         //caricamento delle immagini su cloudinary
         if(files && files.length>0){
@@ -1090,6 +1096,62 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
         });
     }
     finally{
+        connection.release();
+    }
+});
+
+//endpoint per visualizzare eventi (CONTENUTO)
+app.get("/api/show-eventi", async (req, res)=>{
+    const {limit, offset}=req.query;
+    const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
+    const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
+    //preparazione query
+    //query per prendere gli eventi da mostrare
+    const queryEventi="SELECT id, codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine FROM eventi ORDER BY data_inizio DESC LIMIT ? OFFSET ?";
+    //query per sapere se ci sono altri eventi
+    const queryCount="SELECT COUNT(*) AS totale FROM eventi";
+    const connection=await pool.getConnection();//uso connection perché devo fare 3 query
+    try{
+        const [eventi]=await connection.query(queryEventi, [limite, inizio]);
+        if(eventi.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Nessun evento trovato."
+            });
+        }
+        const eventiIds=eventi.map(evento=>evento.id);//costruisco array con id degli eventi
+        //query per estrarre le immagini degli eventi da mostarre
+        const queryImmagini=`SELECT evento_id, url_immagine, ordine FROM immagini_eventi WHERE evento_id IN (${eventiIds.map(()=>'?').join(',')}) ORDER BY ordine ASC`;
+        const [immagini]=await connection.execute(queryImmagini, eventiIds);
+        //associo immagini al rispettivo evento
+        const eventiDaMostrare=eventi.map(evento=>{
+            return {
+                id: evento.id,
+                codice: evento.codice,
+                link_evento: evento.link_evento,
+                link_facebook: evento.link_facebook,
+                link_instagram: evento.link_instagram,
+                titolo: evento.titolo,
+                descrizione: evento.descrizione,
+                data_inizio: evento.data_inizio,
+                data_fine: evento.data_fine,
+                immagini: immagini.filter(img=>img.evento_id===evento.id).map(img=>img.url_immagine)
+            };
+        });
+        const [[{totale}]]=await connection.execute(queryCount);
+        const altri=inizio+eventi.length<totale;//true=>ce ne sono altri; false=>sono finiti
+        return res.json({
+            success: true,
+            eventi: eventiDaMostrare,
+            altri: altri
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint evento: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore durante il recupero degli eventi."
+        });
+    }finally{
         connection.release();
     }
 });

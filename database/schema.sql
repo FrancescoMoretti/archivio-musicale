@@ -74,6 +74,8 @@ CREATE TABLE eventi(
     id INT AUTO_INCREMENT PRIMARY KEY,
     codice VARCHAR(10) UNIQUE NOT NULL,
     link_evento VARCHAR(255),
+    link_facebook VARCHAR(255),
+    link_instagram VARCHAR(255),
     titolo VARCHAR(100) NOT NULL,
     descrizione TEXT NOT NULL,
     data_inizio DATE NOT NULL,
