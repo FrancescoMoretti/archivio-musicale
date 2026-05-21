@@ -293,7 +293,7 @@ app.post("/api/cambia-password", autenticaToken, async (req, res)=>{
         console.error("Errore nell'ednpoint cambia-password: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante l'aggiornamento della password."
+            message: "Errore interno durante l'aggiornamento della password."
         });
     }
 });
@@ -353,7 +353,7 @@ app.post("/api/add-utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'
         console.error("Errore nell'endpoint add-utente: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante l'inserimento dell'utente."
+            message: "Errore interno durante l'inserimento dell'utente."
         });
     }
 });
@@ -377,7 +377,7 @@ app.get("/api/show-utenti", autenticaToken, autorizzaRuoli('superadmin', 'admin'
         console.error("Errore nell'endpoint show-utenti: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero degli utenti."
+            message: "Errore interno durante il recupero degli utenti."
         });
     }
 });
@@ -454,7 +454,7 @@ app.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', 'adm
         console.error("Errore nell'endpoint delete-utente: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante la cancellazione dell'utente."
+            message: "Errore interno durante la cancellazione dell'utente."
         });
     }
 });
@@ -493,7 +493,7 @@ app.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin', '
         console.error("Errore nell'endpoint monitor-contenuti: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante la ricerca dei contenuti e degli utenti."
+            message: "Errore interno durante la ricerca dei contenuti e degli utenti."
         });
     }
 });
@@ -520,7 +520,7 @@ app.get("/api/conta-reperti", async (req, res)=>{
         console.error("Errore nell'endpoint conta-reperti: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il conteggio dei reperti."
+            message: "Errore interno durante il conteggio dei reperti."
         });
     }
 });
@@ -678,7 +678,7 @@ app.get("/api/show-edizioni", async (req, res) => {
         console.error("Errore nell'endpoint show-edizioni: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero delle edizioni."
+            message: "Errore interno durante il recupero delle edizioni."
         });
     }
 });
@@ -711,7 +711,7 @@ app.get("/api/edizione/:collocazione", async (req, res) => {
         console.error("Errore nell'endpoint edizione: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero della risorsa."
+            message: "Errore interno durante il recupero della risorsa."
         });
     }
 });
@@ -735,7 +735,7 @@ app.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('super
         console.error("Errore nell'endpoint get-edizione: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero della risorsa."
+            message: "Errore interno durante il recupero della risorsa."
         });
     }
 });
@@ -767,7 +767,7 @@ app.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
         console.error("Errore nell'endpoint update-edizione: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante l'aggiornamento della risorsa."
+            message: "Errore interno durante l'aggiornamento della risorsa."
         });
     }
 });
@@ -923,7 +923,7 @@ app.get("/api/show-stampe", async (req, res)=>{
         console.error("Errore nell'endpoint show-stampe: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero delle stampe."
+            message: "Errore interno durante il recupero delle stampe."
         });
     }
 });
@@ -956,7 +956,7 @@ app.get("/api/stampa/:collocazione", async (req, res) => {
         console.error("Errore nell'endpoint stampa: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero della risorsa."
+            message: "Errore interno durante il recupero della risorsa."
         });
     }
 });
@@ -980,7 +980,7 @@ app.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('superad
         console.error("Errore nell'endpoint get-stampa: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero della risorsa."
+            message: "Errore interno durante il recupero della risorsa."
         });
     }
 });
@@ -1012,7 +1012,7 @@ app.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
         console.error("Errore nell'endpoint update-stampa: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante l'aggiornamento della risorsa."
+            message: "Errore interno durante l'aggiornamento della risorsa."
         });
     }
 });
@@ -1044,7 +1044,7 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
     //controllo data_finale>data_iniziale
     if(data_fine && new Date(data_fine)< new Date(data_inizio)){
         return res.status(400).json({
-            status: false,
+            success: false,
             message: "La data di fine è antecedente alla data di inizio."
         });
     }
@@ -1100,6 +1100,49 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
     }
 });
 
+//endpoint per cancellazione evento (CONTENUTO)
+app.post("/api/delete-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {codice}=req.body;
+    if(!codice){
+        return res.status(400).json({
+            success: false,
+            message: "Codice non valido."
+        });
+    }
+    try{
+        const [immagini]=await pool.query("SELECT i.url_immagine FROM immagini_eventi i JOIN eventi e ON i.evento_id=e.id WHERE e.codice=?", [codice]);
+        if(immagini.length>0){
+            const publicIds=immagini.map(img=>{
+                //estraggo il public_id dall'url dell'immagine
+                const nomeFile=img.url_immagine.split('/').pop().split('.')[0];
+                return `archivio_musicale/eventi/${nomeFile}`;
+            });
+            //cancello le immagini da cloudinary
+            await cloudinary.api.delete_resources(publicIds);
+        }
+        //cancello il contenuto dal DB
+        const [result]=await pool.query("DELETE FROM eventi WHERE codice=?", [codice]);
+        //le immagini si cancellano a cascata
+        if(result.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Evento non presente nel database."
+            });
+        }else{
+            return res.json({
+                success: true,
+                message: "Evento cancellato con successo!"
+            });
+        }
+    }catch(err){
+        console.error("Errore nell'endpoint delete-evento: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante la cancellazione."
+        });
+    }
+});
+
 //endpoint per visualizzare eventi (CONTENUTO)
 app.get("/api/show-eventi", async (req, res)=>{
     const {limit, offset}=req.query;
@@ -1149,10 +1192,77 @@ app.get("/api/show-eventi", async (req, res)=>{
         console.error("Errore nell'endpoint evento: ", err);
         return res.status(500).json({
             success: false,
-            message: "Errore durante il recupero degli eventi."
+            message: "Errore interno durante il recupero degli eventi."
         });
     }finally{
         connection.release();
+    }
+});
+
+//endpoint per recupero dati evento (MODIFICA) (CONTENUTI)
+app.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {codice}=req.params;
+    try{
+        const [rows]=await pool.query("SELECT * FROM eventi WHERE codice=?", [codice]);
+        if(rows.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Evento non trovato."
+            });
+        }
+        res.json({
+            success: true,
+            dati: rows[0]
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint get-evento: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero della risorsa."
+        });
+    }
+});
+
+//endpoint per aggioramento evento (MODIFICA) (CONTENUTI)
+app.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
+    const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
+    if(!titolo || !descrizione || !data_inizio){
+        return res.status(400).json({
+            success: false,
+            message: "Campi obbligatori mancanti (titolo, descrizione e data di inizio)."
+        });
+    }
+    //setto a null eventuali valori facoltativi vuoti
+    if(!data_fine || data_fine.trim()===""){
+        data_fine=null;
+    }
+    //controllo data_finale>data_iniziale
+    if(data_fine && new Date(data_fine)< new Date(data_inizio)){
+        return res.status(400).json({
+            success: false,
+            message: "La data di fine è antecedente alla data di inizio."
+        });
+    }
+    const query="UPDATE eventi SET link_evento=?, link_facebook=?, link_instagram=?, titolo=?, descrizione=?, data_inizio=?, data_fine=?, updated_by=? WHERE codice=?";
+    try{
+        const [result]=await pool.query(query, [link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine, userId, codice]);
+        if(result.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Evento non trovato."
+            });
+        }
+        return res.json({
+            success: true,
+            message: "Evento aggiornato con successo!"
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint update-evento: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante l'aggiornamento della risorsa."
+        });
     }
 });
 

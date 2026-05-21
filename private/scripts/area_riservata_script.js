@@ -387,9 +387,9 @@ document.addEventListener("DOMContentLoaded", function () {
         //validazione client-side
         const codice=form.elements["codice"].value.trim();
         const titolo=form.elements["titolo"].value.trim();
-        const data_inizio=form.elements["data_inizio"].value.trim();
+        const dataInizio=form.elements["data_inizio"].value.trim();
         const descrizione=form.elements["descrizione"].value.trim();
-        if(!codice || !titolo || !data_inizio || !descrizione){
+        if(!codice || !titolo || !dataInizio || !descrizione){
             message.textContent="Errore: Codice, titolo, data iniziale e descrizione sono obbligatori.";
             return;
         }
@@ -412,6 +412,154 @@ document.addEventListener("DOMContentLoaded", function () {
                 form.reset();
             }else{
                 message.textContent=result.message || "Errore durante il salvataggio.";
+            }
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+        }
+    });
+
+    //fetch di cancellazione eventi (ElIMINAZIONE)
+    document.getElementById("cancella-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const codice=document.getElementById("delete-codice-evento").value;
+        const message=form.querySelector('p');
+        //validazione client-side
+        if(!codice){
+            message.textContent="Errore: Codice non inserito."
+            return;
+        }
+        //conferma
+        if(!confirm(`Sei sicuro di voler eliminare l'evento ${codice}?`)){
+            return;
+        }
+        message.textContent="Cancellazione in corso...";
+        try{
+            const res=await fetch("/api/delete-evento", {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({codice})
+            });
+            //gestione reindirizzamenti
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            const result=await res.json();
+            if(res.ok && result.success){
+                message.textContent=result.message;
+                form.reset();
+            }else{
+                message.textContent=result.message || "Errore durante la cancellazione.";
+            }
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+        }
+    });
+
+    //fetch di ricerca eventi (MODIFICA)
+    document.getElementById("cerca-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        //validazione client-side
+        const codice=document.getElementById("search-codice-evento").value.trim();
+        if(!codice){
+            message.textContent="Errore: Codice non inserito.";
+            return;
+        }
+        const modificaForm=document.getElementById("modifica-evento-form");
+        const message2=modificaForm.querySelector('p');
+        const salvaBtn=modificaForm.querySelector('input[type="submit"]');
+        message2.textContent="";
+        message.textContent="Ricerca in corso...";
+        salvaBtn.disabled=true;
+        modificaForm.style.display="none";
+        modificaForm.reset();
+        try{
+            const res=await fetch(`/api/get-evento/${encodeURIComponent(codice)}`);
+            //gestione reindirizzamenti
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            const result=await res.json();
+            if(res.ok && result.success){
+                message.textContent="Evento trovato!"
+                //popolamento del form di modifica
+                document.getElementById("update-codice-evento").value=result.dati.codice;
+                document.getElementById("update-link_evento-evento").value=result.dati.link_evento || "";
+                document.getElementById("update-link_fb-evento").value=result.dati.link_facebook || "";
+                document.getElementById("update-link_ig-evento").value=result.dati.link_instagram || "";
+                document.getElementById("update-titolo-evento").value=result.dati.titolo;
+                document.getElementById("update-data_inizio-evento").value=result.dati.data_inizio.split('T')[0];
+                document.getElementById("update-data_inizio-evento").classList.add('has-value');
+                if(result.dati.data_fine){
+                    document.getElementById("update-data_fine-evento").value=result.dati.data_fine.split('T')[0];
+                    document.getElementById("update-data_fine-evento").classList.add('has-value');
+                }else{
+                    document.getElementById("update-data_fine-evento").value="";
+                }
+                document.getElementById("update-descrizione-evento").value=result.dati.descrizione;
+                salvaBtn.disabled=false;
+                modificaForm.style.display="block";
+            }else{
+                message.textContent=result.message || "Errore durante la ricerca.";
+            }
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server."
+        }
+    });
+
+    //fetch di modifica eventi (MODIFICA)
+    document.getElementById("modifica-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form .querySelector('p');
+        //validazione client-side
+        const codice=document.getElementById("update-codice-evento").value.trim();
+        const titolo=document.getElementById("update-titolo-evento").value.trim();
+        const dataInizio=document.getElementById("update-data_inizio-evento").value.trim();
+        const descrizione=document.getElementById("update-descrizione-evento").value.trim();
+        if(!titolo || !dataInizio || !descrizione){
+            message.textContent="Errore: Titolo, data iniziale e descrizione sono campi obbligatori."
+            return;
+        }
+        const salvaBtn=form.querySelector('input[type="submit"]');
+        message.textContent="Aggiornamento del contenuto in corso...";
+        const dati={
+            codice: codice,
+            link_evento: document.getElementById("update-link_evento-evento").value.trim(),
+            link_facebook: document.getElementById("update-link_fb-evento").value.trim(),
+            link_instagram: document.getElementById("update-link_ig-evento").value.trim(),
+            titolo: titolo,
+            data_inizio: dataInizio,
+            data_fine: document.getElementById("update-data_fine-evento").value.trim(),
+            descrizione: descrizione
+        };
+        try{
+            const res=await fetch("/api/update-evento", {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(dati)
+            });
+            //gestione reindirizzamenti
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            const result=await res.json();
+            if(res.ok && result.success){
+                message.textContent=result.message;
+                form.reset();
+                salvaBtn.disabled=true;
+                const cercaForm=document.getElementById("cerca-evento-form");
+                cercaForm.querySelector('p').textContent="";
+                cercaForm.reset();
+            }else{
+                message.textContent=result.message || "Errore durante l'aggiornamento.";
             }
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";

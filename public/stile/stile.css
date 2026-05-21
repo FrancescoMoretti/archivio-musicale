@@ -394,6 +394,7 @@ footer .material-symbols-outlined{
         font-size: 1.10em;
         padding-right: 0.25em;
         white-space: nowrap;
+        cursor: text;
     }
 
     form .required{
@@ -483,6 +484,11 @@ footer .material-symbols-outlined{
         margin-top: -1em;
     }
 
+    .modifica-form{
+        display: none;
+        margin-top: 1em;
+    }
+
         /*inizio stile select*/
         #add-ruolo-utente:invalid{
             color: var(--placeholder);
@@ -506,12 +512,6 @@ footer .material-symbols-outlined{
         /*fine stile input type="date"*/
 
     /*fine stile form*/
-
-#modifica-edizione-form,
-#modifica-stampa-form{
-    display: none;
-    margin-top: 1em;
-}
 
 .area-riservata .element table{
     display: none;

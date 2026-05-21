@@ -94,7 +94,7 @@
         <form id="cancella-edizione-form" action="/api/delete-edizione" method="POST">
           <p><!--messaggio--></p>
           <div>
-            <label for="delete-collocazione-edizione">Collocazione: </label>
+            <label for="delete-collocazione-edizione" class="required">Collocazione: </label>
             <input type="text" name="collocazione" id="delete-collocazione-edizione" placeholder="A-001" maxlength="10" required>
           </div>
           <input type="submit" value="Elimina contenuto">
@@ -106,12 +106,12 @@
         <form id="cerca-edizione-form" action="/api/get-edizione/:edizione" method="GET">
           <p><!--messaggio--></p>
           <div>
-            <label for="search-collocazione-edizione">Collocazione: </label>
+            <label for="search-collocazione-edizione" class="required">Collocazione: </label>
             <input type="text" id="search-collocazione-edizione" placeholder="A-001" maxlength="10" required>
           </div>
           <input type="submit" value="Cerca contenuto">
         </form>
-        <form id="modifica-edizione-form" action="/api/update-edizione" method="POST">
+        <form id="modifica-edizione-form" class="modifica-form" action="/api/update-edizione" method="POST">
           <p><!--messaggio--></p>
           <!--input nascosto per avere la collocazione nei campi del form-->
           <input type="hidden" name="collocazione" id="update-collocazione-edizione" readonly>
@@ -188,7 +188,7 @@
         <form id="cancella-stampa-form" action="/api/delete-stampa" method="POST">
           <p><!--messaggio--></p>
           <div>
-            <label for="delete-collocazione-stampa">Collocazione: </label>
+            <label for="delete-collocazione-stampa" class="required">Collocazione: </label>
             <input type="text" name="collocazione" id="delete-collocazione-stampa" placeholder="B-001" maxlength="10" required>
           </div>
           <input type="submit" value="Elimina contenuto">
@@ -200,12 +200,12 @@
         <form id="cerca-stampa-form" action="/api/get-stampa/:stampa" method="GET">
           <p><!--messaggio--></p>
           <div>
-            <label for="search-collocazione-stampa">Collocazione: </label>
+            <label for="search-collocazione-stampa" class="required">Collocazione: </label>
             <input type="text" id="search-collocazione-stampa" placeholder="B-001" maxlength="10" required>
           </div>
           <input type="submit" value="Cerca contenuto">
         </form>
-        <form id="modifica-stampa-form" action="/api/update-stampa" method="POST">
+        <form id="modifica-stampa-form" class="modifica-form" action="/api/update-stampa" method="POST">
           <p><!--messaggio--></p>
           <!--input nascosto per avere la collocazione nei campi del form-->
           <input type="hidden" name="collocazione" id="update-collocazione-stampa" readonly>
@@ -288,9 +288,68 @@
       </div>
       <div class="element">
         <h3>Eliminazione Eventi: </h3>
+        <form id="cancella-evento-form" action="/api/delete-evento" method="POST">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="delete-codice-evento" class="required">Codice: </label>
+            <input type="text" name="codice" id="delete-codice-evento" placeholder="E-001" maxlength="10" required>
+          </div>
+          <input type="submit" value="Elimina evento">
+        </form>
       </div>
       <div class="element">
         <h3>Modifica Eventi: </h3>
+        <form id="cerca-evento-form" action="/api/get-evento/:evento" method="GET">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="search-codice-evento" class="required">Codice: </label>
+            <input type="text" name="codice" id="search-codice-evento" placeholder="E-001" maxlength="10" required>
+          </div>
+          <input type="submit" value="Cerca evento">
+        </form>
+        <form id="modifica-evento-form" class="modifica-form" action="/api/update-evento" method="POST">
+          <p><!--messaggio--></p>
+          <!--input nascosto per avere il codice nei campi del form-->
+          <input type="hidden" name="codice" id="update-codice-evento" readonly>
+          <div>
+            <label for="update-link_evento-evento">Link evento: </label>
+            <input type="url" name="link_evento" id="update-link_evento-evento" placeholder="link" maxlength="255">
+          </div>
+          <div>
+            <small>Link alla pagina dell'evento su un sito esterno.</small>
+          </div>
+          <div>
+            <label for="update-link_fb-evento">Link Facebook: </label>
+            <input type="url" name="link_facebook" id="update-link_fb-evento" placeholder="link" maxlength="255">
+          </div>
+          <div>
+            <small>Link al post Facebook dell'evento.</small>
+          </div>
+          <div>
+            <label for="update-link_ig-evento">Link Instagram: </label>
+            <input type="url" name="link_instagram" id="update-link_ig-evento" placeholder="link" maxlength="255">
+          </div>
+          <div>
+            <small>Link al post Instagram dell'evento.</small>
+          </div>
+          <div>
+            <label for="update-titolo-evento" class="required">Titolo: </label>
+            <input type="text" name="titolo" id="update-titolo-evento" placeholder="Titolo" maxlength="100" required>
+          </div>
+          <div>
+            <label for="update-data_inizio-evento" class="required">Data inizio: </label>
+            <input type="date" name="data_inizio" id="update-data_inizio-evento" min="2025-07-23" required>
+          </div>
+          <div>
+            <label for="update-data_fine-evento">Data fine: </label>
+            <input type="date" name="data_fine" id="update-data_fine-evento">
+          </div>
+          <div>
+            <label for="update-descrizione-evento" class="text-label required">Descrizione: </label>
+            <textarea name="descrizione" id="update-descrizione-evento" placeholder="Descrizione" required></textarea>
+          </div>
+          <input type="submit" value="Salva modifiche" disabled>
+        </form>
       </div>
     </div>
   </main>
