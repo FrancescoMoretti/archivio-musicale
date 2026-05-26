@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 console.error("Errore durante il logout.");
             }
         }catch(err){
-            console.error("Errore durante il logout: ", err);
+            console.error(err);
             //anche in caso di fallimento faccio il redirect
             window.location.href='/accedi';
         }

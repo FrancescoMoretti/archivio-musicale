@@ -36,7 +36,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 message.textContent=result.message || "Errore durante l'aggiornamento della password.";
             }
         }catch(err){
-            message.textContent="Errore di rete: impossibile raggiungere il server."
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            console.error(err);
         }
     });
 });

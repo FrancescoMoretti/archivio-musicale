@@ -11,6 +11,6 @@ document.addEventListener("DOMContentLoaded", async function(){
             message.textContent=result.message;
         }
     }catch(err){
-        console.error("Errore di rete: impossibile raggiungere il server.");
+        console.error(err);
     }
 });

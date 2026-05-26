@@ -41,7 +41,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 message.textContent=result.message || "Errore durante il login.";
             }
         }catch(err){
-            message.textContent="Errore di rete: impossibile raggiungere il server."
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            console.error(err);
         }
     });
 });
