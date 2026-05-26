@@ -1,10 +1,12 @@
+SET FOREIGN_KEY_CHECKS = 0;--disabilito controlli sulle chiavi esterne
 DROP TABLE IF EXISTS immagini_edizioni;
 DROP TABLE IF EXISTS edizioni;
 DROP TABLE IF EXISTS immagini_stampe;
 DROP TABLE IF EXISTS stampe;
-DROP TABLE IF EXISTS eventi;
 DROP TABLE IF EXISTS immagini_eventi;
+DROP TABLE IF EXISTS eventi;
 DROP TABLE IF EXISTS utenti;
+SET FOREIGN_KEY_CHECKS = 1;--riabilito i controlli sulle chiavi esterne
 
 CREATE TABLE utenti(
     id INT AUTO_INCREMENT PRIMARY KEY,

@@ -1,4 +1,4 @@
-let numeroArticoli=1;//numero di articoli che voglio mostrare per volta
+let numeroArticoli=4;//numero di articoli che voglio mostrare per volta
 let articoliMostrati=0;
 let left=true;//variabile per alternare foto a sinistra e a destra negli articoli con una sola immagine
 
@@ -25,9 +25,21 @@ document.addEventListener("DOMContentLoaded", async function(){
                 //aggiornamento contenti
                 result.eventi.forEach(evento => {
                     const article=document.createElement('article');
-                    let h3=`<h3>${evento.titolo}</h3>`;//titolo
-                    article.insertAdjacentHTML('beforeend', h3);
+                    const testata=document.createElement('div');//titolo + date
+                    testata.classList.add('testata');
+                    let h3=`<h3>${evento.titolo}</h3>`;
+                    testata.insertAdjacentHTML('beforeend', h3);
+                    let date=`<p class="date">${evento.data_inizio}`;//date dell'evento
+                    if(evento.data_fine){
+                        date+= ` - ${evento.data_fine}`;
+                    }
+                    date+=`</p>`;
+                    testata.insertAdjacentHTML('beforeend', date);
+                    article.appendChild(testata);
+                    const testo=document.createElement('div');//sezione testuale dell'articolo
+                    testo.classList.add('testo');
                     let p=`<p>${evento.descrizione}</p>`;//corpo dell'articolo
+                    testo.insertAdjacentHTML('beforeend', p);
                     let collegamenti=null;
                     //se c'è almeno un link=> creo div collegamenti
                     if(evento.link_evento || evento.link_facebook || evento.link_instagram){
@@ -57,10 +69,10 @@ document.addEventListener("DOMContentLoaded", async function(){
                             const img=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
                             if(left){
                                 article.insertAdjacentHTML('beforeend', img);
-                                article.insertAdjacentHTML('beforeend', p);
+                                article.appendChild(testo);
                                 left=false;
                             }else{
-                                article.insertAdjacentHTML('beforeend', p);
+                                article.appendChild(testo);
                                 article.insertAdjacentHTML('beforeend', img);
                                 left=true;
                             }
@@ -70,12 +82,12 @@ document.addEventListener("DOMContentLoaded", async function(){
                             const img1=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
                             const img2=`<img src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
                             article.insertAdjacentHTML('beforeend', img1);
-                            article.insertAdjacentHTML('beforeend', p);
+                            article.appendChild(testo);
                             article.insertAdjacentHTML('beforeend', img2);
                         break;
                         default:
                             //non ci sono immagini
-                            article.insertAdjacentHTML('beforeend', p);
+                            article.appendChild(testo);
                         break;
                     }
                     if(collegamenti){
@@ -100,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                 }
             }
         }catch(err){
-            message.textContent="Errore di rete: impossible raggiungere il server.";
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
             if(altriBtn){
                 altriBtn.style.display="none";
             }

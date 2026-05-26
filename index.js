@@ -1028,6 +1028,12 @@ app.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin'
             message: "Campi obbligatori mancanti (codice, titolo, descrizione e data di inizio)."
         });
     }
+    if(files.length>2){
+        return res.status(400).json({
+            success: false,
+            message: "Puoi caricare al massimo 2 immagini per evento."
+        });
+    }
     //setto a null eventuali valori facoltativi vuoti
     if(!link_evento || link_evento.trim()===""){
         link_evento=null;
@@ -1150,7 +1156,7 @@ app.get("/api/show-eventi", async (req, res)=>{
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
     //preparazione query
     //query per prendere gli eventi da mostrare
-    const queryEventi="SELECT id, codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine FROM eventi ORDER BY data_inizio DESC LIMIT ? OFFSET ?";
+    const queryEventi="SELECT id, codice, link_evento, link_facebook, link_instagram, titolo, descrizione, DATE_FORMAT(data_inizio, '%d/%m/%Y') AS data_inizio, DATE_FORMAT(data_fine, '%d/%m/%Y') AS data_fine FROM eventi ORDER BY eventi.data_inizio DESC LIMIT ? OFFSET ?";
     //query per sapere se ci sono altri eventi
     const queryCount="SELECT COUNT(*) AS totale FROM eventi";
     const connection=await pool.getConnection();//uso connection perché devo fare 3 query
@@ -1203,7 +1209,7 @@ app.get("/api/show-eventi", async (req, res)=>{
 app.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {codice}=req.params;
     try{
-        const [rows]=await pool.query("SELECT * FROM eventi WHERE codice=?", [codice]);
+        const [rows]=await pool.query("SELECT id, codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine FROM eventi WHERE codice=?", [codice]);
         if(rows.length===0){
             return res.status(404).json({
                 success: false,
@@ -1225,7 +1231,7 @@ app.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 
 
 //endpoint per aggioramento evento (MODIFICA) (CONTENUTI)
 app.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
+    let {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     if(!titolo || !descrizione || !data_inizio){
         return res.status(400).json({
@@ -1267,6 +1273,11 @@ app.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', 'adm
 });
 
 //fine endpoint per gestione CONTENUTI
+
+//favicon
+app.get("/favicon.ico", (req, res)=>{
+    res.sendFile(__dirname+"/favicon.ico");
+});
 
 //404
 app.use((req, res)=>{

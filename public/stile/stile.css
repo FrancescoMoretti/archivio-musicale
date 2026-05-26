@@ -702,12 +702,21 @@ footer .material-symbols-outlined{
     background-color: var(--carta3);
 }
 
-#eventi-sec article h3{
+#eventi-sec article .testata{
     grid-column: span 4;
     margin: 0;
 }
 
-#eventi-sec article p{
+#eventi-sec article .testata h3{
+    margin-bottom: 0.5em;
+}
+
+#eventi-sec article .date{
+    text-align: center;
+    margin-top: 0;
+}
+
+#eventi-sec article .testo{
     grid-column: span 4;
 }
 
@@ -739,13 +748,13 @@ footer .material-symbols-outlined{
 }
 
     /*inizio articoli 1 immagine*/
-    #eventi-sec .one-img-article p{
+    #eventi-sec .one-img-article .testo{
         grid-column: span 3;
     }
     /*fine articoli 1 immagine*/
 
     /*inizio articoli 2 immagini*/
-    #eventi-sec .two-img-article p{
+    #eventi-sec .two-img-article .testo{
         grid-column: span 2;
     }
     /*fine articoli 2 immagini*/

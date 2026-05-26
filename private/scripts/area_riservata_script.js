@@ -393,6 +393,11 @@ document.addEventListener("DOMContentLoaded", function () {
             message.textContent="Errore: Codice, titolo, data iniziale e descrizione sono obbligatori.";
             return;
         }
+        const immagini=form.elements["immagini"].files;
+        if(immagini.length>2){
+            message.textContent="Errore: Puoi caricare al massimo 2 immagini per evento.";
+            return;
+        }
         //preparazione dati
         const formData= new FormData(form);
         try{
@@ -486,7 +491,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             const result=await res.json();
             if(res.ok && result.success){
-                message.textContent="Evento trovato!"
+                message.textContent="Evento trovato!";
                 //popolamento del form di modifica
                 document.getElementById("update-codice-evento").value=result.dati.codice;
                 document.getElementById("update-link_evento-evento").value=result.dati.link_evento || "";
@@ -501,6 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }else{
                     document.getElementById("update-data_fine-evento").value="";
                 }
+                document.getElementById("update-data_fine-evento").min=result.dati.data_inizio.split('T')[0];//imposto data minima come la data di inizio
                 document.getElementById("update-descrizione-evento").value=result.dati.descrizione;
                 salvaBtn.disabled=false;
                 modificaForm.style.display="block";
@@ -567,13 +573,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     //data_inizio<data_fine
-    document.getElementById("add-data_inizio-evento").addEventListener("change", (event)=>{
-        const dataInizio=event.target.value;
-        const inputDataFine=document.getElementById("add-data_fine-evento");
-        inputDataFine.min=dataInizio;//setto l'attributo min per la data di fine alla data di inizio
-        if(inputDataFine.value && inputDataFine.value<dataInizio){
-            inputDataFine.value="";
+    function integritaDate(event){
+        const inputInizio=event.target;//input type="date"
+        const dataInizio=inputInizio.value;
+        //risalgo al prefisso dell'id input
+        let prefisso="";
+        if(inputInizio.id.startsWith("add-")){
+            prefisso="add";
+        }else if(inputInizio.id.startsWith("update-")){
+            prefisso="update"
         }
+        const inputFine=document.getElementById(`${prefisso}-data_fine-evento`);
+        inputFine.min=dataInizio;
+        //se data inizio diventa antecedente alla data finale=>svuoto la data finale
+        if(inputFine.value && inputFine.value<dataInizio){
+            inputFine.value="";
+            inputFine.classList.remove("has-value");
+        }
+    };
+
+    ["add-data_inizio-evento", "update-data_inizio-evento"].forEach(id=>{
+        document.getElementById(id).addEventListener("change", integritaDate);
     });
 
     //stile input type="date"
