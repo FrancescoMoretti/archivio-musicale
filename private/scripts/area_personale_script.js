@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function(){
             const result=await res.json();
             if(res.ok && result.success){
                 alert(result.message);//avviso che vene richiesto di rifare il login
-                window.location.href("/accedi");
+                window.location.href="/accedi";
             }else{
                 message.textContent=result.message || "Errore durante l'aggiornamento della password.";
             }
