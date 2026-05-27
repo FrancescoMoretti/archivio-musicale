@@ -366,6 +366,10 @@ footer .material-symbols-outlined{
     padding: 0 1.5em 1em 1.5em;
 }
 
+.area-riservata #utenti-grid .element:nth-of-type(3){
+    grid-column: span 2;
+}
+
 .area-riservata #monitoraggio-grid{
     grid-template-columns: repeat(1, 1fr);
     width: 60%;
