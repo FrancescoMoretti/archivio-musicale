@@ -7,6 +7,16 @@ const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
 
 const pool = require('./src/db');
+//keepalive per non far andare il db in timeout
+setInterval(async ()=>{
+    try{
+        await pool.query("SElECT 1");
+        console.log("Ping di keepalive inviato al db.");
+    }catch(err){
+        console.error("Errore nel keepalive: ", err);
+    }
+}, 12*60*60*1000);//scatta ogni 12 ore
+
 const { upload, cloudinary } = require('./src/cloudinaryConfig');
 
 const app = express();
