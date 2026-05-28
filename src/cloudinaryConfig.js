@@ -12,4 +12,21 @@ cloudinary.config({
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-module.exports = { cloudinary, upload };
+//funzione di upload su cloudinary
+const uploadToCloudinary = (buffer, folder) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: `archivio_musicale/${folder}` },
+            (error, result) => {
+                if (error) reject(error);
+                else resolve({
+                    imageUrl: result.secure_url,
+                    publicId: result.public_id
+                });
+            }
+        );
+        stream.end(buffer);
+    });
+};
+
+module.exports = { cloudinary, upload, uploadToCloudinary};
