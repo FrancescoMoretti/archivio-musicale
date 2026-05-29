@@ -23,21 +23,21 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         document.title=`${contenuto.titolo} - ${contenuto.autore} | Archivio musicale Luca Moretti`;
         //popolazione della scheda dell'articolo
         titolo.textContent=contenuto.titolo;
-        let stringaHTML = `
+        let stringaHTML=`
             <ul>
                 <li><span>Collocazione</span>: ${contenuto.collocazione}</li>
                 <li><span>Autore</span>: ${contenuto.autore}</li>
-                <li><span>Data</span>: ${contenuto.data_str || "/"}</li>
         `;
-        if(contenuto.stampa){
-            stringaHTML+= `
-                    <li><span>Stampa</span>: ${contenuto.stampa}</li>
-            `;
+        if(contenuto.data_str){
+            stringaHTML+=`<li><span>Data</span>: ${contenuto.data_str}</li>`;
         }
-        stringaHTML+=`                
-                <li><span>Dimensioni</span>: ${contenuto.dimensioni || "/"}</li>
-            </ul>
-        `;
+        if(contenuto.stampa){
+            stringaHTML+=`<li><span>Stampa</span>: ${contenuto.stampa}</li>`;
+        }
+        if(contenuto.dimensioni){
+            stringaHTML+=`<li><span>Dimensioni</span>: ${contenuto.dimensioni}</li>`;
+        }
+        stringaHTML+=`</ul>`;
         scheda.innerHTML = stringaHTML;
         //gestione delle immagini
         const n_immagini = listaImmagini.length;

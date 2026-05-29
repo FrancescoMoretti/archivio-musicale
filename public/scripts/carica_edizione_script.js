@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
     const params = new URLSearchParams(window.location.search);
     const collocazione = params.get("collocazione");
-    const titolo=document.getElementById("titolo");
+    //const titolo=document.getElementById("titolo");
     const scheda = document.getElementById("scheda");
     const immaginiDiv = document.getElementById("immagini");
     //collocazione non specificata o non valida
@@ -22,24 +22,30 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         //cambio il titolo della pagina per SEO
         document.title=`${contenuto.titolo} - ${contenuto.autore} | Archivio musicale Luca Moretti`;
         //popolazione della scheda dell'articolo
-        titolo.textContent=contenuto.titolo;
-        let stringaHTML = `
+        let stringaHTML=`
             <ul>
+                <li class="titolo">${contenuto.titolo}</li>
                 <li><span>Collocazione</span>: ${contenuto.collocazione}</li>
         `;
-        if (contenuto.link_rism) {
-            stringaHTML += `
+        if(contenuto.link_rism){
+            stringaHTML+=`
                     <li><span><a href="${contenuto.link_rism}" target="_blank">Link RISM</a></span></li>
             `;
         }
-        stringaHTML += `
-                <li><span>Autore</span>: ${contenuto.autore}</li>
-                <li><span>Data</span>: ${contenuto.data_str || "/"}</li>
-                <li><span>Editore</span>: ${contenuto.editore || "/"}</li>
-                <li><span>Descrizione</span>: ${contenuto.descrizione || "/"}</li>
-                <li><span>Note</span>: ${contenuto.note || "/"}</li>
-            </ul>
-        `;
+        stringaHTML+=`<li><span>Autore</span>: ${contenuto.autore}</li>`
+        if(contenuto.data_str){
+            stringaHTML+=`<li><span>Data</span>: ${contenuto.data_str}</li>`;
+        }
+        if(contenuto.editore){
+            stringaHTML+=`<li><span>Editore</span>: ${contenuto.editore}</li>`;
+        }
+        if(contenuto.descrizione){
+            stringaHTML+=`<li><span>Descrizione</span>: ${contenuto.descrizione}</li>`;
+        }
+        if(contenuto.note){
+            stringaHTML+=`<li><span>Note</span>: ${contenuto.note}</li>`;
+        }
+        stringaHTML+=`</ul>`;
         scheda.innerHTML = stringaHTML;
         //gestione delle immagini
         const n_immagini = listaImmagini.length;

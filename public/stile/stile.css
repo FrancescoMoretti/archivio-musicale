@@ -629,6 +629,11 @@ footer .material-symbols-outlined{
     margin-bottom: 0.75em;
 }
 
+#scheda .titolo{
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
 #scheda span{
     font-weight: bold;
 }
