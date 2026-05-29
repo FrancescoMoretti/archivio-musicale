@@ -4,10 +4,11 @@ document.addEventListener("DOMContentLoaded", function(){
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
-        const email=document.getElementById("email").value;
+        //trim() solo per email
+        const email=document.getElementById("email").value.trim();
         const password=document.getElementById("password").value;
         //validazione client-side
-        if(!email || !password){
+        if(!email || !password || !String(password).trim()){
             message.textContent="Email o password non inseriti.";
             return;
         }

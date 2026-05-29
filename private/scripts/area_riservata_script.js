@@ -64,11 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
     //fetch di cancellazione edizioni (ELIMINAZIONE)
     document.getElementById("cancella-edizione-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const form = event.target;
-        const message = form.querySelector('p');
+        const form=event.target;
+        const message=form.querySelector('p');
         //validazione client-side
-        const collocazione = document.getElementById("delete-collocazione-edizione").value.trim();
-        if (!collocazione) {
+        const collocazione=document.getElementById("delete-collocazione-edizione").value.trim();
+        if (!collocazione){
             message.textContent = "Errore: Collocazione non inserita."
             return;
         }
@@ -249,9 +249,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cancella-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
-        const collocazione=document.getElementById("delete-collocazione-stampa").value;
         const message=form.querySelector('p');
         //validazione client-side
+        const collocazione=document.getElementById("delete-collocazione-stampa").value.trim();
         if(!collocazione){
             message.textContent="Errore: Collocazione non inserita."
             return;
@@ -290,9 +290,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("cerca-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const cercaForm=event.target;
-        const message = cercaForm.querySelector('p');
+        const message=cercaForm.querySelector('p');
         //validazione client-side
-        const collocazione = document.getElementById("search-collocazione-stampa").value.trim();
+        const collocazione=document.getElementById("search-collocazione-stampa").value.trim();
         if(!collocazione){
             message.textContent="Errore: Collocazione non inserita";
             return;
@@ -390,7 +390,6 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
-        message.textContent="Caricamento in corso...";
         //validazione client-side
         const codice=form.elements["codice"].value.trim();
         const titolo=form.elements["titolo"].value.trim();
@@ -405,6 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
             message.textContent="Errore: Puoi caricare al massimo 2 immagini per evento.";
             return;
         }
+        message.textContent="Caricamento in corso...";
         //preparazione dati
         const formData= new FormData(form);
         try{
@@ -431,13 +431,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    //fetch di cancellazione eventi (ElIMINAZIONE)
+    //fetch di cancellazione eventi (ELIMINAZIONE)
     document.getElementById("cancella-evento-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
-        const codice=document.getElementById("delete-codice-evento").value;
         const message=form.querySelector('p');
         //validazione client-side
+        const codice=document.getElementById("delete-codice-evento").value.trim();
         if(!codice){
             message.textContent="Errore: Codice non inserito."
             return;

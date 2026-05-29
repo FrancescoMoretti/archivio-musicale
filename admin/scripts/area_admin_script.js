@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function(){
         const nome=form.elements["nome"].value.trim();
         const ruolo=form.elements["ruolo"].value.trim();
         const email=form.elements["email"].value.trim();
-        const password=form.elements["password"].value.trim();
-        if(!nome || !ruolo || !email || !password){
+        const password=form.elements["password"].value;
+        if(!nome || !ruolo || !email || !password || !String(password).trim()){
             message.textContent="Tutti i campi devono essere riempiti."
             return;
         }
