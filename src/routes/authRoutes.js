@@ -43,7 +43,8 @@ router.get("/accedi", (req, res)=>{
 //endpoint per login
 router.post("/api/login", async (req, res)=>{
     const {email, password} = req.body;
-    if(!email || !password){
+    //validazione server-side
+    if(!email || !String(email).trim() || !password || !String(password).trim()){
         return res.status(400).json({
             success: false,
             message: "Email o password mancanti."
@@ -135,8 +136,8 @@ router.get("/api/me", autenticaToken, (req, res)=>{
 router.post("/api/cambia-password", autenticaToken, async (req, res)=>{
     const {oldPsw, newPsw, confirmPsw}=req.body;
     const userId=req.utente.id;//estratto dal JWT
-    //validazione dati
-    if(!oldPsw || !newPsw || !confirmPsw){
+    //validazione server-side
+    if(!oldPsw || !String(oldPsw).trim() || !newPsw || !String(newPsw).trim() || !confirmPsw || !String(confirmPsw).trim()){
         return res.status(400).json({
             success: false,
             message: "Inserisci la vecchia password, la nuova password e ripetere la nuova password."
@@ -202,8 +203,8 @@ router.post("/api/add-utente", autenticaToken, autorizzaRuoli('superadmin', 'adm
     const {email, password, nome, ruolo} = req.body;//dati del nuovo utente, presi dalla richiesta
     const userRuolo=req.utente.ruolo;//ruolo di chi invia la richiesta, preso dal token
     const userId=req.utente.id;//id di chi invia la richiesta, preso dal token
-    //validazione dei dati
-    if(!email || !password || !nome || !ruolo){
+    //validazione server-side
+    if(!email || !String(email).trim() || !password || !String(password).trim() || !nome || !String(nome).trim() || !ruolo || !String(ruolo).trim()){
         return res.status(400).json({
             success: false,
             message: "Tutti i campi devono essere riempiti."
@@ -289,7 +290,8 @@ router.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', '
     const ruoliSuperadmin=['admin', 'editor'];//ruoli eliminabili da superadmin
     const ruoliAdmin=['editor'];//ruoli eliminabili da admin
     let cancellazionePermessa=false;
-    if(!id){
+    //validazione server-side
+    if(!id || !String(id).trim()){
         return res.status(400).json({
             success: false,
             message: "Identificativo non valido."
@@ -354,45 +356,6 @@ router.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', '
         return res.status(500).json({
             success: false,
             message: "Errore interno durante la cancellazione dell'utente."
-        });
-    }
-});
-
-//endpoint per monitoraggio contenuti
-router.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
-    const {filtro}=req.query;
-    //gestione filtro
-    if(!filtro || !filtro.trim()){
-        return res.status(400).json({
-            success: false,
-            message: "Cerca un contenuto o un utente."
-        });
-    }
-    const filtroLike=`%${filtro}%`;
-    const query=`SELECT r.collocazione, r.titolo, r.autore, r.created_at, c.email AS created_by, r.updated_at, m.email AS updated_by FROM(
-        SELECT collocazione, autore, titolo, created_at, created_by, updated_at, updated_by FROM edizioni
-        UNION ALL
-        SELECT collocazione, autore, titolo, created_at, created_by, updated_at, updated_by FROM stampe
-    ) AS r LEFT JOIN utenti c ON r.created_by=c.id LEFT JOIN utenti m ON r.updated_by=m.id
-    WHERE r.collocazione LIKE ? OR r.titolo LIKE ? OR r.autore LIKE ? OR c.email LIKE ? OR m.email LIKE ?
-    ORDER BY r.updated_at DESC`;
-    try{
-        const [rows]=await pool.query(query, [filtroLike, filtroLike, filtroLike, filtroLike, filtroLike]);
-        if(rows.length===0){
-            return res.status(404).json({
-                success: false,
-                message: "Nessun contenuto o utente trovato."
-            });
-        }
-        return res.json({
-            success: true,
-            contenuti: rows
-        });
-    }catch(err){
-        console.error("Errore nell'endpoint monitor-contenuti: ", err);
-        return res.status(500).json({
-            success: false,
-            message: "Errore interno durante la ricerca dei contenuti e degli utenti."
         });
     }
 });

@@ -5,25 +5,26 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 
-//endpoint per inserimento stampa (CONTENUTI)
+//endpoint per inserimento stampa
 router.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     let {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
-    if(!collocazione || !autore || !titolo){
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim() || !autore || !String(autore).trim() || !titolo || !String(titolo).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!data_str || data_str.trim()===""){
+    if(!data_str || !String(data_str).trim()){
         data_str=null;
     }
-    if(!stampa || stampa.trim()===""){
+    if(!stampa || !String(stampa).trim()){
         stampa=null;
     }
-    if(!dimensioni || dimensioni.trim()===""){
+    if(!dimensioni || !String(dimensioni).trim()){
         dimensioni=null;
     }
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
@@ -76,10 +77,11 @@ router.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
     }
 });
 
-//endpoint per cancellazione stampa (CONTENUTI)
+//endpoint per cancellazione stampa
 router.post("/api/delete-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.body;
-    if(!collocazione){
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
         return res.status(400).json({
             success: false,
             message: "Collocazione non valida."
@@ -119,7 +121,7 @@ router.post("/api/delete-stampa", autenticaToken, autorizzaRuoli('superadmin', '
     }
 });
 
-//endpoint per lista stampe (CONTENUTI)
+//endpoint per lista stampe
 router.get("/api/show-stampe", async (req, res)=>{
     const {limit, offset, filtro}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
@@ -161,9 +163,16 @@ router.get("/api/show-stampe", async (req, res)=>{
     }
 });
 
-//endpoint per lettura stampa (CONTENUTI)
+//endpoint per lettura stampa
 router.get("/api/stampa/:collocazione", async (req, res) => {
     const collocazione = req.params.collocazione;
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
     const queryContenuti = "SELECT * FROM stampe WHERE collocazione=?";
     const queryImmagini = "SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
     try {
@@ -194,9 +203,16 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
     }
 });
 
-//endpoint per recupero dati stampa (MODIFICA) (CONTENUTI)
+//endpoint per recupero dati stampa
 router.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
-    const { collocazione } = req.params;
+    const {collocazione}=req.params;
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
     try {
         const [rows] = await pool.query("SELECT * FROM stampe WHERE collocazione=?", [collocazione]);
         if (rows.length === 0) {
@@ -218,15 +234,26 @@ router.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('supe
     }
 });
 
-//endpoint per aggiornamento stampa (MODIFICA) (CONTENUTI)
+//endpoint per aggiornamento stampa
 router.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
     const { collocazione, autore, titolo, data_str, stampa, dimensioni } = req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
-    if (!autore || !titolo) {
+    //validazione server-side
+    if (!autore || !String(autore).trim() || !titolo || !String(titolo).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
+    }
+    //setto a null eventuali valori facoltativi vuoti
+    if(!data_str || !String(data_str).trim()){
+        data_str=null;
+    }
+    if(!stampa || !String(stampa).trim()){
+        stampa=null;
+    }
+    if(!dimensioni || !String(dimensioni).trim()){
+        dimensioni=null;
     }
     const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=?, updated_by=? WHERE collocazione=?";
     try {

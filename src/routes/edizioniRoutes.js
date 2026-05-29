@@ -5,38 +5,39 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 
-//endpoint per inserimento edizione (CONTENUTI)
-router.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res) => {
-    let { collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note } = req.body;
+//endpoint per inserimento edizione
+router.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
+    let {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
-    const files = req.files;//immagini
-    if (!collocazione || !titolo || !autore) {
+    const files=req.files;//immagini
+    //validazione server-side
+    if (!collocazione || !String(collocazione).trim() || !titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });//400: richiesta mal formata
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!link_rism || link_rism.trim()===""){
+    if(!link_rism || !String(link_rism).trim()){
         link_rism=null;
     }
-    if(!data_str || data_str.trim()===""){
+    if(!data_str || !String(data_str).trim()){
         data_str=null;
     }
-    if(!editore || editore.trim()===""){
+    if(!editore || !String(editore).trim()){
         editore=null;
     }
-    if(!descrizione || descrizione.trim()===""){
+    if(!descrizione || !String(descrizione).trim()){
         descrizione=null;
     }
-    if(!note || note.trim()===""){
+    if(!note || !String(note).trim()){
         note=null;
     }
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
-    const queryEdizione = `INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const queryImmagine = `INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
-    const connection = await pool.getConnection();
+    const queryEdizione=`INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const queryImmagine=`INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
+    const connection=await pool.getConnection();
     try {
         await connection.beginTransaction();
         const [result] = await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, userId]);
@@ -78,10 +79,11 @@ router.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
     }
 });
 
-//endpoint per cancellazione edizione (CONTENUTI)
+//endpoint per cancellazione edizione
 router.post("/api/delete-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.body;
-    if(!collocazione){
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
         return res.status(400).json({
             success: false,
             message: "Collocazione non valida."
@@ -121,11 +123,11 @@ router.post("/api/delete-edizione", autenticaToken, autorizzaRuoli('superadmin',
     }
 });
 
-//endpoint per lista edizioni (CONTENUTI)
-router.get("/api/show-edizioni", async (req, res) => {
-    const { limit, offset, filtro } = req.query;
-    const limite = parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
-    const inizio = parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
+//endpoint per lista edizioni
+router.get("/api/show-edizioni", async (req, res)=>{
+    const {limit, offset, filtro}=req.query;
+    const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
+    const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
     //query per contare le righe che avrà la tabella
     let queryTotali = "SELECT COUNT(*) AS totali FROM edizioni e";
     //query per estrarre contenuti e url dell'immagine, uso left join per estrarre anche edizioni senza immagini
@@ -163,15 +165,22 @@ router.get("/api/show-edizioni", async (req, res) => {
     }
 });
 
-//endpoint per lettura edizione (CONTENUTI)
-router.get("/api/edizione/:collocazione", async (req, res) => {
-    const collocazione = req.params.collocazione;
-    const queryContenuti = "SELECT * FROM edizioni WHERE collocazione=?";
-    const queryImmagini = "SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
+//endpoint per lettura edizione
+router.get("/api/edizione/:collocazione", async (req, res)=>{
+    const collocazione=req.params.collocazione;
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
+    const queryContenuti="SELECT * FROM edizioni WHERE collocazione=?";
+    const queryImmagini="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
     try {
         const [edizioneRisultato] = await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
-        if (edizioneRisultato.length === 0) {
+        if (edizioneRisultato.length===0) {
             return res.status(404).json({
                 success: false,
                 message: "Edizione/Manoscritto non trovato."
@@ -196,9 +205,16 @@ router.get("/api/edizione/:collocazione", async (req, res) => {
     }
 });
 
-//endpoint per recupero dati edizione (MODIFICA) (CONTENUTI)
+//endpoint per recupero dati edizione
 router.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const { collocazione }=req.params;
+    const {collocazione}=req.params;
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
     try{
         const [rows]=await pool.query("SELECT * FROM edizioni WHERE collocazione=?", [collocazione]);
         if(rows.length===0){
@@ -220,15 +236,32 @@ router.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('su
     }
 });
 
-//endpoint per aggiornamento edizione (MODIFICA) (CONTENUTI)
+//endpoint per aggiornamento edizione
 router.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
+    let {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
-    if (!titolo || !autore) {
+    //validazione server-side
+    if (!titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
+    }
+    //setto a null eventuali valori facoltativi vuoti
+    if(!link_rism || !String(link_rism).trim()){
+        link_rism=null;
+    }
+    if(!data_str || !String(data_str).trim()){
+        data_str=null;
+    }
+    if(!editore || !String(editore).trim()){
+        editore=null;
+    }
+    if(!descrizione || !String(descrizione).trim()){
+        descrizione=null;
+    }
+    if(!note || !String(note).trim()){
+        note=null;
     }
     const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=?, updated_by=? WHERE collocazione=?";
     try{

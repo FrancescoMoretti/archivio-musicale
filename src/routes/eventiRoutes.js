@@ -5,34 +5,35 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 
-//endpoint per inserimento evento (CONTENUTO)
+//endpoint per inserimento evento
 router.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     let {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
-    if(!codice || !titolo || !descrizione || !data_inizio){
+    //validazione server-side
+    if(!codice || !String(codice).trim() || !titolo || !String(titolo).trim() || !descrizione || !String(descrizione).trim() || !data_inizio || !String(data_inizio).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (codice, titolo, descrizione e data di inizio)."
         });
     }
-    if(files.length>2){
+    if(files || files.length>2){
         return res.status(400).json({
             success: false,
             message: "Puoi caricare al massimo 2 immagini per evento."
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!link_evento || link_evento.trim()===""){
+    if(!link_evento || !String(link_evento).trim()){
         link_evento=null;
     }
-    if(!link_facebook || link_facebook.trim()===""){
+    if(!link_facebook || !String(link_facebook).trim()){
         link_facebook=null;
     }
-    if(!link_instagram || link_instagram.trim()===""){
+    if(!link_instagram || !String(link_instagram).trim()){
         link_instagram=null;
     }
-    if(!data_fine || data_fine.trim()===""){
+    if(!data_fine || !String(data_fine).trim()){
         data_fine=null;
     }
     //controllo data_finale>data_iniziale
@@ -94,10 +95,11 @@ router.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'adm
     }
 });
 
-//endpoint per cancellazione evento (CONTENUTO)
+//endpoint per cancellazione evento
 router.post("/api/delete-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {codice}=req.body;
-    if(!codice){
+    //validazione server-side
+    if(!codice || !String(codice).trim()){
         return res.status(400).json({
             success: false,
             message: "Codice non valido."
@@ -137,7 +139,7 @@ router.post("/api/delete-evento", autenticaToken, autorizzaRuoli('superadmin', '
     }
 });
 
-//endpoint per visualizzare eventi (CONTENUTO)
+//endpoint per visualizzare eventi
 router.get("/api/show-eventi", async (req, res)=>{
     const {limit, offset}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
@@ -193,9 +195,16 @@ router.get("/api/show-eventi", async (req, res)=>{
     }
 });
 
-//endpoint per recupero dati evento (MODIFICA) (CONTENUTI)
+//endpoint per recupero dati evento
 router.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {codice}=req.params;
+    //validazione server-side
+    if(!codice || !String(codice).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Codice non valido."
+        });
+    }
     try{
         const [rows]=await pool.query("SELECT id, codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine FROM eventi WHERE codice=?", [codice]);
         if(rows.length===0){
@@ -217,18 +226,19 @@ router.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin
     }
 });
 
-//endpoint per aggioramento evento (MODIFICA) (CONTENUTI)
+//endpoint per aggioramento evento
 router.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     let {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
-    if(!titolo || !descrizione || !data_inizio){
+    //validazione server-side
+    if(!titolo || !String(titolo).trim() || !descrizione || !String(descrizione).trim() || !data_inizio || !String(data_inizio).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (titolo, descrizione e data di inizio)."
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!data_fine || data_fine.trim()===""){
+    if(!data_fine || !String(data_fine).trim()){
         data_fine=null;
     }
     //controllo data_finale>data_iniziale

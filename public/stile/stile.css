@@ -370,10 +370,8 @@ footer .material-symbols-outlined{
     grid-column: span 2;
 }
 
-.area-riservata #monitoraggio-grid{
-    grid-template-columns: repeat(1, 1fr);
-    width: 60%;
-    margin: 1em auto;
+.area-riservata #monitoraggio-grid .element{
+    grid-column: span 2;
 }
 
 .area-riservata #monitoraggio-grid #monitoraggio-form div{

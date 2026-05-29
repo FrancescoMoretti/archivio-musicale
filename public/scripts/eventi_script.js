@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             const result=await res.json();
             if(res.ok && result.success){
                 //aggiornamento contenti
-                result.eventi.forEach(evento => {
+                result.eventi.forEach(evento=>{
                     const article=document.createElement('article');
                     const testata=document.createElement('div');//titolo + date
                     testata.classList.add('testata');
