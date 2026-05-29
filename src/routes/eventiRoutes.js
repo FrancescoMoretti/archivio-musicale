@@ -17,7 +17,7 @@ router.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'adm
             message: "Campi obbligatori mancanti (codice, titolo, descrizione e data di inizio)."
         });
     }
-    if(files || files.length>2){
+    if(files && files.length>2){
         return res.status(400).json({
             success: false,
             message: "Puoi caricare al massimo 2 immagini per evento."
