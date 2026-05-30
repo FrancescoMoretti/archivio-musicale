@@ -27,11 +27,11 @@ document.addEventListener("DOMContentLoaded", async function(){
                     const article=document.createElement('article');
                     const testata=document.createElement('div');//titolo + date
                     testata.classList.add('testata');
-                    let h3=`<h3>${evento.titolo}</h3>`;
+                    let h3=`<h3>${evento.titolo} (${evento.codice})</h3>`;
                     testata.insertAdjacentHTML('beforeend', h3);
                     let date=`<p class="date">${evento.data_inizio}`;//date dell'evento
                     if(evento.data_fine){
-                        date+= ` - ${evento.data_fine}`;
+                        date+=` - ${evento.data_fine}`;
                     }
                     date+=`</p>`;
                     testata.insertAdjacentHTML('beforeend', date);
@@ -90,6 +90,7 @@ document.addEventListener("DOMContentLoaded", async function(){
                             article.appendChild(testo);
                         break;
                     }
+                    //se l'ho creata=>appendo sezione collegamenti
                     if(collegamenti){
                         article.appendChild(collegamenti);
                     }
