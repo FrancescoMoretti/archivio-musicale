@@ -173,7 +173,7 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
             message: "Collocazione non valida."
         });
     }
-    const queryContenuti = "SELECT * FROM stampe WHERE collocazione=?";
+    const queryContenuti = "SELECT id, collocazione, titolo, autore, data_str, stampa, dimensioni FROM stampe WHERE collocazione=?";
     const queryImmagini = "SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
     try {
         const [stampaRisultato] = await pool.query(queryContenuti, [collocazione]);
@@ -214,7 +214,7 @@ router.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('supe
         });
     }
     try {
-        const [rows] = await pool.query("SELECT * FROM stampe WHERE collocazione=?", [collocazione]);
+        const [rows] = await pool.query("SELECT collocazione, autore, titolo, data_str, stampa, dimensioni FROM stampe WHERE collocazione=?", [collocazione]);
         if (rows.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -236,7 +236,7 @@ router.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('supe
 
 //endpoint per aggiornamento stampa
 router.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
-    const { collocazione, autore, titolo, data_str, stampa, dimensioni } = req.body;
+    let {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     if (!autore || !String(autore).trim() || !titolo || !String(titolo).trim()) {
@@ -257,8 +257,8 @@ router.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', '
     }
     const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=?, updated_by=? WHERE collocazione=?";
     try {
-        const [result] = await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, userId, collocazione]);
-        if (result.affectedRows === 0) {
+        const [result]=await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, userId, collocazione]);
+        if (result.affectedRows===0){
             return res.status(404).json({
                 success: false,
                 message: "Stampa/Foto non trovata."

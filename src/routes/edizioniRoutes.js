@@ -175,10 +175,10 @@ router.get("/api/edizione/:collocazione", async (req, res)=>{
             message: "Collocazione non valida."
         });
     }
-    const queryContenuti="SELECT * FROM edizioni WHERE collocazione=?";
+    const queryContenuti="SELECT id, collocazione, titolo, link_rism, autore, data_str, editore, descrizione, note FROM edizioni WHERE collocazione=?";
     const queryImmagini="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
     try {
-        const [edizioneRisultato] = await pool.query(queryContenuti, [collocazione]);
+        const [edizioneRisultato]=await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
         if (edizioneRisultato.length===0) {
             return res.status(404).json({
@@ -186,17 +186,17 @@ router.get("/api/edizione/:collocazione", async (req, res)=>{
                 message: "Edizione/Manoscritto non trovato."
             });
         }
-        const content = edizioneRisultato[0];
+        const content=edizioneRisultato[0];
         //recupero le immagini della risorsa
-        const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
-        const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
+        const [immaginiRisultato]=await pool.query(queryImmagini, [content.id]);
+        const listaUrlImmagini=immaginiRisultato.map(riga=>riga.url_immagine);
         return res.json({
             success: true,
             content: content,
             immagini: listaUrlImmagini,
             n_immagini: listaUrlImmagini.length
         });
-    } catch (err) {
+    }catch(err){
         console.error("Errore nell'endpoint edizione: ", err);
         return res.status(500).json({
             success: false,
@@ -216,7 +216,7 @@ router.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('su
         });
     }
     try{
-        const [rows]=await pool.query("SELECT * FROM edizioni WHERE collocazione=?", [collocazione]);
+        const [rows]=await pool.query("SELECT collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note FROM edizioni WHERE collocazione=?", [collocazione]);
         if(rows.length===0){
             return res.status(404).json({
                 success: false,

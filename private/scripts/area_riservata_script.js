@@ -105,48 +105,48 @@ document.addEventListener("DOMContentLoaded", function () {
     //fetch di ricerca edizioni (MODIFICA)
     document.getElementById("cerca-edizione-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const cercaForm = event.target;
-        const message = cercaForm.querySelector('p');
+        const cercaForm=event.target;
+        const message=cercaForm.querySelector('p');
         //validazione client-side
-        const collocazione = document.getElementById("search-collocazione-edizione").value.trim();
+        const collocazione=document.getElementById("search-collocazione-edizione").value.trim();
         if(!collocazione){
             message.textContent="Errore: Collocazione non inserita."
             return;
         }
-        const modificaForm = document.getElementById("modifica-edizione-form");
-        const message2 = modificaForm.querySelector('p');
-        const salvaBtn = modificaForm.querySelector('input[type="submit"]');
+        const modificaForm=document.getElementById("modifica-edizione-form");
+        const message2=modificaForm.querySelector('p');
+        const salvaBtn=modificaForm.querySelector('input[type="submit"]');
         message2.textContent="";
-        message.textContent = "Ricerca in corso...";
-        salvaBtn.disabled = true;
-        modificaForm.style.display = "none";
+        message.textContent="Ricerca in corso...";
+        salvaBtn.disabled=true;
+        modificaForm.style.display="none";
         modificaForm.reset();
         try {
-            const res = await fetch(`/api/get-edizione/${encodeURIComponent(collocazione)}`);
+            const res=await fetch(`/api/get-edizione/${encodeURIComponent(collocazione)}`);
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if (res.status===403) {
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
             if (res.ok && result.success) {
-                message.textContent = "Contenuto trovato!";
+                message.textContent="Contenuto trovato!";
                 //popolamento del form di modifica
-                document.getElementById("update-collocazione-edizione").value = result.dati.collocazione;
-                document.getElementById("update-link_rism-edizione").value = result.dati.link_rism || "";
-                document.getElementById("update-autore-edizione").value = result.dati.autore;
-                document.getElementById("update-titolo-edizione").value = result.dati.titolo;
-                document.getElementById("update-data_str-edizione").value = result.dati.data_str || "";
-                document.getElementById("update-editore-edizione").value = result.dati.editore || "";
-                document.getElementById("update-descrizione-edizione").value = result.dati.descrizione || "";
-                document.getElementById("update-note-edizione").value = result.dati.note || "";
+                document.getElementById("update-collocazione-edizione").value=result.dati.collocazione;
+                document.getElementById("update-link_rism-edizione").value=result.dati.link_rism || "";
+                document.getElementById("update-autore-edizione").value=result.dati.autore;
+                document.getElementById("update-titolo-edizione").value=result.dati.titolo;
+                document.getElementById("update-data_str-edizione").value=result.dati.data_str || "";
+                document.getElementById("update-editore-edizione").value=result.dati.editore || "";
+                document.getElementById("update-descrizione-edizione").value=result.dati.descrizione || "";
+                document.getElementById("update-note-edizione").value=result.dati.note || "";
                 salvaBtn.disabled = false;
-                modificaForm.style.display = "block";
+                modificaForm.style.display="block";
             } else {
-                message.textContent = result.message || "Errore durante la ricerca.";
+                message.textContent=result.message || "Errore durante la ricerca.";
             }
         } catch (err) {
-            message.textContent = "Errore di rete: impossibile raggiungere il server.";
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
             console.error(err);
         }
     });
@@ -154,8 +154,8 @@ document.addEventListener("DOMContentLoaded", function () {
     //fetch di modifica edizioni (MODIFICA)
     document.getElementById("modifica-edizione-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const form = event.target;
-        const message = form.querySelector('p');
+        const form=event.target;
+        const message=form.querySelector('p');
         //validazione client-side
         const collocazione=document.getElementById("update-collocazione-edizione").value.trim();
         const autore=document.getElementById("update-autore-edizione").value.trim();
