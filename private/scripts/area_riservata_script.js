@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     //gestione form con radio button
-    const radioBtn = document.querySelectorAll('input[name="tipo-form"]');
-    radioBtn.forEach(btn => {
+    const radioBtn=document.querySelectorAll('input[name="tipo-form"]');
+    radioBtn.forEach(btn=>{
         btn.addEventListener("change", function () {
             document.getElementById("edizione-grid").style.display = "none";
             document.getElementById("stampa-grid").style.display = "none";
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //preparazione dati
         const formData = new FormData(form);
         try {
-            const res = await fetch("/api/add-edizione", {
+            const res = await fetch("/api/edizione", {
                 method: "POST",
                 credentials: "include",
                 body: formData
@@ -69,35 +69,33 @@ document.addEventListener("DOMContentLoaded", function () {
         //validazione client-side
         const collocazione=document.getElementById("delete-collocazione-edizione").value.trim();
         if (!collocazione){
-            message.textContent = "Errore: Collocazione non inserita."
+            message.textContent="Errore: Collocazione non inserita."
             return;
         }
         //conferma
         if (!confirm(`Sei sicuro di voler eliminare l'Edizione/Manoscritto ${collocazione}?`)) {
             return;
         }
-        message.textContent = "Cancellazione in corso...";
+        message.textContent="Cancellazione in corso...";
         try {
-            const res = await fetch("/api/delete-edizione", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ collocazione })
+            const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`, {
+                method: "DELETE",
+                credentials: "include"
             });
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if (res.status===403) {
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
             if (res.ok && result.success) {
-                message.textContent = result.message;
+                message.textContent=result.message;
                 form.reset();
             } else {
-                message.textContent = result.message || "Errore durante la cancellazione.";
+                message.textContent=result.message || "Errore durante la cancellazione.";
             }
         } catch (err) {
-            message.textContent = "Errore di rete: impossibile raggiungere il server.";
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
             console.error(err);
         }
     });
@@ -160,14 +158,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const collocazione=document.getElementById("update-collocazione-edizione").value.trim();
         const autore=document.getElementById("update-autore-edizione").value.trim();
         const titolo=document.getElementById("update-titolo-edizione").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: Collocazione è un campo obbligatorio.";
+            return;
+        }
         if(!autore || !titolo){
             message.textContent="Errore: Autore e titolo sono campi obbligatori.";
             return;
         }
-        const salvaBtn = form.querySelector('input[type="submit"]');
-        message.textContent = "Aggiornamento del contenuto in corso...";
-        const dati = {
-            collocazione: collocazione,
+        const salvaBtn=form.querySelector('input[type="submit"]');
+        message.textContent="Aggiornamento del contenuto in corso...";
+        const dati={
             link_rism: document.getElementById("update-link_rism-edizione").value.trim(),
             autore: autore,
             titolo: titolo,
@@ -177,30 +178,30 @@ document.addEventListener("DOMContentLoaded", function () {
             note: document.getElementById("update-note-edizione").value.trim()
         };
         try {
-            const res = await fetch("/api/update-edizione", {
-                method: "POST",
+            const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`, {
+                method: "PUT",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(dati)
             });
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if (res.status===403) {
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
             if (res.ok && result.success) {
-                message.textContent = result.message;
+                message.textContent=result.message;
                 form.reset();
-                salvaBtn.disabled = true;
+                salvaBtn.disabled=true;
                 const cercaForm=document.getElementById("cerca-edizione-form");
                 cercaForm.querySelector('p').textContent="";
                 cercaForm.reset();
             } else {
-                message.textContent = result.message || "Errore durante l'aggiornamento.";
+                message.textContent=result.message || "Errore durante l'aggiornamento.";
             }
         } catch (err) {
-            message.textContent = "Errore di rete: impossibile raggiungere il server."
+            message.textContent="Errore di rete: impossibile raggiungere il server."
             console.error(err);
         }
     });
@@ -222,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //preparazione dati
         const formData = new FormData(form);
         try {
-            const res = await fetch("/api/add-stampa", {
+            const res = await fetch("/api/stampa", {
                 method: "POST",
                 credentials: "include",
                 body: formData
@@ -257,16 +258,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
         //conferma
-        if(!confirm(`Sei sicuro di voler eliminre la Stampa/Foto ${collocazione}?`)){
+        if(!confirm(`Sei sicuro di voler eliminare la Stampa/Foto ${collocazione}?`)){
             return;
         }
         message.textContent = "Cancellazione in corso...";
         try{
-            const res=await fetch("/api/delete-stampa", {
-                method: "POST",
-                credentials: "include",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({collocazione})
+            const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`, {
+                method: "DELETE",
+                credentials: "include"
             });
             //gestione reindirizzamenti
             if(res.status===403){
@@ -342,6 +341,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const collocazione=document.getElementById("update-collocazione-stampa").value.trim();
         const autore=document.getElementById("update-autore-stampa").value.trim();
         const titolo=document.getElementById("update-titolo-stampa").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: Collocazione è un campo obbligatorio.";
+            return;
+        }
         if(!autore || !titolo){
             message.textContent="Errore: Autore e titolo sono campi obbligatori.";
             return;
@@ -349,7 +352,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const salvaBtn=form.querySelector('input[type="submit"]');
         message.textContent="Aggiornamento del contenuto in corso...";
         const dati={
-            collocazione: collocazione,
             autore: autore,
             titolo: titolo,
             data_str: document.getElementById("update-data_str-stampa").value.trim(),
@@ -357,8 +359,8 @@ document.addEventListener("DOMContentLoaded", function () {
             dimensioni: document.getElementById("update-dimensioni-stampa").value.trim()
         };
         try{
-            const res=await fetch("/api/update-stampa", {
-                method: "POST",
+            const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`, {
+                method: "PUT",
                 credentials: "include",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dati)

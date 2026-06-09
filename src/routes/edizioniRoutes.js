@@ -6,7 +6,7 @@ const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 
 //endpoint per inserimento edizione
-router.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
+router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     let {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
@@ -65,7 +65,7 @@ router.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
         }catch(cloudinaryErr){
             console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
         }
-        console.error("Errore nell'endpoint add-edizione: ", err);
+        console.error("Errore nell'endpoint POST edizione: ", err);
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ 
                 success: false,
@@ -80,8 +80,8 @@ router.post("/api/add-edizione", autenticaToken, autorizzaRuoli('superadmin', 'a
 });
 
 //endpoint per cancellazione edizione
-router.post("/api/delete-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const {collocazione}=req.body;
+router.delete("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {collocazione}=req.params;
     //validazione server-side
     if(!collocazione || !String(collocazione).trim()){
         return res.status(400).json({
@@ -115,7 +115,7 @@ router.post("/api/delete-edizione", autenticaToken, autorizzaRuoli('superadmin',
             });
         }
     }catch(err){
-        console.error("Errore nell'endpoint delete-edizione: ", err);
+        console.error("Errore nell'endpoint DELETE edizione: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante la cancellazione."
@@ -197,7 +197,7 @@ router.get("/api/edizione/:collocazione", async (req, res)=>{
             n_immagini: listaUrlImmagini.length
         });
     }catch(err){
-        console.error("Errore nell'endpoint edizione: ", err);
+        console.error("Errore nell'endpoint GET edizione: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero della risorsa."
@@ -237,8 +237,9 @@ router.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('su
 });
 
 //endpoint per aggiornamento edizione
-router.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    let {collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
+router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {collocazione}=req.params;
+    let {link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     if (!titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
@@ -277,7 +278,7 @@ router.post("/api/update-edizione", autenticaToken, autorizzaRuoli('superadmin',
             message: "Contenuto aggiornato con successo!"
         });
     }catch(err){
-        console.error("Errore nell'endpoint update-edizione: ", err);
+        console.error("Errore nell'endpoint PUT edizione: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante l'aggiornamento della risorsa."

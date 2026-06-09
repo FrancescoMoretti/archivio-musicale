@@ -6,7 +6,7 @@ const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 
 //endpoint per inserimento stampa
-router.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
+router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     let {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
@@ -62,9 +62,9 @@ router.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
         }catch(cloudinaryErr){
             console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
         }
-        console.error("Errore nell'endpoint add-stampa: ", err);
+        console.error("Errore nell'endpoint POST stampa: ", err);
         if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 success: false,
                 message: "Errore: il numero identificativo è già esistente." });
         }
@@ -78,8 +78,8 @@ router.post("/api/add-stampa", autenticaToken, autorizzaRuoli('superadmin', 'adm
 });
 
 //endpoint per cancellazione stampa
-router.post("/api/delete-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const {collocazione}=req.body;
+router.delete("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {collocazione}=req.params;
     //validazione server-side
     if(!collocazione || !String(collocazione).trim()){
         return res.status(400).json({
@@ -113,7 +113,7 @@ router.post("/api/delete-stampa", autenticaToken, autorizzaRuoli('superadmin', '
             });
         }
     }catch(err){
-        console.error("Errore nell'endpoint delete-stampa: ", err);
+        console.error("Errore nell'endpoint DELETE stampa: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante la cancellazione."
@@ -184,7 +184,7 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
                 message: "Stampa/Foto non trovata."
             });
         }
-        const content = stampaRisultato[0];
+        const content=stampaRisultato[0];
         //recupero le immagini della risorsa
         const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
         const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
@@ -195,7 +195,7 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
             n_immagini: listaUrlImmagini.length
         });
     } catch (err) {
-        console.error("Errore nell'endpoint stampa: ", err);
+        console.error("Errore nell'endpoint GET stampa: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero della risorsa."
@@ -235,8 +235,9 @@ router.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('supe
 });
 
 //endpoint per aggiornamento stampa
-router.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
-    let {collocazione, autore, titolo, data_str, stampa, dimensioni}=req.body;
+router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
+    const {collocazione}=req.params;
+    let {autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     if (!autore || !String(autore).trim() || !titolo || !String(titolo).trim()) {
@@ -269,7 +270,7 @@ router.post("/api/update-stampa", autenticaToken, autorizzaRuoli('superadmin', '
             message: "Stampa/Foto aggiornata con successo!"
         });
     } catch (err) {
-        console.error("Errore nell'endpoint update-stampa: ", err);
+        console.error("Errore nell'endpoint PUT stampa: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante l'aggiornamento della risorsa."

@@ -10,15 +10,15 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         return;
     }
     try {
-        const res = await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`);
-        const result = await res.json();
+        const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`);
+        const result=await res.json();
         //contenuto non trovato
         if (!res.ok || !result.success) {
             window.location.href = "/404.html";
             return;
         }
-        const contenuto = result.content;//dati della risorsa
-        const listaImmagini = result.immagini || [];//array di URL a cloudinary
+        const contenuto=result.content;//dati della risorsa
+        const listaImmagini=result.immagini || [];//array di URL a cloudinary
         //cambio il titolo della pagina per SEO
         document.title=`${contenuto.titolo} - ${contenuto.autore} | Archivio musicale Luca Moretti`;
         //popolazione della scheda dell'articolo

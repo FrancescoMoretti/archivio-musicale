@@ -48,7 +48,7 @@
     <div class="grid" id="edizione-grid">
       <div class="element">
         <h3>Aggiunta Edizioni e Manoscritti: </h3>
-        <form id="aggiungi-edizione-form" action="/api/add-edizione" method="POST" enctype="multipart/form-data">
+        <form id="aggiungi-edizione-form" action="/api/edizione" method="POST" enctype="multipart/form-data">
           <p><!--messaggio--></p>
           <div>
             <label for="add-collocazione-edizione" class="required">Collocazione: </label>
@@ -91,7 +91,7 @@
       </div>
       <div class="element">
         <h3>Eliminazione Edizioni e Manoscritti: </h3>
-        <form id="cancella-edizione-form" action="/api/delete-edizione" method="POST">
+        <form id="cancella-edizione-form" action="/api/edizione/:collocazione" method="DELETE">
           <p><!--messaggio--></p>
           <div>
             <label for="delete-collocazione-edizione" class="required">Collocazione: </label>
@@ -103,7 +103,7 @@
       <div class="element">
         <h3>Modifica Edizioni e Manoscritti: </h3>
         <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
-        <form id="cerca-edizione-form" action="/api/get-edizione/:edizione" method="GET">
+        <form id="cerca-edizione-form" action="/api/get-edizione/:collocazione" method="GET">
           <p><!--messaggio--></p>
           <div>
             <label for="search-collocazione-edizione" class="required">Collocazione: </label>
@@ -111,7 +111,7 @@
           </div>
           <input type="submit" value="Cerca contenuto">
         </form>
-        <form id="modifica-edizione-form" class="modifica-form" action="/api/update-edizione" method="POST">
+        <form id="modifica-edizione-form" class="modifica-form" action="/api/edizione/:collocazione" method="PUT">
           <p><!--messaggio--></p>
           <!--input nascosto per avere la collocazione nei campi del form-->
           <input type="hidden" name="collocazione" id="update-collocazione-edizione" readonly>
@@ -150,7 +150,7 @@
     <div class="grid" id="stampa-grid">
       <div class="element">
         <h3>Aggiunta Stampe e Foto:</h3>
-        <form id="aggiungi-stampa-form" action="/api/add-stampa" method="POST" enctype="multipart/form-data">
+        <form id="aggiungi-stampa-form" action="/api/stampa" method="POST" enctype="multipart/form-data">
           <p><!--messaggio--></p>
           <div>
             <label for="add-collocazione-stampa" class="required">Collocazione: </label>
@@ -185,7 +185,7 @@
       </div>
       <div class="element">
         <h3>Eliminazione Stampe e Foto: </h3>
-        <form id="cancella-stampa-form" action="/api/delete-stampa" method="POST">
+        <form id="cancella-stampa-form" action="/api/stampa/:collocazione" method="DELETE">
           <p><!--messaggio--></p>
           <div>
             <label for="delete-collocazione-stampa" class="required">Collocazione: </label>
@@ -197,7 +197,7 @@
       <div class="element">
         <h3>Modifica Stampe e Foto: </h3>
         <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
-        <form id="cerca-stampa-form" action="/api/get-stampa/:stampa" method="GET">
+        <form id="cerca-stampa-form" action="/api/get-stampa/:collocazione" method="GET">
           <p><!--messaggio--></p>
           <div>
             <label for="search-collocazione-stampa" class="required">Collocazione: </label>
@@ -205,7 +205,7 @@
           </div>
           <input type="submit" value="Cerca contenuto">
         </form>
-        <form id="modifica-stampa-form" class="modifica-form" action="/api/update-stampa" method="POST">
+        <form id="modifica-stampa-form" class="modifica-form" action="/api/stampa/:collocazione" method="PUT">
           <p><!--messaggio--></p>
           <!--input nascosto per avere la collocazione nei campi del form-->
           <input type="hidden" name="collocazione" id="update-collocazione-stampa" readonly>
