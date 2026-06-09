@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //preparazione dati
         const formData= new FormData(form);
         try{
-            const res=await fetch("/api/add-evento", {
+            const res=await fetch("/api/evento", {
                 method: "POST",
                 credentials: "include",
                 body: formData
@@ -450,11 +450,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         message.textContent="Cancellazione in corso...";
         try{
-            const res=await fetch("/api/delete-evento", {
-                method: "POST",
-                credentials: "include",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({codice})
+            const res=await fetch(`/api/evento/${encodeURIComponent(codice)}`, {
+                method: "DELETE",
+                credentials: "include"
             });
             //gestione reindirizzamenti
             if(res.status===403){
@@ -540,6 +538,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const titolo=document.getElementById("update-titolo-evento").value.trim();
         const dataInizio=document.getElementById("update-data_inizio-evento").value.trim();
         const descrizione=document.getElementById("update-descrizione-evento").value.trim();
+        if(!codice){
+            message.textContent="Errore: Codice è un campo obbligatorio.";
+            return;
+        }
         if(!titolo || !dataInizio || !descrizione){
             message.textContent="Errore: Titolo, data iniziale e descrizione sono campi obbligatori."
             return;
@@ -547,7 +549,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const salvaBtn=form.querySelector('input[type="submit"]');
         message.textContent="Aggiornamento del contenuto in corso...";
         const dati={
-            codice: codice,
             link_evento: document.getElementById("update-link_evento-evento").value.trim(),
             link_facebook: document.getElementById("update-link_fb-evento").value.trim(),
             link_instagram: document.getElementById("update-link_ig-evento").value.trim(),
@@ -557,8 +558,8 @@ document.addEventListener("DOMContentLoaded", function () {
             descrizione: descrizione
         };
         try{
-            const res=await fetch("/api/update-evento", {
-                method: "POST",
+            const res=await fetch(`/api/evento/${encodeURIComponent(codice)}`, {
+                method: "PUT",
                 credentials: "include",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(dati)

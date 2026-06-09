@@ -6,7 +6,7 @@ const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 
 //endpoint per inserimento evento
-router.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
+router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
     let {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
@@ -78,7 +78,7 @@ router.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'adm
         }catch(cloudinaryErr){
             console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
         }
-        console.error("Errore nell'endpoint add-evento: ", err);
+        console.error("Errore nell'endpoint POST evento: ", err);
         if(err.code==='ER_DUP_ENTRY'){
             return res.status(400).json({
                 success: false,
@@ -96,8 +96,8 @@ router.post("/api/add-evento", autenticaToken, autorizzaRuoli('superadmin', 'adm
 });
 
 //endpoint per cancellazione evento
-router.post("/api/delete-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const {codice}=req.body;
+router.delete("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {codice}=req.params;
     //validazione server-side
     if(!codice || !String(codice).trim()){
         return res.status(400).json({
@@ -131,7 +131,7 @@ router.post("/api/delete-evento", autenticaToken, autorizzaRuoli('superadmin', '
             });
         }
     }catch(err){
-        console.error("Errore nell'endpoint delete-evento: ", err);
+        console.error("Errore nell'endpoint DELETE evento: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante la cancellazione."
@@ -226,9 +226,10 @@ router.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin
     }
 });
 
-//endpoint per aggioramento evento
-router.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    let {codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
+//endpoint per aggiornamento evento
+router.put("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {codice}=req.params;
+    let {link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     if(!titolo || !String(titolo).trim() || !descrizione || !String(descrizione).trim() || !data_inizio || !String(data_inizio).trim()){
@@ -240,6 +241,15 @@ router.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', '
     //setto a null eventuali valori facoltativi vuoti
     if(!data_fine || !String(data_fine).trim()){
         data_fine=null;
+    }
+    if(!link_evento || !String(link_evento).trim()){
+        link_evento=null;
+    }
+    if(!link_facebook || !String(link_facebook).trim()){
+        link_facebook=null;
+    }
+    if(!link_instagram || !String(link_instagram).trim()){
+        link_instagram=null;
     }
     //controllo data_finale>data_iniziale
     if(data_fine && new Date(data_fine)< new Date(data_inizio)){
@@ -262,7 +272,7 @@ router.post("/api/update-evento", autenticaToken, autorizzaRuoli('superadmin', '
             message: "Evento aggiornato con successo!"
         });
     }catch(err){
-        console.error("Errore nell'endpoint update-evento: ", err);
+        console.error("Errore nell'endpoint PUT evento: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante l'aggiornamento della risorsa."
