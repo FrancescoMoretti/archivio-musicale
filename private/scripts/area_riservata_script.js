@@ -120,24 +120,19 @@ document.addEventListener("DOMContentLoaded", function () {
         modificaForm.style.display="none";
         modificaForm.reset();
         try {
-            const res=await fetch(`/api/get-edizione/${encodeURIComponent(collocazione)}`);
-            //gestione reindirizzamenti
-            if (res.status===403) {
-                window.location.href="/403.html";
-                return;
-            }
+            const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`);
             const result=await res.json();
             if (res.ok && result.success) {
                 message.textContent="Contenuto trovato!";
                 //popolamento del form di modifica
-                document.getElementById("update-collocazione-edizione").value=result.dati.collocazione;
-                document.getElementById("update-link_rism-edizione").value=result.dati.link_rism || "";
-                document.getElementById("update-autore-edizione").value=result.dati.autore;
-                document.getElementById("update-titolo-edizione").value=result.dati.titolo;
-                document.getElementById("update-data_str-edizione").value=result.dati.data_str || "";
-                document.getElementById("update-editore-edizione").value=result.dati.editore || "";
-                document.getElementById("update-descrizione-edizione").value=result.dati.descrizione || "";
-                document.getElementById("update-note-edizione").value=result.dati.note || "";
+                document.getElementById("update-collocazione-edizione").value=result.content.collocazione;
+                document.getElementById("update-link_rism-edizione").value=result.content.link_rism || "";
+                document.getElementById("update-autore-edizione").value=result.content.autore;
+                document.getElementById("update-titolo-edizione").value=result.content.titolo;
+                document.getElementById("update-data_str-edizione").value=result.content.data_str || "";
+                document.getElementById("update-editore-edizione").value=result.content.editore || "";
+                document.getElementById("update-descrizione-edizione").value=result.content.descrizione || "";
+                document.getElementById("update-note-edizione").value=result.content.note || "";
                 salvaBtn.disabled = false;
                 modificaForm.style.display="block";
             } else {
@@ -305,22 +300,17 @@ document.addEventListener("DOMContentLoaded", function () {
         modificaForm.style.display = "none";
         modificaForm.reset();
         try{
-            const res= await fetch(`/api/get-stampa/${encodeURIComponent(collocazione)}`);
-            //gestione reindirizzamenti
-            if (res.status === 403) {
-                window.location.href="/403.html";
-                return;
-            }
+            const res= await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`);
             const result=await res.json();
             if(res.ok && result.success){
                 message.textContent="Contenuto trovato!";
                 //popolamento del form di modifica
-                document.getElementById("update-collocazione-stampa").value=result.dati.collocazione;
-                document.getElementById("update-autore-stampa").value=result.dati.autore;
-                document.getElementById("update-titolo-stampa").value=result.dati.titolo;
-                document.getElementById("update-data_str-stampa").value=result.dati.data_str || "";
-                document.getElementById("update-stampa-stampa").value=result.dati.stampa || "";
-                document.getElementById("update-dimensioni-stampa").value=result.dati.dimensioni || "";
+                document.getElementById("update-collocazione-stampa").value=result.content.collocazione;
+                document.getElementById("update-autore-stampa").value=result.content.autore;
+                document.getElementById("update-titolo-stampa").value=result.content.titolo;
+                document.getElementById("update-data_str-stampa").value=result.content.data_str || "";
+                document.getElementById("update-stampa-stampa").value=result.content.stampa || "";
+                document.getElementById("update-dimensioni-stampa").value=result.content.dimensioni || "";
                 salvaBtn.disabled=false;
                 modificaForm.style.display="block";
             }else{
@@ -492,7 +482,7 @@ document.addEventListener("DOMContentLoaded", function () {
         modificaForm.style.display="none";
         modificaForm.reset();
         try{
-            const res=await fetch(`/api/get-evento/${encodeURIComponent(codice)}`);
+            const res=await fetch(`/api/evento/${encodeURIComponent(codice)}`);
             //gestione reindirizzamenti
             if(res.status===403){
                 window.location.href="/403.html";

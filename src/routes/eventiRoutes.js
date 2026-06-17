@@ -140,7 +140,7 @@ router.delete("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin'
 });
 
 //endpoint per visualizzare eventi
-router.get("/api/show-eventi", async (req, res)=>{
+router.get("/api/eventi", async (req, res)=>{
     const {limit, offset}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
@@ -196,7 +196,7 @@ router.get("/api/show-eventi", async (req, res)=>{
 });
 
 //endpoint per recupero dati evento
-router.get("/api/get-evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+router.get("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {codice}=req.params;
     //validazione server-side
     if(!codice || !String(codice).trim()){

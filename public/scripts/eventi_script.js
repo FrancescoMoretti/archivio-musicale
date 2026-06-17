@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async function(){
     //fetch di caricamento degli eventi
     async function caricaEventi(){
         //costruisco url con parametri
-        let url=`/api/show-eventi?limit=${numeroArticoli}&offset=${articoliMostrati}`;
+        let url=`/api/eventi?limit=${numeroArticoli}&offset=${articoliMostrati}`;
         try{
             const res=await fetch(url);
             const result=await res.json();

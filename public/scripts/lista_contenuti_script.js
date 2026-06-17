@@ -10,11 +10,11 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     let paginaContenuto=null;
     switch(idBody){
         case 'lista-edizioni':
-            endpoint="/api/show-edizioni";
+            endpoint="/api/edizioni";
             paginaContenuto="/edizione.html";
         break;
         case 'lista-stampe':
-            endpoint="/api/show-stampe";
+            endpoint="/api/stampe";
             paginaContenuto="/stampa.html";
         break;
         default:
@@ -59,24 +59,24 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     async function caricaContenuti() {
         const offset = (schermata - 1) * righe;
         //costruisco URL con i parametri
-        let url = `${endpoint}?limit=${righe}&offset=${offset}`;
+        let url=`${endpoint}?limit=${righe}&offset=${offset}`;
         if (searchBar.value) {
-            url += `&filtro=${encodeURIComponent(searchBar.value)}`;
+            url+=`&filtro=${encodeURIComponent(searchBar.value)}`;
         }
         try {
-            const res = await fetch(url);
-            const result = await res.json();
+            const res=await fetch(url);
+            const result=await res.json();
             //aggiornamento contenuti
             if(res.ok && result.success){
                 mostraPagina(result.contenuti, result.totali);
             }else{
-                tbody.innerHTML = "<tr><td colspan='4'>" + result.message + "</td></tr>";
+                tbody.innerHTML="<tr><td colspan='4'>" + result.message + "</td></tr>";
                 precBtn.style.visibility="hidden";
                 succBtn.style.visibility="hidden";
                 return;
             }
         } catch (err) {
-            tbody.innerHTML = "<tr><td colspan='4'>Errore di rete</td></tr>";
+            tbody.innerHTML="<tr><td colspan='4'>Errore di rete</td></tr>";
             console.error(err);
             precBtn.style.visibility="hidden";
             succBtn.style.visibility="hidden";

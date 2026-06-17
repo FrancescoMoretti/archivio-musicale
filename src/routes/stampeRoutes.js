@@ -122,7 +122,7 @@ router.delete("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('super
 });
 
 //endpoint per lista stampe
-router.get("/api/show-stampe", async (req, res)=>{
+router.get("/api/stampe", async (req, res)=>{
     const {limit, offset, filtro}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
@@ -196,37 +196,6 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
         });
     } catch (err) {
         console.error("Errore nell'endpoint GET stampa: ", err);
-        return res.status(500).json({
-            success: false,
-            message: "Errore interno durante il recupero della risorsa."
-        });
-    }
-});
-
-//endpoint per recupero dati stampa
-router.get("/api/get-stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
-    const {collocazione}=req.params;
-    //validazione server-side
-    if(!collocazione || !String(collocazione).trim()){
-        return res.status(400).json({
-            success: false,
-            message: "Collocazione non valida."
-        });
-    }
-    try {
-        const [rows] = await pool.query("SELECT collocazione, autore, titolo, data_str, stampa, dimensioni FROM stampe WHERE collocazione=?", [collocazione]);
-        if (rows.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "Stampa/Foto non trovata."
-            });
-        }
-        return res.json({
-            success: true,
-            dati: rows[0]
-        });
-    } catch (err) {
-        console.error("Errore nell'endpoint get-stampa: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero della risorsa."

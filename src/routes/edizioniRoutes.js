@@ -124,7 +124,7 @@ router.delete("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('sup
 });
 
 //endpoint per lista edizioni
-router.get("/api/show-edizioni", async (req, res)=>{
+router.get("/api/edizioni", async (req, res)=>{
     const {limit, offset, filtro}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
@@ -198,37 +198,6 @@ router.get("/api/edizione/:collocazione", async (req, res)=>{
         });
     }catch(err){
         console.error("Errore nell'endpoint GET edizione: ", err);
-        return res.status(500).json({
-            success: false,
-            message: "Errore interno durante il recupero della risorsa."
-        });
-    }
-});
-
-//endpoint per recupero dati edizione
-router.get("/api/get-edizione/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
-    const {collocazione}=req.params;
-    //validazione server-side
-    if(!collocazione || !String(collocazione).trim()){
-        return res.status(400).json({
-            success: false,
-            message: "Collocazione non valida."
-        });
-    }
-    try{
-        const [rows]=await pool.query("SELECT collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note FROM edizioni WHERE collocazione=?", [collocazione]);
-        if(rows.length===0){
-            return res.status(404).json({
-                success: false,
-                message: "Edizione/Manoscritto non trovato."
-            });
-        }
-        return res.json({
-            success: true,
-            dati: rows[0]
-        });
-    }catch(err){
-        console.error("Errore nell'endpoint get-edizione: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero della risorsa."
