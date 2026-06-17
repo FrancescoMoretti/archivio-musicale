@@ -155,7 +155,7 @@ router.get("/api/stampe", async (req, res)=>{
             totali: totali
         });
     }catch(err){
-        console.error("Errore nell'endpoint show-stampe: ", err);
+        console.error("Errore nell'endpoint GET stampe: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero delle stampe."

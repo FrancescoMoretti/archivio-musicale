@@ -157,7 +157,7 @@ router.get("/api/edizioni", async (req, res)=>{
             totali: totali
         });
     } catch (err) {
-        console.error("Errore nell'endpoint show-edizioni: ", err);
+        console.error("Errore nell'endpoint GET edizioni: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero delle edizioni."

@@ -185,7 +185,7 @@ router.get("/api/eventi", async (req, res)=>{
             altri: altri
         });
     }catch(err){
-        console.error("Errore nell'endpoint evento: ", err);
+        console.error("Errore nell'endpoint GET eventi: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero degli eventi."
@@ -218,7 +218,7 @@ router.get("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', '
             dati: rows[0]
         });
     }catch(err){
-        console.error("Errore nell'endpoint get-evento: ", err);
+        console.error("Errore nell'endpoint GET evento: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero della risorsa."

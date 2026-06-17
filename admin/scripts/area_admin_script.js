@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function(){
             password: password
         };
         try{
-            const res=await fetch("/api/add-utente", {
+            const res=await fetch("/api/utente", {
                 method: "POST",
                 credentials: "include",
                 headers: {"Content-Type": "application/json"},
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function(){
         tabella.style.display="table";
         const tbody=tabella.querySelector('tbody');
         try{
-            const res=await fetch("/api/show-utenti", {
+            const res=await fetch("/api/utenti", {
                 method: "GET",
                 credentials: "include"
             });
@@ -139,11 +139,10 @@ document.addEventListener("DOMContentLoaded", function(){
         message.textContent="Cancellazione in corso";
         const idInviato=parseInt(id, 10);
         try{
-            const res=await fetch("/api/delete-utente", {
-                method: "POST",
+            const res=await fetch(`/api/utente/${encodeURIComponent(idInviato)}`, {
+                method: "DELETE",
                 credentials: "include",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({id: idInviato})
+                headers: {"Content-Type": "application/json"}
             });
             //gestione reindirizzamenti
             if(res.status===403){

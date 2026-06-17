@@ -119,7 +119,7 @@ router.post("/api/logout", (req, res)=>{
     });
 });
 
-//endoint per dettagli sugli utenti
+//endoint per dettagli sugli utenti (nome, ruolo, pswCambiata)
 router.get("/api/me", autenticaToken, (req, res)=>{
     //req.utente viene popolato da autenticaToken
     return res.json({
@@ -133,7 +133,7 @@ router.get("/api/me", autenticaToken, (req, res)=>{
 });
 
 //endpoint per cambio password
-router.post("/api/cambia-password", autenticaToken, async (req, res)=>{
+router.patch("/api/utente/password", autenticaToken, async (req, res)=>{
     const {oldPsw, newPsw, confirmPsw}=req.body;
     const userId=req.utente.id;//estratto dal JWT
     //validazione server-side
@@ -190,7 +190,7 @@ router.post("/api/cambia-password", autenticaToken, async (req, res)=>{
             message: "Password aggiornata con successo! Sarà richiesto di ripetere login."
         });
     }catch(err){
-        console.error("Errore nell'ednpoint cambia-password: ", err);
+        console.error("Errore nell'endpoint PATCH password: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante l'aggiornamento della password."
@@ -199,7 +199,7 @@ router.post("/api/cambia-password", autenticaToken, async (req, res)=>{
 });
 
 //endpoint per creazione utenti
-router.post("/api/add-utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
     const {email, password, nome, ruolo} = req.body;//dati del nuovo utente, presi dalla richiesta
     const userRuolo=req.utente.ruolo;//ruolo di chi invia la richiesta, preso dal token
     const userId=req.utente.id;//id di chi invia la richiesta, preso dal token
@@ -250,7 +250,7 @@ router.post("/api/add-utente", autenticaToken, autorizzaRuoli('superadmin', 'adm
             message: `Utente ${nome} creato con successo come ${ruolo}!`
         });
     }catch(err){
-        console.error("Errore nell'endpoint add-utente: ", err);
+        console.error("Errore nell'endpoint POST utente: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante l'inserimento dell'utente."
@@ -259,7 +259,7 @@ router.post("/api/add-utente", autenticaToken, autorizzaRuoli('superadmin', 'adm
 });
 
 //endpoint per lista degli utenti
-router.get("/api/show-utenti", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+router.get("/api/utenti", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
     let query=`SELECT u.id, u.email, u.nome, u.ruolo, u.created_at, c.email AS email_creatore FROM utenti u LEFT JOIN utenti c ON u.created_by=c.id`;
     try{
         const [rows]=await pool.query(query);
@@ -274,7 +274,7 @@ router.get("/api/show-utenti", autenticaToken, autorizzaRuoli('superadmin', 'adm
             utenti: rows,
         });
     }catch(err){
-        console.error("Errore nell'endpoint show-utenti: ", err);
+        console.error("Errore nell'endpoint GET utenti: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante il recupero degli utenti."
@@ -283,8 +283,8 @@ router.get("/api/show-utenti", autenticaToken, autorizzaRuoli('superadmin', 'adm
 });
 
 //endpoint per cancellazione utenti
-router.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
-    const {id}=req.body;//id dell'utente da eliminare
+router.delete("/api/utente/:id", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    const {id}=req.params;//id dell'utente da eliminare
     const userRuolo=req.utente.ruolo;//ruolo dell'utente che sta facendo la richiesta
     const userId=req.utente.id;//id dell'utente che sta facendo la richiesta
     const ruoliSuperadmin=['admin', 'editor'];//ruoli eliminabili da superadmin
@@ -352,7 +352,7 @@ router.post("/api/delete-utente", autenticaToken, autorizzaRuoli('superadmin', '
             });
         }
     }catch(err){
-        console.error("Errore nell'endpoint delete-utente: ", err);
+        console.error("Errore nell'endpoint DELETE utente: ", err);
         return res.status(500).json({
             success: false,
             message: "Errore interno durante la cancellazione dell'utente."

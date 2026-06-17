@@ -47,7 +47,7 @@
         <div class="grid" id="utenti-grid">
             <div class="element">
                 <h3>Aggiunta Utenti: </h3>
-                <form id="aggiungi-utente-form" action="/api/add-utente" method="POST">
+                <form id="aggiungi-utente-form" action="/api/utente" method="POST">
                     <p><!--messaggio--></p>
                     <div>
                         <label for="add-nome-utente" class="required">Nome: </label>
@@ -75,7 +75,7 @@
             </div>
             <div class="element">
                 <h3>Eliminazione Utenti: </h3>
-                <form id="cancella-utente-form" action="/api/delete-utente" method="POST">
+                <form id="cancella-utente-form" action="/api/utente/:id" method="DELETE">
                     <p><!--messaggio--></p>
                     <div>
                         <label for="delete-id-utente" class="required">Identificativo utente: </label>

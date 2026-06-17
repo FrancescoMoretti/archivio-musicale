@@ -18,8 +18,8 @@ document.addEventListener("DOMContentLoaded", function(){
             return;
         }
         try{
-            const res=await fetch('/api/cambia-password', {
-                method: "POST",
+            const res=await fetch('/api/utente/password', {
+                method: "PATCH",
                 credentials: "include",
                 headers: {"Content-Type": 'application/json'},
                 body: JSON.stringify({oldPsw, newPsw, confirmPsw})

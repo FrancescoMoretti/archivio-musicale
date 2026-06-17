@@ -103,7 +103,7 @@
       <div class="element">
         <h3>Modifica Edizioni e Manoscritti: </h3>
         <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
-        <form id="cerca-edizione-form" action="/api/get-edizione/:collocazione" method="GET">
+        <form id="cerca-edizione-form" action="/api/edizione/:collocazione" method="GET">
           <p><!--messaggio--></p>
           <div>
             <label for="search-collocazione-edizione" class="required">Collocazione: </label>
@@ -197,7 +197,7 @@
       <div class="element">
         <h3>Modifica Stampe e Foto: </h3>
         <p>Per modificare la <strong>collocazione</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> la risorsa.</p>
-        <form id="cerca-stampa-form" action="/api/get-stampa/:collocazione" method="GET">
+        <form id="cerca-stampa-form" action="/api/stampa/:collocazione" method="GET">
           <p><!--messaggio--></p>
           <div>
             <label for="search-collocazione-stampa" class="required">Collocazione: </label>
@@ -300,7 +300,7 @@
       <div class="element">
         <h3>Modifica Eventi: </h3>
         <p>Per modificare il <strong>codice</strong> o le <strong>immagini</strong> devi <strong>eliminare e reinserire</strong> l'evento.</p>
-        <form id="cerca-evento-form" action="/api/get-evento/:codice" method="GET">
+        <form id="cerca-evento-form" action="/api/evento/:codice" method="GET">
           <p><!--messaggio--></p>
           <div>
             <label for="search-codice-evento" class="required">Codice: </label>
