@@ -21,6 +21,17 @@ app.use(cookieParser());
 app.use('/admin', autenticaToken, autorizzaRuoli('admin', 'superadmin'), express.static('admin'));
 //servo file statici dalla cartella /provate solo ai superadmin, admin o editor
 app.use('/private', autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), express.static('private'));
+
+//DEVIAZIONI TEMPORANEE
+app.get('/catalogo.html', (req, res)=>{
+    res.redirect(302, 'lista_edizioni.html');
+});
+
+app.get('/lista_stampe.html', (req, res)=>{
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+//FINE DEVIAZIONI TEMPORANEE
+
 // Serve i file statici dalla cartella public
 app.use(express.static('public'));
 
