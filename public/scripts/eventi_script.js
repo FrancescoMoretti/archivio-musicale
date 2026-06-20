@@ -70,10 +70,17 @@ document.addEventListener("DOMContentLoaded", async function(){
                     switch(numeroImmagini){
                         case 1:
                             article.classList.add("one-img-article");
-                            const img=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            let classeResponsive="";
+                            //gestione della classe per apparizione/sparizione immagini negli articoli
+                            if(left){
+                                classeResponsive=`class="pc-img"`;
+                            }
+                            const img=`<img ${classeResponsive} src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const imgResponsive=`<img class="mobile-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
                             if(left){
                                 article.insertAdjacentHTML('beforeend', img);
                                 article.appendChild(testo);
+                                article.insertAdjacentHTML('beforeend', imgResponsive);
                                 left=false;
                             }else{
                                 article.appendChild(testo);
@@ -83,10 +90,12 @@ document.addEventListener("DOMContentLoaded", async function(){
                         break;
                         case 2:
                             article.classList.add("two-img-article");
-                            const img1=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const img1=`<img class="pc-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const img1Responsive=`<img class="mobile-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
                             const img2=`<img src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
                             article.insertAdjacentHTML('beforeend', img1);
                             article.appendChild(testo);
+                            article.insertAdjacentHTML('beforeend', img1Responsive);
                             article.insertAdjacentHTML('beforeend', img2);
                         break;
                         default:

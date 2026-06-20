@@ -68,6 +68,11 @@ a{
 ul{
     list-style: none;
 }
+    /*inizio stile responsive*/
+    article .mobile-img{
+        display: none;
+    }
+    /*fine stile responsive*/
 /*fine stile generale*/
 
 /*inizio stile menù*/
@@ -774,13 +779,6 @@ footer .material-symbols-outlined{
     grid-template-columns: repeat(4, 1fr);
     margin: 4em;
     column-gap: 1em;
-    background-color: var(--carta2);
-    padding: 2em;
-    border-radius: 15%;
-}
-
-#biografia article:nth-child(odd){
-    background-color: var(--carta3);
 }
 
 #biografia article .testata{
@@ -836,3 +834,51 @@ footer .material-symbols-outlined{
     color: var(--sfondoScuro);
 }
 /*fine stile pagina privacy*/
+
+/*Stile alternativo per schermi con meno di 768px*/
+@media screen and (max-width: 768px){
+/*inizio restyling articoli biografia e eventi*/
+    article .mobile-img{
+        display: block;
+    }
+    
+    article .pc-img{
+        display: none;
+    }
+
+    article img,
+    article div{
+        grid-column: span 2;
+    }
+
+    #biografia article .testo,
+    #eventi-sec article .testo,
+    #eventi-sec .one-img-article .testo,
+    #eventi-sec .two-img-article .testo{
+        grid-column: span 4;
+    }
+
+    article .collegamenti{
+        margin-top: 1em;
+    }
+/*fine restyling articoli biografia e eventi*/
+
+/*inizio restyling footer*/
+    footer address{
+        flex-direction: column;
+        gap: 0;
+    }
+/*fine restyling footer*/
+
+/*inizio restyling privacy*/
+    #informativa{
+        width: 90%;
+    }
+/*fine restyling privacy*/
+
+/*inizio restyling pagine lista*/
+    table{
+        width: 90%;
+    }
+/*fine restyling pagine lista*/
+}
