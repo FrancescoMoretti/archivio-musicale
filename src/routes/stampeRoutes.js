@@ -3,7 +3,7 @@ const router=express.Router();
 
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 
 //endpoint per inserimento stampa
 router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -164,8 +164,8 @@ router.get("/api/stampe", async (req, res)=>{
 });
 
 //endpoint per lettura stampa
-router.get("/api/stampa/:collocazione", async (req, res) => {
-    const collocazione = req.params.collocazione;
+router.get("/api/stampa/:collocazione", autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res) => {
+    const {collocazione}=req.params;
     //validazione server-side
     if(!collocazione || !String(collocazione).trim()){
         return res.status(400).json({
@@ -173,12 +173,17 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
             message: "Collocazione non valida."
         });
     }
-    const queryContenuti = "SELECT id, collocazione, titolo, autore, data_str, stampa, dimensioni FROM stampe WHERE collocazione=?";
-    const queryImmagini = "SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
+    let campiSelect="id, titolo, autore, data_str, stampa, dimensioni";
+    //se l'utente è addetto => recupero anche la collocazione
+    if(req.addetto){
+        campiSelect+=", collocazione";
+    }
+    const queryContenuti=`SELECT ${campiSelect} FROM stampe WHERE collocazione=?`;
+    const queryImmagini="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
     try {
-        const [stampaRisultato] = await pool.query(queryContenuti, [collocazione]);
+        const [stampaRisultato]=await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
-        if (stampaRisultato.length === 0) {
+        if (stampaRisultato.length===0) {
             return res.status(404).json({
                 success: false,
                 message: "Stampa/Foto non trovata."
@@ -186,8 +191,8 @@ router.get("/api/stampa/:collocazione", async (req, res) => {
         }
         const content=stampaRisultato[0];
         //recupero le immagini della risorsa
-        const [immaginiRisultato] = await pool.query(queryImmagini, [content.id]);
-        const listaUrlImmagini = immaginiRisultato.map(riga => riga.url_immagine);
+        const [immaginiRisultato]=await pool.query(queryImmagini, [content.id]);
+        const listaUrlImmagini=immaginiRisultato.map(riga => riga.url_immagine);
         return res.json({
             success: true,
             content: content,

@@ -27,7 +27,11 @@ document.addEventListener("DOMContentLoaded", async function(){
                     const article=document.createElement('article');
                     const testata=document.createElement('div');//titolo + date
                     testata.classList.add('testata');
-                    let h3=`<h3>${evento.titolo} (${evento.codice})</h3>`;
+                    let h3=`<h3>${evento.titolo}`;
+                    if(evento.codice){
+                        h3+=`(${evento.codice})`;
+                    }
+                    h3+=`</h3>`;
                     testata.insertAdjacentHTML('beforeend', h3);
                     let date=`<p class="date">${evento.data_inizio}`;//date dell'evento
                     if(evento.data_fine){

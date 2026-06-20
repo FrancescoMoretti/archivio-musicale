@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
-    const params = new URLSearchParams(window.location.search);
-    const collocazione = params.get("collocazione");
+    const params=new URLSearchParams(window.location.search);
+    const collocazione=params.get("collocazione");
     //const titolo=document.getElementById("titolo");
-    const scheda = document.getElementById("scheda");
-    const immaginiDiv = document.getElementById("immagini");
+    const scheda=document.getElementById("scheda");
+    const immaginiDiv=document.getElementById("immagini");
     //collocazione non specificata o non valida
     if (!collocazione || collocazione.trim()==="") {
-        window.location.href = "/404.html";
+        window.location.href="/404.html";
         return;
     }
     try {
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         const result=await res.json();
         //contenuto non trovato
         if (!res.ok || !result.success) {
-            window.location.href = "/404.html";
+            window.location.href="/404.html";
             return;
         }
         const contenuto=result.content;//dati della risorsa
@@ -24,13 +24,12 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         //popolazione della scheda dell'articolo
         let stringaHTML=`
             <ul>
-                <li class="titolo">${contenuto.titolo}</li>
-                <li><span>Collocazione</span>: ${contenuto.collocazione}</li>
-        `;
+                <li class="titolo">${contenuto.titolo}</li>`;
+        if(contenuto.collocazione){
+            stringaHTML+=`<li><span>Collocazione</span>: ${contenuto.collocazione}</li>`;
+        }
         if(contenuto.link_rism){
-            stringaHTML+=`
-                    <li><span><a href="${contenuto.link_rism}" target="_blank">Link RISM</a></span></li>
-            `;
+            stringaHTML+=`<li><span><a href="${contenuto.link_rism}" target="_blank">Link RISM</a></span></li>`;
         }
         stringaHTML+=`<li><span>Autore</span>: ${contenuto.autore}</li>`
         if(contenuto.data_str){

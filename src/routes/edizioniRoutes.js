@@ -3,7 +3,7 @@ const router=express.Router();
 
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 
 //endpoint per inserimento edizione
 router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -166,8 +166,8 @@ router.get("/api/edizioni", async (req, res)=>{
 });
 
 //endpoint per lettura edizione
-router.get("/api/edizione/:collocazione", async (req, res)=>{
-    const collocazione=req.params.collocazione;
+router.get("/api/edizione/:collocazione", autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {collocazione}=req.params;
     //validazione server-side
     if(!collocazione || !String(collocazione).trim()){
         return res.status(400).json({
@@ -175,7 +175,12 @@ router.get("/api/edizione/:collocazione", async (req, res)=>{
             message: "Collocazione non valida."
         });
     }
-    const queryContenuti="SELECT id, collocazione, titolo, link_rism, autore, data_str, editore, descrizione, note FROM edizioni WHERE collocazione=?";
+    let campiSelect="id, titolo, link_rism, autore, data_str, editore, descrizione, note";
+    //se l'utente è addetto => recupero anche la collocazione
+    if(req.addetto){
+        campiSelect+=", collocazione";
+    }
+    const queryContenuti=`SELECT ${campiSelect} FROM edizioni WHERE collocazione=?`;
     const queryImmagini="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
     try {
         const [edizioneRisultato]=await pool.query(queryContenuti, [collocazione]);

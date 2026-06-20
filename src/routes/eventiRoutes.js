@@ -3,7 +3,7 @@ const router=express.Router();
 
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 
 //endpoint per inserimento evento
 router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -140,13 +140,18 @@ router.delete("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin'
 });
 
 //endpoint per visualizzare eventi
-router.get("/api/eventi", async (req, res)=>{
+router.get("/api/eventi", autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {limit, offset}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
     //preparazione query
+    let campiSelect="id, link_evento, link_facebook, link_instagram, titolo, descrizione, DATE_FORMAT(data_inizio, '%d/%m/%Y') AS data_inizio, DATE_FORMAT(data_fine, '%d/%m/%Y') AS data_fine";
+    //se l'utente è addetto => recupero anche il codice
+    if(req.addetto){
+        campiSelect+=", codice";
+    }
     //query per prendere gli eventi da mostrare
-    const queryEventi="SELECT id, codice, link_evento, link_facebook, link_instagram, titolo, descrizione, DATE_FORMAT(data_inizio, '%d/%m/%Y') AS data_inizio, DATE_FORMAT(data_fine, '%d/%m/%Y') AS data_fine FROM eventi ORDER BY eventi.data_inizio DESC LIMIT ? OFFSET ?";
+    const queryEventi=`SELECT ${campiSelect} FROM eventi ORDER BY eventi.data_inizio DESC LIMIT ? OFFSET ?`;
     //query per sapere se ci sono altri eventi
     const queryCount="SELECT COUNT(*) AS totale FROM eventi";
     const connection=await pool.getConnection();//uso connection perché devo fare 3 query

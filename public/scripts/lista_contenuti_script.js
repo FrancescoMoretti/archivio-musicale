@@ -1,6 +1,6 @@
-let schermata = 1;//contatore per la schermata che sto mostrando
-const righe = 5;//righe di tabella per ogni pagina
-const altezzaCellaImmagine = 4.3;//cella imagine è alta 4.3em
+let schermata=1;//contatore per la schermata che sto mostrando
+const righe=5;//righe di tabella per ogni pagina
+const altezzaCellaImmagine=4.3;//cella imagine è alta 4.3em
 let timeoutRicerca=null;
 
 document.addEventListener("DOMContentLoaded", async ()=>{
@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     }
 
     //elementi fissi
-    const precBtn = document.getElementById("prec-btn");
-    const succBtn = document.getElementById("succ-btn");
-    const searchBar = document.getElementById("search-bar");
+    const precBtn=document.getElementById("prec-btn");
+    const succBtn=document.getElementById("succ-btn");
+    const searchBar=document.getElementById("search-bar");
     const tbody=document.querySelector('tbody');
 
     //chiamata iniziale
@@ -50,14 +50,14 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     searchBar.addEventListener("input", async () => {
         clearTimeout(timeoutRicerca);//se l'utente sta ancora scrivendo cancello il timer
         timeoutRicerca=setTimeout(async ()=>{
-            schermata = 1;//torno alla prima pagina
+            schermata=1;//torno alla prima pagina
             await caricaContenuti();
         }, 300);//prima di eseguire aspetto 300ms
     });
 
     //funzione principale che carica contenuti dal server
     async function caricaContenuti() {
-        const offset = (schermata - 1) * righe;
+        const offset=(schermata - 1) * righe;
         //costruisco URL con i parametri
         let url=`${endpoint}?limit=${righe}&offset=${offset}`;
         if (searchBar.value) {
@@ -70,13 +70,13 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             if(res.ok && result.success){
                 mostraPagina(result.contenuti, result.totali);
             }else{
-                tbody.innerHTML="<tr><td colspan='4'>" + result.message + "</td></tr>";
+                tbody.innerHTML="<tr><td colspan='3'>"+result.message+"</td></tr>";
                 precBtn.style.visibility="hidden";
                 succBtn.style.visibility="hidden";
                 return;
             }
         } catch (err) {
-            tbody.innerHTML="<tr><td colspan='4'>Errore di rete</td></tr>";
+            tbody.innerHTML="<tr><td colspan='3'>Errore di rete</td></tr>";
             console.error(err);
             precBtn.style.visibility="hidden";
             succBtn.style.visibility="hidden";
@@ -84,64 +84,61 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     };
 
     function mostraPagina(lista_da_mostrare, totale) {
-        tbody.innerHTML = "";
+        tbody.innerHTML="";
         //se non ci sono elementi da mostrare
         if(lista_da_mostrare.length===0){
-            tbody.innerHTML="<tr><td colspan='4'>Nessun contenuto trovato.</td></tr>";
+            tbody.innerHTML="<tr><td colspan='3'>Nessun contenuto trovato.</td></tr>";
             precBtn.style.visibility="hidden";
             succBtn.style.visibility="hidden";
             tbody.style.height="auto";
             return;
         }
-        lista_da_mostrare.forEach(contenuto => {
-            const tr = document.createElement("tr");
-            const tdCollocazione = document.createElement("td");
-            tdCollocazione.textContent = contenuto.collocazione;
-            const tdAutore = document.createElement("td");
-            tdAutore.textContent = contenuto.autore;
-            const tdTitolo = document.createElement("td");
+        lista_da_mostrare.forEach(contenuto=>{
+            const tr=document.createElement("tr");
+            const tdAutore=document.createElement("td");
+            tdAutore.textContent=contenuto.autore;
+            const tdTitolo=document.createElement("td");
             //aggiungo link per SEO
             const linkTitolo=document.createElement("a");
             linkTitolo.href=`${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
             linkTitolo.textContent=contenuto.titolo;
             tdTitolo.appendChild(linkTitolo);
             //GESTIONE COLONNA IMMAGINE
-            const tdImmagine = document.createElement("td");
+            const tdImmagine=document.createElement("td");
             if (contenuto.url_immagine) {
-                const img = document.createElement("img");
-                const miniaturaUrl = contenuto.url_immagine.replace('/upload/', '/upload/w_100,c_thumb/');//w_100,c_thumb servono per scaricare l'immagine in versione miniatura
-                img.src = miniaturaUrl;
-                img.alt = `Copertina di ${contenuto.titolo}`;
-                img.loading = "lazy";
+                const img=document.createElement("img");
+                const miniaturaUrl=contenuto.url_immagine.replace('/upload/', '/upload/w_100,c_thumb/');//w_100,c_thumb servono per scaricare l'immagine in versione miniatura
+                img.src=miniaturaUrl;
+                img.alt=`Copertina di ${contenuto.titolo}`;
+                img.loading="lazy";
                 tdImmagine.appendChild(img);
             } else {
                 tdImmagine.className="no-img";
-                tdImmagine.textContent = "No Img";
+                tdImmagine.textContent="No Img";
             }
-            tr.appendChild(tdCollocazione);
             tr.appendChild(tdAutore);
             tr.appendChild(tdTitolo);
             tr.appendChild(tdImmagine);
-            tr.addEventListener("click", () => {
-                window.location.href = `${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
+            tr.addEventListener("click", ()=>{
+                window.location.href=`${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
             });
             tbody.appendChild(tr);
         });
         //adatto tabella al contenuto
-        tbody.style.height = `${tbody.rows.length*altezzaCellaImmagine}em`;
+        tbody.style.height=`${tbody.rows.length*altezzaCellaImmagine}em`;
         //aggiorno indice pagina
-        document.getElementById("schermata").textContent = `Pagina ${schermata}`;
+        document.getElementById("schermata").textContent=`Pagina ${schermata}`;
         //gestione bottoni
-        const paginaCorrente = (schermata - 1) * righe;
-        if (schermata === 1) {
-            precBtn.style.visibility = "hidden";
+        const paginaCorrente=(schermata-1)*righe;
+        if (schermata===1) {
+            precBtn.style.visibility="hidden";
         } else {
-            precBtn.style.visibility = "visible";
+            precBtn.style.visibility="visible";
         }
-        if (paginaCorrente + righe >= totale) {
-            succBtn.style.visibility = "hidden";
+        if (paginaCorrente+righe>=totale) {
+            succBtn.style.visibility="hidden";
         } else {
-            succBtn.style.visibility = "visible";
+            succBtn.style.visibility="visible";
         }
     };
 });

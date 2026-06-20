@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
+const jwt=require('jsonwebtoken');
 
 //middleware di verifica del token JWT
-const autenticaToken = (req, res, next)=>{
+const autenticaToken=(req, res, next)=>{
     //evito che le pagine protette possano essere raggiunte con "<-" senza il controllo del token
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     //no-store: non salvo copia della pagina nella memoria temporanea
@@ -82,4 +82,31 @@ const autorizzaRuoli=(...ruoliAmmessi)=>{
     };
 };
 
-module.exports={autenticaToken, autorizzaRuoli};
+//middleware di verifica "morbida"
+const autenticaTokenMorbido=(...ruoliAmmessi)=>{
+    return (req, res, next)=>{
+        const token=req.cookies.token;
+        req.addetto=false;//di default suppongo utente non addetto(!editor, !admin, !superadmin)
+        //se il token non c'è => mando avanti
+        if(!token){
+            return next();
+        }
+        try{
+            //token presente => verifica
+            const payload=jwt.verify(token, process.env.JWT_SECRET);
+            if(ruoliAmmessi.includes(payload.ruolo)){
+                req.addetto=true;
+            }
+            next();
+        }catch(err){
+            //se il token è stato manomesso
+            if(err.name==="JsonWebTokenError"){
+                res.clearCookie('token');//consumo il token
+                return res.status(403).redirect('/403.html');//403: forbidden
+            }
+            next();
+        }
+    }
+};
+
+module.exports={autenticaToken, autorizzaRuoli, autenticaTokenMorbido};

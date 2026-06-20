@@ -25,9 +25,11 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         titolo.textContent=contenuto.titolo;
         let stringaHTML=`
             <ul>
-                <li><span>Collocazione</span>: ${contenuto.collocazione}</li>
                 <li><span>Autore</span>: ${contenuto.autore}</li>
         `;
+        if(contenuto.collocazione){
+            stringaHTML+=`<li><span>Collocazione</span>: ${contenuto.collocazione}</li>`;
+        }
         if(contenuto.data_str){
             stringaHTML+=`<li><span>Data</span>: ${contenuto.data_str}</li>`;
         }
@@ -38,14 +40,14 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
             stringaHTML+=`<li><span>Dimensioni</span>: ${contenuto.dimensioni}</li>`;
         }
         stringaHTML+=`</ul>`;
-        scheda.innerHTML = stringaHTML;
+        scheda.innerHTML=stringaHTML;
         //gestione delle immagini
-        const n_immagini = listaImmagini.length;
+        const n_immagini=listaImmagini.length;
         //se ho una sola immagine la metto come immagine
-        if (n_immagini === 1) {
+        if (n_immagini===1) {
             immaginiDiv.innerHTML = `<img src="${listaImmagini[0]}" alt="Immagine di ${contenuto.titolo}">`;
         } else if (n_immagini > 1) {
-            immaginiDiv.innerHTML = `
+            immaginiDiv.innerHTML=`
                 <div id="slider">
                     <div id="slider-track">
                         ${listaImmagini.map(url => `<img class="slide" src="${url}" alt="Immagine di ${contenuto.titolo}">`).join("")}
