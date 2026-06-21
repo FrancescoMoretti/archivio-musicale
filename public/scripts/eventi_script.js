@@ -40,10 +40,9 @@ document.addEventListener("DOMContentLoaded", async function(){
                     date+=`</p>`;
                     testata.insertAdjacentHTML('beforeend', date);
                     article.appendChild(testata);
-                    const testo=document.createElement('div');//sezione testuale dell'articolo
+                    const testo=document.createElement('p');//sezione testuale dell'articolo
                     testo.classList.add('testo');
-                    let p=`<p>${evento.descrizione}</p>`;//corpo dell'articolo
-                    testo.insertAdjacentHTML('beforeend', p);
+                    testo.insertAdjacentHTML('beforeend', evento.descrizione);
                     let collegamenti=null;
                     //se c'è almeno un link=> creo div collegamenti
                     if(evento.link_evento || evento.link_facebook || evento.link_instagram){

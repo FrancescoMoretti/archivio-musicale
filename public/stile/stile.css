@@ -779,6 +779,12 @@ footer .material-symbols-outlined{
     grid-template-columns: repeat(4, 1fr);
     margin: 4em;
     column-gap: 1em;
+    background-color: var(--carta2);
+    border-radius: 15%;
+}
+
+#biografia article:nth-child(odd){
+    background-color: var(--carta3);
 }
 
 #biografia article .testata{
@@ -838,24 +844,35 @@ footer .material-symbols-outlined{
 /*Stile alternativo per schermi con meno di 768px*/
 @media screen and (max-width: 768px){
 /*inizio restyling articoli biografia e eventi*/
-    article .mobile-img{
-        display: block;
+    #biografia article,
+    #eventi-sec article{
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
     }
-    
+
+    article .testo{
+        margin: 0;
+    }
+
     article .pc-img{
         display: none;
     }
 
-    article img,
-    article div{
-        grid-column: span 2;
+    article .mobile-img{
+        display: block;
     }
 
-    #biografia article .testo,
-    #eventi-sec article .testo,
-    #eventi-sec .one-img-article .testo,
-    #eventi-sec .two-img-article .testo{
-        grid-column: span 4;
+    #biografia article div:has(p.didascalia){
+        /*spazio per non coprire didascalia*/
+        margin-bottom: 2em;
+    }
+
+    #biografia article,
+    #eventi-sec article{
+        margin: 0 1em 1em 1em;
+        padding: 1em;
+        border-radius: 5%;
     }
 
     article .collegamenti{
@@ -873,10 +890,15 @@ footer .material-symbols-outlined{
 /*inizio restyling privacy*/
     #informativa{
         width: 90%;
+        margin: auto 2em 1em 2em;
     }
 /*fine restyling privacy*/
 
 /*inizio restyling pagine lista*/
+    .lista-contenuti{
+        margin: auto 2em;
+    }
+
     table{
         width: 90%;
     }
