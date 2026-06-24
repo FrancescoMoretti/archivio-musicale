@@ -843,6 +843,37 @@ footer .material-symbols-outlined{
 
 /*Stile alternativo per schermi con meno di 768px*/
 @media screen and (max-width: 768px){
+/*inizio restyling menù*/
+    #menu-icon{
+        display: block;
+        font-size: 3em;
+        width: 10%;
+        margin: 0 0 0 90%;
+        cursor: pointer;
+    }
+
+    #menu{
+        display: none;
+        flex-direction: column;
+        justify-content: space-evenly;
+        height: auto;
+        }
+
+    #menu #logo{
+        display: none;
+    }
+
+    #menu-toggle:checked ~ #menu{
+        display: flex;
+    }
+/*fine restyling menù*/
+
+/*inizio restyling body*/
+    body{
+        padding-top: 4em;
+    }
+/*fine restyling body*/
+
 /*inizio restyling articoli biografia e eventi*/
     #biografia article,
     #eventi-sec article{
@@ -883,6 +914,7 @@ footer .material-symbols-outlined{
 /*inizio restyling footer*/
     footer address{
         flex-direction: column;
+        margin: auto;
         gap: 0;
     }
 /*fine restyling footer*/
@@ -903,4 +935,11 @@ footer .material-symbols-outlined{
         width: 90%;
     }
 /*fine restyling pagine lista*/
+
+/*inizio restyling home*/
+    #welcome-sec{
+        margin-left: 2em;
+        margin-right: 2em;
+    }
+/*fine restyling home*/
 }
