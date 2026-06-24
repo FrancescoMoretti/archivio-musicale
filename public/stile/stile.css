@@ -678,7 +678,7 @@ footer .material-symbols-outlined{
     /*fine stile slider*/
 /*fine stile pagine contenuti*/
 
-/*inizio stile pagina eventi*/
+/*inizio stile pagina eventi e biografia*/
 #eventi #contatti-sec address{
     font-style: normal;
     text-align: center;
@@ -700,7 +700,8 @@ footer .material-symbols-outlined{
     margin: 0 auto 2em auto;
 }
 
-#eventi-sec article{
+#eventi-sec article,
+#biografia article{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     margin: 4em;
@@ -710,11 +711,13 @@ footer .material-symbols-outlined{
     border-radius: 15%;
 }
 
-#eventi-sec article:nth-child(odd){
+#eventi-sec article:nth-child(odd),
+#biografia article:nth-child(odd){
     background-color: var(--carta3);
 }
 
-#eventi-sec article .testata{
+#eventi-sec article .testata,
+#biografia article .testata{
     grid-column: span 4;
     margin: 0;
 }
@@ -732,6 +735,10 @@ footer .material-symbols-outlined{
     grid-column: span 4;
 }
 
+#biografia article .testo{
+    grid-column: span 2;
+}
+
 #eventi-sec article .collegamenti{
     grid-column: span 4;
 }
@@ -747,7 +754,9 @@ footer .material-symbols-outlined{
     color: var(--colorD);
 }
 
-#eventi-sec article img{
+#eventi-sec article img,
+#biografia article img,
+#biografia article div{
     border-radius: 5%;
     transition: 0.3s ease-out;
     max-width: 20em;
@@ -755,8 +764,15 @@ footer .material-symbols-outlined{
     margin: auto;
 }
 
-#eventi-sec article img:hover{
+#eventi-sec article img:hover,
+#biografia article img:hover{
     transform: scale(1.05);
+}
+
+#biografia article .didascalia{
+    text-align: center;
+    margin-top: 0;
+    font-style: italic;
 }
 
     /*inizio articoli 1 immagine*/
@@ -771,50 +787,7 @@ footer .material-symbols-outlined{
     }
     /*fine articoli 2 immagini*/
 
-/*fine stile pagina eventi*/
-
-/*inizio stile pagina biografia*/
-#biografia article{
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin: 4em;
-    column-gap: 1em;
-    background-color: var(--carta2);
-    border-radius: 15%;
-}
-
-#biografia article:nth-child(odd){
-    background-color: var(--carta3);
-}
-
-#biografia article .testata{
-    grid-column: span 4;
-    margin: 0;
-}
-
-#biografia article .testo{
-    grid-column: span 2;
-}
-
-#biografia article img,
-#biografia article div{
-    border-radius: 5%;
-    transition: 0.3s ease-out;
-    max-width: 20em;
-    max-height: 20em;
-    margin: auto;
-}
-
-#biografia article img:hover{
-    transform: scale(1.05);
-}
-
-#biografia article .didascalia{
-    text-align: center;
-    margin-top: 0;
-    font-style: italic;
-}
-/*fine stile pagina biografia*/
+/*fine stile pagina eventi e biografia*/
 
 /*inizio stile pagina privacy*/
 #informativa{
@@ -880,6 +853,9 @@ footer .material-symbols-outlined{
         display: flex;
         flex-direction: column;
         gap: 1em;
+        margin: 0 1em 1em 1em;
+        padding: 1em;
+        border-radius: 5%;
     }
 
     article .testo{
@@ -897,13 +873,6 @@ footer .material-symbols-outlined{
     #biografia article div:has(p.didascalia){
         /*spazio per non coprire didascalia*/
         margin-bottom: 2em;
-    }
-
-    #biografia article,
-    #eventi-sec article{
-        margin: 0 1em 1em 1em;
-        padding: 1em;
-        border-radius: 5%;
     }
 
     article .collegamenti{
