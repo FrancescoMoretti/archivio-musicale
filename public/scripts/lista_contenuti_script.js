@@ -98,10 +98,14 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             const tdAutore=document.createElement("td");
             tdAutore.textContent=contenuto.autore;
             const tdTitolo=document.createElement("td");
+            let titolo=contenuto.titolo;
+            if(titolo.length>10){
+                titolo=titolo.slice(0, 25)+"...";
+            }
             //aggiungo link per SEO
             const linkTitolo=document.createElement("a");
             linkTitolo.href=`${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
-            linkTitolo.textContent=contenuto.titolo;
+            linkTitolo.textContent=titolo;
             tdTitolo.appendChild(linkTitolo);
             //GESTIONE COLONNA IMMAGINE
             const tdImmagine=document.createElement("td");

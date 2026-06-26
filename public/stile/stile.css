@@ -896,8 +896,22 @@ footer .material-symbols-outlined{
 /*fine restyling privacy*/
 
 /*inizio restyling pagine lista*/
+    #lista-edizioni h1,
+    #lista-stampe h1{
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
     .lista-contenuti{
         margin: auto 5%;
+    }
+
+    #ricerca-sec{
+        width: 80%;
+    }
+
+    #ricerca-sec div label{
+        display: none;
     }
 
     table{
@@ -911,7 +925,19 @@ footer .material-symbols-outlined{
     }
 
     #welcome-sec img{
-        width: 50%;
+        width: 100%;
     }
 /*fine restyling home*/
+
+/*inizio restyling pagina dettaglio*/
+    .articolo .grid{
+        display: flex;
+        flex-direction: column;
+        margin: 0 5% 2em 5%;
+    }
+    
+    .articolo .grid #scheda{
+        margin-top: 1em;
+    }
+/*fine restyling pagina dettaglio*/
 }
