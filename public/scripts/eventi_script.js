@@ -66,36 +66,37 @@ document.addEventListener("DOMContentLoaded", async function(){
                     if(evento.immagini){
                         numeroImmagini=evento.immagini.length;
                     }
+                    const responsiveImgDiv=document.createElement('div');
+                    responsiveImgDiv.classList.add('mobile-img');
                     switch(numeroImmagini){
                         case 1:
                             article.classList.add("one-img-article");
-                            let classeResponsive="";
-                            //gestione della classe per apparizione/sparizione immagini negli articoli
-                            if(left){
-                                classeResponsive=`class="pc-img"`;
-                            }
-                            const img=`<img ${classeResponsive} src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
-                            const imgResponsive=`<img class="mobile-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const img=`<img class="pc-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const imgResponsive=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
                             if(left){
                                 article.insertAdjacentHTML('beforeend', img);
                                 article.appendChild(testo);
-                                article.insertAdjacentHTML('beforeend', imgResponsive);
                                 left=false;
                             }else{
                                 article.appendChild(testo);
                                 article.insertAdjacentHTML('beforeend', img);
                                 left=true;
                             }
+                            responsiveImgDiv.insertAdjacentHTML('beforeend', imgResponsive);
+                            article.appendChild(responsiveImgDiv);
                         break;
                         case 2:
                             article.classList.add("two-img-article");
                             const img1=`<img class="pc-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
-                            const img1Responsive=`<img class="mobile-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
-                            const img2=`<img src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
+                            const img2=`<img class="pc-img" src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
+                            const img1Responsive=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const img2Responsive=`<img src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
                             article.insertAdjacentHTML('beforeend', img1);
                             article.appendChild(testo);
-                            article.insertAdjacentHTML('beforeend', img1Responsive);
                             article.insertAdjacentHTML('beforeend', img2);
+                            responsiveImgDiv.insertAdjacentHTML('beforeend', img1Responsive);
+                            responsiveImgDiv.insertAdjacentHTML('beforeend', img2Responsive);
+                            article.appendChild(responsiveImgDiv);
                         break;
                         default:
                             //non ci sono immagini
