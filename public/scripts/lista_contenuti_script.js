@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             const tdTitolo=document.createElement("td");
             let titolo=contenuto.titolo;
             if(titolo.length>10){
-                titolo=titolo.slice(0, 25)+"...";
+                titolo=titolo.slice(0, 50)+"...";
             }
             //aggiungo link per SEO
             const linkTitolo=document.createElement("a");
