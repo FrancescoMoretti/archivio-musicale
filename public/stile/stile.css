@@ -814,6 +814,14 @@ footer .material-symbols-outlined{
 
 /*Stile alternativo per schermi con meno di 1024px*/
 @media screen and (max-width: 1024px){
+/*inizio restyling footer*/
+    footer address{
+        flex-direction: column;
+        margin: auto;
+        gap: 0;
+    }
+/*fine restyling footer*/
+
 /*inizio restyling home*/
     #welcome-sec img{
         width: 50%;
@@ -907,14 +915,6 @@ footer .material-symbols-outlined{
         flex-direction: column;
     }
 /*fine restyling eventi e biografia*/
-
-/*inizio restyling footer*/
-    footer address{
-        flex-direction: column;
-        margin: auto;
-        gap: 0;
-    }
-/*fine restyling footer*/
 
 /*inizio restyling privacy*/
     #informativa{

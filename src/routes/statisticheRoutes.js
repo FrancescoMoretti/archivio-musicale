@@ -16,7 +16,7 @@ router.get("/api/conta-reperti", async (req, res)=>{
         }
         return res.json({
             success: true,
-            message: `L'archivio ospita: ${risultato[0].somma_reperti} reperti.`
+            message: `L'archivio ospita: ${risultato[0].somma_reperti} schede.`
         });
     }catch(err){
         console.error("Errore nell'endpoint conta-reperti: ", err);
@@ -63,6 +63,44 @@ router.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin'
             success: false,
             message: "Errore interno durante la ricerca dei contenuti e degli utenti."
         });
+    }
+});
+
+//endoint per sitemap
+router.get("/sitemap.xml", async (req, res)=>{
+    try{
+        const urlBase="https://www.archiviolm.it";//dominio di base
+        //lista pagine statiche
+        const pagineStatiche=[
+            '', //index.html
+            '/biografia.html',
+            '/eventi.html',
+            '/lista_edizioni.html'
+        ];
+        //preparazione query
+        const queryEdizioni="SELECT collocazione FROM edizioni";
+        //esecuzione query
+        const [edizioni]=await pool.query(queryEdizioni);
+        //intestazione sitemap
+        let xml='<?xml version="1.0" encoding="UTF-8"?>\n';
+        xml+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+        //aggiunta pagine statiche
+        pagineStatiche.forEach(pagina=>{
+            xml+=`  <url>\n    <loc>${urlBase}${pagina}</loc>\n  </url>\n`;
+        });
+        //aggiunta edizioni
+        edizioni.forEach(edizione=>{
+            xml+=`  <url>\n    <loc>${urlBase}/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}</loc>\n  </url>\n`;
+        });
+        //chiusura tag principale
+        xml+='</urlset>';
+        //dico al browser che questo è xml
+        res.header('Content-type', 'application/xml');
+        //invio la striga xml
+        res.send(xml);
+    }catch(err){
+        console.error("Errore durante la generazione della sitemap: ", err);
+        res.status(500).end();
     }
 });
 
