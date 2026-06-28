@@ -33,6 +33,9 @@ body {
 
 main {
     flex: 1; /*occupa tutto lo spazio che avanza tra header e footer */
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    margin-bottom: 1em;
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -181,7 +184,6 @@ footer .material-symbols-outlined{
 .grid{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    margin: 0 4em 2em 4em;
     column-gap: 2em;
 }
 
@@ -235,7 +237,7 @@ footer .material-symbols-outlined{
 /*inizio stile pagine lista*/
 #ricerca-sec{
     display: block;
-    width: 40%;
+    width: 55%;
     margin: 0 auto;
 }
 
@@ -255,10 +257,6 @@ footer .material-symbols-outlined{
 #ricerca-sec input[type=text]{
     font-size: 1.15em;
     width: 100%;
-}
-
-.lista-contenuti{
-    margin: auto 4em;
 }
     /*inizio stile tabella*/
     table{
@@ -331,7 +329,6 @@ footer .material-symbols-outlined{
 .area-riservata #radio-div{
     display: inline;
     width: 40%;
-    margin: 0 auto;
 }
 
 .area-riservata #radio-div input[name="tipo-form"]{
@@ -347,7 +344,6 @@ footer .material-symbols-outlined{
     border-radius: 35%;
     border: var(--sfondoScuro) solid 2px;
     transition: color 0.3s ease-out;
-    margin: auto 0.5em;
     font-family: "Ubuntu", sans-serif;
     font-weight: bold;
 }
@@ -377,6 +373,7 @@ footer .material-symbols-outlined{
 
 .area-riservata #monitoraggio-grid .element{
     grid-column: span 2;
+    border-radius: 2.5%;
 }
 
 .area-riservata #monitoraggio-grid #monitoraggio-form div{
@@ -529,7 +526,7 @@ footer .material-symbols-outlined{
 #login form,
 #cambia-password-div{
     display: block;
-    width: 40%;
+    width: 60%;
     margin: auto;
     overflow: hidden;
     background-color: var(--carta2);
@@ -557,7 +554,7 @@ footer .material-symbols-outlined{
 #catalogo .grid{
     gap: 0 0;
     grid-template-columns: repeat(2, 1fr);
-    margin: 0 20em 4em 20em;
+    margin: 0 20% 4em 20%;
 }
 
 #catalogo .grid .element{
@@ -704,7 +701,8 @@ footer .material-symbols-outlined{
 #biografia article{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    margin: 4em;
+    margin-top: 4em;
+    margin-bottom: 4em;
     column-gap: 1em;
     background-color: var(--carta2);
     padding: 2em;
@@ -791,7 +789,7 @@ footer .material-symbols-outlined{
 
 /*inizio stile pagina privacy*/
 #informativa{
-    width: 55%;
+    width: 65%;
     margin: auto auto 1em auto;
 }
 
@@ -853,8 +851,7 @@ footer .material-symbols-outlined{
         display: flex;
         flex-direction: column;
         gap: 1em;
-        margin: 0 2.5% 1em 2.5%;
-        padding: 2.5%;
+        padding: 5%;
         border-radius: 5%;
     }
 
@@ -891,21 +888,10 @@ footer .material-symbols-outlined{
 /*inizio restyling privacy*/
     #informativa{
         width: 90%;
-        margin: auto 5% 1em 5%;
     }
 /*fine restyling privacy*/
 
 /*inizio restyling pagine lista*/
-    #lista-edizioni h1,
-    #lista-stampe h1{
-        margin-left: 5%;
-        margin-right: 5%;
-    }
-
-    .lista-contenuti{
-        margin: auto 5%;
-    }
-
     #ricerca-sec{
         width: 80%;
     }
@@ -920,12 +906,8 @@ footer .material-symbols-outlined{
 /*fine restyling pagine lista*/
 
 /*inizio restyling home*/
-    #welcome-sec{
-        margin: auto 5%;
-    }
-
     #welcome-sec img{
-        width: 100%;
+        width: 80%;
     }
 /*fine restyling home*/
 
@@ -933,7 +915,6 @@ footer .material-symbols-outlined{
     .articolo .grid{
         display: flex;
         flex-direction: column;
-        margin: 0 5% 2em 5%;
     }
     
     .articolo .grid #scheda{
