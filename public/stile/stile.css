@@ -812,6 +812,61 @@ footer .material-symbols-outlined{
 }
 /*fine stile pagina privacy*/
 
+/*Stile alternativo per schermi con meno di 1024px*/
+@media screen and (max-width: 1024px){
+/*inizio restyling home*/
+    #welcome-sec img{
+        width: 50%;
+    }
+/*fine restyling home*/
+
+/*inizio restyling articoli biografia e eventi*/
+    #biografia article,
+    #eventi-sec article{
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1em;
+        padding: 5%;
+        border-radius: 5%;
+    }
+
+    #eventi-sec article .testata,
+    #biografia article .testata{
+        grid-column: span 2;
+        margin: 0;
+    }
+
+    #biografia article .testo,
+    #eventi-sec article .testo,
+    #eventi-sec .one-img-article .testo,
+    #eventi-sec .two-img-article .testo{
+        margin: 0;
+        grid-column: span 2;
+    }
+
+    article .pc-img{
+        display: none;
+    }
+
+    article .mobile-img{
+        display: block;
+    }
+
+    #eventi-sec .one-image-article img{
+        grid-column: span 2;
+    }
+
+    #biografia article div:has(p.didascalia){
+        /*spazio per non coprire didascalia*/
+        margin-bottom: 2em;
+    }
+
+    #eventi-sec article .collegamenti{
+        margin-top: 1em;
+        grid-column: span 2;
+    }
+/*fine restyling articoli biografia e eventi*/
+}
+
 /*Stile alternativo per schermi con meno di 768px*/
 @media screen and (max-width: 768px){
 /*inizio restyling menù*/
@@ -845,37 +900,13 @@ footer .material-symbols-outlined{
     }
 /*fine restyling body*/
 
-/*inizio restyling articoli biografia e eventi*/
+/*inizio restyling eventi e biografia*/
     #biografia article,
     #eventi-sec article{
         display: flex;
         flex-direction: column;
-        gap: 1em;
-        padding: 5%;
-        border-radius: 5%;
     }
-
-    article .testo{
-        margin: 0;
-    }
-
-    article .pc-img{
-        display: none;
-    }
-
-    article .mobile-img{
-        display: block;
-    }
-
-    #biografia article div:has(p.didascalia){
-        /*spazio per non coprire didascalia*/
-        margin-bottom: 2em;
-    }
-
-    article .collegamenti{
-        margin-top: 1em;
-    }
-/*fine restyling articoli biografia e eventi*/
+/*fine restyling eventi e biografia*/
 
 /*inizio restyling footer*/
     footer address{
