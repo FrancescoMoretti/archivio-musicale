@@ -960,6 +960,10 @@ footer .material-symbols-outlined{
         display: flex;
         flex-direction: column;
     }
+
+    .articolo .grid #immagini{
+        margin: auto;
+    }
     
     .articolo .grid #scheda{
         margin-top: 1em;
