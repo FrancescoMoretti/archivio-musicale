@@ -8,14 +8,14 @@ flowchart LR
         Admin(["amministratore"])
     end
 
-    subgraph "Server"
+    subgraph "Server\n(Railway)"
         S_admin["/admin"]
         S_public["/public"]
     end
 
     subgraph "Database"
-        Aiven[("Aiven\n(Dati testuali)")]
-        Cloudinary[("Cloudinary\n(Immagini)")]
+        Aiven[("Dati testuali\n(Aiven)")]
+        Cloudinary[("Immagini\n(Cloudinary)")]
     end
 
     Viewer -- "Richiesta risorsa" --> S_public
