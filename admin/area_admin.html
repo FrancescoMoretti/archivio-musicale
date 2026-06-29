@@ -137,8 +137,11 @@
         <div class="grid" id="correzione-grid">
             <div class="element">
                 <h3>Correzione Edizioni e Manoscritti: </h3>
-                <p><!--messaggio--></p>
-                <button id="correggi-edizioni">Correggi</button>
+                <p>Le correzioni consistono nell'<strong>aggiungere il punto (.)</strong> alle <strong>descrizioni</strong> e alle <strong>note</strong> che non lo hanno alla fine.</p>
+                <form id="correggi-edizioni-form" action="/api/edizioni" method="PATCH">
+                    <p><!--messaggio--></p>
+                    <input type="submit" value="Correggi">
+                </form>
             </div>
         </div>
     </main>

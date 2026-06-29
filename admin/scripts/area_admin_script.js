@@ -243,11 +243,10 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     //fetch per correggere edizioni
-    document.getElementById("correggi-edizioni").addEventListener("click", async (event)=>{
-        const btn=event.target;
-        btn.disabled=true;//impedisco click ripetuti sul bottone
-        const div=btn.closest('.element');
-        const message=div.querySelector('p');
+    document.getElementById("correggi-edizioni-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
         message.textContent="Correzione in corso";
         try{
             const res=await fetch(`/api/edizioni`, {
@@ -268,8 +267,6 @@ document.addEventListener("DOMContentLoaded", function(){
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             console.error(err);
-        }finally{
-            btn.disabled=false;
         }
     });
 });
