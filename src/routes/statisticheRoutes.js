@@ -16,7 +16,7 @@ router.get("/api/conta-reperti", async (req, res)=>{
         }
         return res.json({
             success: true,
-            message: `Schede caricate: ${risultato[0].somma_reperti}.`
+            message: `Schede caricate: ${risultato[0].somma_reperti}`
         });
     }catch(err){
         console.error("Errore nell'endpoint conta-reperti: ", err);
