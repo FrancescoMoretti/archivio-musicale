@@ -129,25 +129,25 @@ router.get("/api/edizioni", async (req, res)=>{
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
     //query per contare le righe che avrà la tabella
-    let queryTotali = "SELECT COUNT(*) AS totali FROM edizioni e";
+    let queryTotali="SELECT COUNT(*) AS totali FROM edizioni e";
     //query per estrarre contenuti e url dell'immagine, uso left join per estrarre anche edizioni senza immagini
-    let queryContenuti = `SELECT e.id, e.collocazione, e.titolo, e.autore, i.url_immagine FROM edizioni e LEFT JOIN immagini_edizioni i ON e.id=i.edizione_id AND i.ordine=1`;
-    let paramsContenuti = [];
-    let paramsTotali = [];
-    let whereClause = "";//clausola where
+    let queryContenuti=`SELECT e.id, e.collocazione, e.titolo, e.autore, i.url_immagine FROM edizioni e LEFT JOIN immagini_edizioni i ON e.id=i.edizione_id AND i.ordine=1`;
+    let paramsContenuti=[];
+    let paramsTotali=[];
+    let whereClause="";//clausola where
     //gestione filtro
-    if (filtro) {
+    if(filtro){
         whereClause = " WHERE e.autore LIKE ? OR e.titolo LIKE ?";//spazio all'inizio
         const filtroLike = `%${filtro}%`;
         paramsTotali.push(filtroLike, filtroLike);
         paramsContenuti.push(filtroLike, filtroLike);
     }
-    queryTotali += whereClause;
-    queryContenuti += whereClause;
+    queryTotali+=whereClause;
+    queryContenuti+=whereClause;
     //gestione ordinamento
-    queryContenuti += " ORDER BY e.collocazione ASC LIMIT ? OFFSET ?";//spazio all'inizio
+    queryContenuti+=" ORDER BY e.collocazione ASC LIMIT ? OFFSET ?";//spazio all'inizio
     paramsContenuti.push(limite, inizio);
-    try {
+    try{
         const [risultatoTotale] = await pool.query(queryTotali, paramsTotali);
         const totali = risultatoTotale[0].totali;
         const [righe] = await pool.query(queryContenuti, paramsContenuti);
@@ -156,7 +156,7 @@ router.get("/api/edizioni", async (req, res)=>{
             contenuti: righe,
             totali: totali
         });
-    } catch (err) {
+    }catch(err){
         console.error("Errore nell'endpoint GET edizioni: ", err);
         return res.status(500).json({
             success: false,
@@ -257,6 +257,66 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
             success: false,
             message: "Errore interno durante l'aggiornamento della risorsa."
         });
+    }
+});
+
+//endpoint per correzione edizioni
+router.patch("/api/edizioni", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    //preparazione query
+    const querySelect="SELECT collocazione, descrizione, note FROM edizioni";
+    const queryUpdate="UPDATE edizioni SET descrizione=?, note=? WHERE collocazione=?";
+    let modificati=[];//array per salvare collocazioni delle edizioni corrette
+    
+    //funzione di correzione testi (descrizione e note)
+    const correggiTesto=(testo)=>{
+        if(!testo){
+            return testo;
+        }
+        let testoPulito=testo.trim();//pulisco da eventuali spazi in eccesso
+        if(testoPulito.length>0 && !testoPulito.endsWith('.')){
+            testoPulito+='.';
+        }
+        return testoPulito;
+    };
+
+    const connection=await pool.getConnection();
+    try{
+        await connection.beginTransaction();
+        const [edizioni]=await connection.execute(querySelect);
+        //ciclo di correzione
+        for(const edizione of edizioni){
+            //correzione "descrizione" e "note"
+            const descrizioneCorretta=correggiTesto(edizione.descrizione);
+            const noteCorrette=correggiTesto(edizione.note);
+            if(descrizioneCorretta!==edizione.descrizione || noteCorrette!==edizione.note){
+                //aggiorno edizione
+                await connection.execute(queryUpdate, [descrizioneCorretta, noteCorrette, edizione.collocazione]);
+                //annoto la collocazione dell'edizione modificata
+                modificati.push(edizione.collocazione);
+            }
+        }
+        await connection.commit();
+        if(modificati.length===0){
+            return res.status(200).json({
+                success: true,
+                message: "Nessun errore rilevato per Edizioni e Manoscritti."
+            });
+        }else{
+            const stringa=modificati.join(", ")+".";//lista delle collocazioni per edizioni modificate
+            return res.status(200).json({
+                success: true,
+                message: `Correzione completata con successo! Sono stati corrette le Edizioni/Manoscritti con collocazione: ${stringa}`
+            });
+        }
+    }catch(err){
+        await connection.rollback();
+        console.error("Errore nell'endpoint PATCH edizioni: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante la correzione."
+        });
+    }finally{
+        connection.release();
     }
 });
 

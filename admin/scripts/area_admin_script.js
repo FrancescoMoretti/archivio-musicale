@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function(){
         btn.addEventListener("change", function(){
             document.getElementById("utenti-grid").style.display="none";
             document.getElementById("monitoraggio-grid").style.display="none";
+            document.getElementById("correzione-grid").style.display="none";
             const selected=document.querySelector('input[name="tipo-form"]:checked').value;
             switch(selected){
                 case '1':
@@ -12,6 +13,9 @@ document.addEventListener("DOMContentLoaded", function(){
                 break;
                 case '2':
                     document.getElementById("monitoraggio-grid").style.display="grid";
+                break;
+                case '3':
+                    document.getElementById("correzione-grid").style.display="grid";
                 break;
             }
         });
@@ -235,6 +239,37 @@ document.addEventListener("DOMContentLoaded", function(){
         }catch(err){
             tbody.innerHTML="<tr><td colspan='7'>Errore di rete: impossibile raggiungere il server.</td></tr>";
             console.error(err);
+        }
+    });
+
+    //fetch per correggere edizioni
+    document.getElementById("correggi-edizioni").addEventListener("click", async (event)=>{
+        const btn=event.target;
+        btn.disabled=true;//impedisco click ripetuti sul bottone
+        const div=btn.closest('.element');
+        const message=div.querySelector('p');
+        message.textContent="Correzione in corso";
+        try{
+            const res=await fetch(`/api/edizioni`, {
+                method: "PATCH",
+                credentials: "include"
+            });
+            //gestione reindirizzamenti
+            if(res.status===403){
+                window.location.href="/403.html";
+                return;
+            }
+            const result=await res.json();
+            if(res.ok && result.success){
+                message.textContent=result.message;
+            }else{
+                message.textContent=result.message || "Errore durante la correzione.";
+            }
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            console.error(err);
+        }finally{
+            btn.disabled=false;
         }
     });
 });

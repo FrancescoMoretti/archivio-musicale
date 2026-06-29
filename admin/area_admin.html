@@ -43,6 +43,8 @@
             <label for="radio1">Gestione degli utenti</label>
             <input type="radio" name="tipo-form" id="radio2" value="2">
             <label for="radio2">Monitoraggio dei contenuti</label>
+            <input type="radio" name="tipo-form" id="radio3" value="3">
+            <label for="radio3">Correzione dei contenuti</label>
         </div>
         <div class="grid" id="utenti-grid">
             <div class="element">
@@ -113,7 +115,6 @@
                         <input type="text" name="search-bar" id="search-bar" placeholder="Cerca un titolo o un autore">
                         <input type="submit" value="Cerca">
                     </div>
-                    
                 </form>
                 <table>
                     <thead>
@@ -131,6 +132,13 @@
                         <!--corpo della tabella-->
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="grid" id="correzione-grid">
+            <div class="element">
+                <h3>Correzione Edizioni e Manoscritti: </h3>
+                <p><!--messaggio--></p>
+                <button id="correggi-edizioni">Correggi</button>
             </div>
         </div>
     </main>
