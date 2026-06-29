@@ -262,9 +262,10 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
 
 //endpoint per correzione edizioni
 router.patch("/api/edizioni", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
+    const userId=req.utente.id;//id dell'utente che sta facendo la correzione
     //preparazione query
     const querySelect="SELECT collocazione, descrizione, note FROM edizioni";
-    const queryUpdate="UPDATE edizioni SET descrizione=?, note=? WHERE collocazione=?";
+    const queryUpdate="UPDATE edizioni SET descrizione=?, note=?, updated_by=? WHERE collocazione=?";
     let modificati=[];//array per salvare collocazioni delle edizioni corrette
     
     //funzione di correzione testi (descrizione e note)
@@ -290,7 +291,7 @@ router.patch("/api/edizioni", autenticaToken, autorizzaRuoli('superadmin', 'admi
             const noteCorrette=correggiTesto(edizione.note);
             if(descrizioneCorretta!==edizione.descrizione || noteCorrette!==edizione.note){
                 //aggiorno edizione
-                await connection.execute(queryUpdate, [descrizioneCorretta, noteCorrette, edizione.collocazione]);
+                await connection.execute(queryUpdate, [descrizioneCorretta, noteCorrette, userId, edizione.collocazione]);
                 //annoto la collocazione dell'edizione modificata
                 modificati.push(edizione.collocazione);
             }
