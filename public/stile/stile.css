@@ -215,14 +215,14 @@ footer .material-symbols-outlined{
 }
 
 #welcome-sec img{
-    width: 25%;
+    width: 30%;
     aspect-ratio: 1/1;
     object-fit: cover;
     object-position: center;
     border-radius: 50%;
     border: 3px solid var(--colorC);
     display: block;
-    margin: 1em auto;
+    margin: 2em auto;
 }
 
 #contatore-div p{
