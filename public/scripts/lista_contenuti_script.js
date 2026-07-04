@@ -1,5 +1,5 @@
 let schermata=1;//contatore per la schermata che sto mostrando
-const righe=5;//righe di tabella per ogni pagina
+const righe=10;//righe di tabella per ogni pagina
 const altezzaCellaImmagine=4.3;//cella imagine è alta 4.3em
 let timeoutRicerca=null;
 

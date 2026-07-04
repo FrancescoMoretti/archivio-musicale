@@ -145,7 +145,7 @@ router.get("/api/edizioni", async (req, res)=>{
     queryTotali+=whereClause;
     queryContenuti+=whereClause;
     //gestione ordinamento
-    queryContenuti+=" ORDER BY e.collocazione ASC LIMIT ? OFFSET ?";//spazio all'inizio
+    queryContenuti+=" ORDER BY e.titolo ASC LIMIT ? OFFSET ?";//spazio all'inizio
     paramsContenuti.push(limite, inizio);
     try{
         const [risultatoTotale] = await pool.query(queryTotali, paramsTotali);
