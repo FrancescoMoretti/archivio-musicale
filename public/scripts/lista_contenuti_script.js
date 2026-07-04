@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             tdAutore.textContent=contenuto.autore;
             const tdTitolo=document.createElement("td");
             let titolo=contenuto.titolo;
-            if(titolo.length>10){
+            if(titolo.length>50){
                 titolo=titolo.slice(0, 50)+"...";
             }
             //aggiungo link per SEO
