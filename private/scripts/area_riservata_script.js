@@ -24,39 +24,42 @@ document.addEventListener("DOMContentLoaded", function () {
     //fetch di aggiunta edizioni (INSERIMENTO)
     document.getElementById("aggiungi-edizione-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const form = event.target;
-        const message = form.querySelector('p');
+        const form=event.target;
+        const message=form.querySelector('p');
         //validazione client-side
-        const collocazione = form.elements["collocazione"].value.trim();
-        const autore = form.elements["autore"].value.trim();
-        const titolo = form.elements["titolo"].value.trim();
+        const collocazione=form.elements["collocazione"].value.trim();
+        const autore=form.elements["autore"].value.trim();
+        const titolo=form.elements["titolo"].value.trim();
         if (!collocazione || !autore || !titolo) {
             message.textContent = "Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
-        message.textContent = "Caricamento in corso...";
+        message.textContent="Caricamento in corso...";
         //preparazione dati
-        const formData = new FormData(form);
+        const formData=new FormData(form);
+        formData.set("collocazione", collocazione);
+        formData.set("autore", autore);
+        formData.set("titolo", titolo);
         try {
-            const res = await fetch("/api/edizione", {
+            const res=await fetch("/api/edizione", {
                 method: "POST",
                 credentials: "include",
                 body: formData
             });
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if (res.status===403) {
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
             if (res.ok && result.success) {
-                message.textContent = result.message;
+                message.textContent=result.message;
                 form.reset();
             } else {
-                message.textContent = result.message || "Errore durante il salvataggio.";
+                message.textContent=result.message || "Errore durante il salvataggio.";
             }
         } catch (err) {
-            message.textContent = "Errore di rete: impossibile raggiungere il server.";
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
             console.error(err);
         }
     });
@@ -204,39 +207,42 @@ document.addEventListener("DOMContentLoaded", function () {
     //fetch di aggiunta stampe (INSERIMENTO)
     document.getElementById("aggiungi-stampa-form").addEventListener("submit", async (event) => {
         event.preventDefault();
-        const form = event.target;
-        const message = form.querySelector('p');
-        message.textContent = "Caricamento in corso...";
+        const form=event.target;
+        const message=form.querySelector('p');
+        message.textContent="Caricamento in corso...";
         //validazione client-side
-        const collocazione = form.elements["collocazione"].value.trim();
-        const autore = form.elements["autore"].value.trim();
-        const titolo = form.elements["titolo"].value.trim();
+        const collocazione=form.elements["collocazione"].value.trim();
+        const autore=form.elements["autore"].value.trim();
+        const titolo=form.elements["titolo"].value.trim();
         if (!collocazione || !autore || !titolo) {
-            message.textContent = "Errore: Collocazione, autore e titolo sono obbligatori.";
+            message.textContent="Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
         //preparazione dati
-        const formData = new FormData(form);
+        const formData=new FormData(form);
+        formData.set("collocazione", collocazione);
+        formData.set("autore", autore);
+        formData.set("titolo", titolo);
         try {
-            const res = await fetch("/api/stampa", {
+            const res=await fetch("/api/stampa", {
                 method: "POST",
                 credentials: "include",
                 body: formData
             });
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if (res.status===403) {
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
             if (res.ok && result.success) {
-                message.textContent = result.message;
+                message.textContent=result.message;
                 form.reset();
             } else {
-                message.textContent = result.message || "Errore durante il salvataggio.";
+                message.textContent=result.message || "Errore durante il salvataggio.";
             }
         } catch (err) {
-            message.textContent = "Errore di rete: impossibile raggiungere il server.";
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
             console.error(err);
         }
     });
@@ -398,7 +404,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         message.textContent="Caricamento in corso...";
         //preparazione dati
-        const formData= new FormData(form);
+        const formData=new FormData(form);
+        formData.set("codice", codice);
+        formData.set("titolo", titolo);
+        formData.set("data_inizio", dataInizio);
+        formData.set("descrizione", descrizione);
         try{
             const res=await fetch("/api/evento", {
                 method: "POST",

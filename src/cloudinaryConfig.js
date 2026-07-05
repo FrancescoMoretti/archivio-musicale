@@ -1,5 +1,5 @@
-const cloudinary = require('cloudinary').v2;
-const multer = require('multer');
+const cloudinary=require('cloudinary').v2;
+const multer=require('multer');
 require('dotenv').config();
 
 cloudinary.config({
@@ -9,15 +9,15 @@ cloudinary.config({
 });
 
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const storage=multer.memoryStorage();
+const upload=multer({ storage: storage });
 
 //funzione di upload su cloudinary
-const uploadToCloudinary = (buffer, folder) => {
+const uploadToCloudinary=(buffer, folder) => {
     return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
+        const stream=cloudinary.uploader.upload_stream(
             { folder: `archivio_musicale/${folder}` },
-            (error, result) => {
+            (error, result)=>{
                 if (error) reject(error);
                 else resolve({
                     imageUrl: result.secure_url,
@@ -29,4 +29,4 @@ const uploadToCloudinary = (buffer, folder) => {
     });
 };
 
-module.exports = { cloudinary, upload, uploadToCloudinary};
+module.exports={cloudinary, upload, uploadToCloudinary};

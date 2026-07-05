@@ -24,7 +24,6 @@ Font sans-serif: "Ubuntu";
 body {
     margin: 0;
     text-align: center;
-    /*background-color: var(--carta1);*/
     padding-top: 5em;
     display: flex;
     flex-direction: column;
@@ -36,7 +35,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    background-color: var(--carta1);
+    background-color: var(--carta1);/*colore per fallback*/
 }
 
 main {
