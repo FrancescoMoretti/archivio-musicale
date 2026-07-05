@@ -91,15 +91,15 @@ document.addEventListener("DOMContentLoaded", function(){
                     const riga=document.createElement('tr');//creo riga
                     const dataLocale=new Date(utente.created_at).toLocaleDateString('it-IT');//formattazione della data
                     let stringaHTML=`
-                        <td>${utente.id}</td>
-                        <td>${utente.email}</td>
-                        <td>${utente.nome}</td>
-                        <td>${utente.ruolo}</td>
+                        <td>${escapeHTML(utente.id)}</td>
+                        <td>${escapeHTML(utente.email)}</td>
+                        <td>${escapeHTML(utente.nome)}</td>
+                        <td>${escapeHTML(utente.ruolo)}</td>
                         <td>${dataLocale}</td>
                     `;
                     if(utente.email_creatore){
                         stringaHTML+=`
-                            <td>${utente.email_creatore}</td>
+                            <td>${escapeHTML(utente.email_creatore)}</td>
                         `;
                     }else{
                         if(utente.ruolo==='superadmin'){
@@ -199,14 +199,14 @@ document.addEventListener("DOMContentLoaded", function(){
                     const riga=document.createElement('tr');//creo riga
                     const dataCreazione=new Date(contenuto.created_at).toLocaleDateString('it-IT');//formattazione della data
                     let stringaHTML=`
-                        <td>${contenuto.collocazione}</td>
-                        <td>${contenuto.titolo}</td>
-                        <td>${contenuto.autore}</td>
+                        <td>${escapeHTML(contenuto.collocazione)}</td>
+                        <td>${escapeHTML(contenuto.titolo)}</td>
+                        <td>${escapeHTML(contenuto.autore)}</td>
                         <td>${dataCreazione}</td>
                     `;
                     //utente creatore
                     if(contenuto.created_by){
-                        stringaHTML+=`<td>${contenuto.created_by}</td>`;
+                        stringaHTML+=`<td>${escapeHTML(contenuto.created_by)}</td>`;
                     }else{
                         stringaHTML+=`<td>Utente eliminato</td>`;
                     }
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function(){
                         stringaHTML+=`<td>${dataModifica}</td>`;
                         if(contenuto.updated_by){
                             //se esiste l'utente che ha fatto la modifica
-                            stringaHTML+=`<td>${contenuto.updated_by}</td>`;
+                            stringaHTML+=`<td>${escapeHTML(contenuto.updated_by)}</td>`;
                         }else{
                             //se non esiste più l'utente che ha fatto la modifica
                             stringaHTML+=`<td>Utente eliminato</td>`;

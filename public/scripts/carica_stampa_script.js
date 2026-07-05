@@ -25,19 +25,19 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         titolo.textContent=contenuto.titolo;
         let stringaHTML=`
             <ul>
-                <li><span>Autore</span>: ${contenuto.autore}</li>
+                <li><span>Autore</span>: ${escapeHTML(contenuto.autore)}</li>
         `;
         if(contenuto.collocazione){
-            stringaHTML+=`<li><span>Collocazione</span>: ${contenuto.collocazione}</li>`;
+            stringaHTML+=`<li><span>Collocazione</span>: ${escapeHTML(contenuto.collocazione)}</li>`;
         }
         if(contenuto.data_str){
-            stringaHTML+=`<li><span>Data</span>: ${contenuto.data_str}</li>`;
+            stringaHTML+=`<li><span>Data</span>: ${escapeHTML(contenuto.data_str)}</li>`;
         }
         if(contenuto.stampa){
-            stringaHTML+=`<li><span>Stampa</span>: ${contenuto.stampa}</li>`;
+            stringaHTML+=`<li><span>Stampa</span>: ${escapeHTML(contenuto.stampa)}</li>`;
         }
         if(contenuto.dimensioni){
-            stringaHTML+=`<li><span>Dimensioni</span>: ${contenuto.dimensioni}</li>`;
+            stringaHTML+=`<li><span>Dimensioni</span>: ${escapeHTML(contenuto.dimensioni)}</li>`;
         }
         stringaHTML+=`</ul>`;
         scheda.innerHTML=stringaHTML;
@@ -45,12 +45,12 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         const n_immagini=listaImmagini.length;
         //se ho una sola immagine la metto come immagine
         if (n_immagini===1) {
-            immaginiDiv.innerHTML = `<img src="${listaImmagini[0]}" alt="Immagine di ${contenuto.titolo}">`;
-        } else if (n_immagini > 1) {
+            immaginiDiv.innerHTML=`<img src="${escapeHTML(listaImmagini[0])}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`;
+        } else if (n_immagini>1){
             immaginiDiv.innerHTML=`
                 <div id="slider">
                     <div id="slider-track">
-                        ${listaImmagini.map(url => `<img class="slide" src="${url}" alt="Immagine di ${contenuto.titolo}">`).join("")}
+                        ${listaImmagini.map(url=>`<img class="slide" src="${escapeHTML(url)}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`).join("")}
                     </div>
                 </div>
             `;
