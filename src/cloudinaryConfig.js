@@ -10,11 +10,26 @@ cloudinary.config({
 
 
 const storage=multer.memoryStorage();
-const upload=multer({ storage: storage });
+
+//limito il tipo di file che possono essere caricati
+const ALLOWED_MIME_TYPES=['image/jpeg', 'image/png', 'image/webp'];
+
+const fileFilter=(req, file, cb)=>{
+    if(ALLOWED_MIME_TYPES.includes(file.mimetype)){
+        cb(null, true);
+    }else{
+        cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname));
+    }
+};
+
+const upload=multer({storage: storage, fileFilter, limits:{
+    fileSize: 5*1024*1024,//5MB per file
+    files: 5
+}});
 
 //funzione di upload su cloudinary
-const uploadToCloudinary=(buffer, folder) => {
-    return new Promise((resolve, reject) => {
+const uploadToCloudinary=(buffer, folder)=>{
+    return new Promise((resolve, reject)=>{
         const stream=cloudinary.uploader.upload_stream(
             { folder: `archivio_musicale/${folder}` },
             (error, result)=>{

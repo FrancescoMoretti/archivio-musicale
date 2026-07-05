@@ -61,6 +61,15 @@ app.use((req, res)=>{
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
 
+//handler per erorri non gestiti
+app.use((err, req, res, next)=>{
+    console.error("Errore non gestito: ", err);
+    res.status(err.status || 500).json({
+        success: false,
+        message: "Errore interno lato server."
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server in esecuzione sulla porta ${PORT}`);
 });

@@ -211,18 +211,18 @@ router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin')
         });
     }
     //controllo ruolo
+    const ruoliAmmessi=['admin', 'editor'];
+    if(!ruoliAmmessi.includes(ruolo)){
+        return res.status(400).json({
+            success: false,
+            message: "Ruolo non valido."
+        });
+    }
     //admin può creare solo editor
     if(userRuolo==="admin" && ruolo!=="editor"){
         return res.status(403).json({
             success: false,
             message: "Permessi insufficienti, puoi solo nominare editor."
-        });
-    }
-    //non possono essere creati altri superadmin
-    if(ruolo==='superadmin'){
-        return res.status(403).json({
-            success: false,
-            message: "Impossibile creare altri superadmin."
         });
     }
     try{

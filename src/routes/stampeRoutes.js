@@ -4,6 +4,7 @@ const router=express.Router();
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const gestioneErroriUpload=require('../middleware/images');
 
 //endpoint per inserimento stampa
 router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -251,5 +252,7 @@ router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadm
         });
     }
 });
+
+router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;

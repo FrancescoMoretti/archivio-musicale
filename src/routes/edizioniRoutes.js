@@ -4,6 +4,7 @@ const router=express.Router();
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const gestioneErroriUpload=require('../middleware/images');
 
 //endpoint per inserimento edizione
 router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -40,19 +41,22 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
     const connection=await pool.getConnection();
     try {
         await connection.beginTransaction();
-        const [result] = await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, userId]);
-        const edizioneId = result.insertId;//id dell'edizione inserita
+        const [result]=await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, userId]);
+        const edizioneId=result.insertId;//id dell'edizione inserita
         //caricamento immagini su cloudinary
-        if (files && files.length > 0) {
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const {imageUrl, publicId} = await uploadToCloudinary(file.buffer, "edizioni");
+        if (files && files.length>0) {
+            for (let i=0; i<files.length; i++) {
+                const file=files[i];
+                const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "edizioni");
                 publicIds.push(publicId);
-                await connection.execute(queryImmagine, [edizioneId, imageUrl, i + 1]);
+                await connection.execute(queryImmagine, [edizioneId, imageUrl, i+1]);
             }
         }
         await connection.commit();
-        return res.status(201).json({ success: true, message: "Contenuto salvato con successo!" });
+        return res.status(201).json({
+            success: true,
+            message: "Contenuto salvato con successo!"
+        });
     } catch (err) {
         await connection.rollback();
         try{
@@ -66,7 +70,7 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
             console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
         }
         console.error("Errore nell'endpoint POST edizione: ", err);
-        if (err.code === 'ER_DUP_ENTRY') {
+        if(err.code==='ER_DUP_ENTRY') {
             return res.status(400).json({ 
                 success: false,
                 message: "Errore: collocazione è già esistente." });
@@ -320,5 +324,7 @@ router.patch("/api/edizioni", autenticaToken, autorizzaRuoli('superadmin', 'admi
         connection.release();
     }
 });
+
+router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;

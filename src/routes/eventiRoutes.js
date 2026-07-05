@@ -4,6 +4,7 @@ const router=express.Router();
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const gestioneErroriUpload=require('../middleware/images');
 
 //endpoint per inserimento evento
 router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -284,5 +285,7 @@ router.put("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', '
         });
     }
 });
+
+router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;
