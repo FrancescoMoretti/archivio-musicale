@@ -33,12 +33,51 @@ router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     //setto a null eventuali valori facoltativi vuoti
     if(!link_evento || !String(link_evento).trim()){
         link_evento=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_evento);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link all'evento non valido."
+            });
+        }
     }
     if(!link_facebook || !String(link_facebook).trim()){
         link_facebook=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_facebook);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link a Facebook non valido."
+            });
+        }
     }
     if(!link_instagram || !String(link_instagram).trim()){
         link_instagram=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_evento);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link a Instagram non valido."
+            });
+        }
     }
     if(!data_fine || !String(data_fine).trim()){
         data_fine=null;
@@ -255,18 +294,68 @@ router.put("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', '
             message: "Campi obbligatori mancanti (titolo, descrizione e data di inizio)."
         });
     }
-    //setto a null eventuali valori facoltativi vuoti
-    if(!data_fine || !String(data_fine).trim()){
-        data_fine=null;
+    if(isNaN(Date.parse(data_inizio))){
+        return res.status(400).json({
+            success: false,
+            message: "Data di inizio non valida."
+        });
     }
+    //setto a null eventuali valori facoltativi vuoti
     if(!link_evento || !String(link_evento).trim()){
         link_evento=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_evento);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link all'evento non valido."
+            });
+        }
     }
     if(!link_facebook || !String(link_facebook).trim()){
         link_facebook=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_facebook);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link a Facebook non valido."
+            });
+        }
     }
     if(!link_instagram || !String(link_instagram).trim()){
         link_instagram=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_instagram);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link a Instagram non valido."
+            });
+        }
+    }
+    if(!data_fine || !String(data_fine).trim()){
+        data_fine=null;
+    }else if(isNaN(Date.parse(data_fine))){
+        return res.status(400).json({
+            success: false,
+            message: "Data di fine non valida."
+        });
     }
     //controllo data_finale>data_iniziale
     if(data_fine && new Date(data_fine)< new Date(data_inizio)){

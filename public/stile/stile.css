@@ -780,6 +780,10 @@ footer .material-symbols-outlined{
     transform: scale(1.05);
 }
 
+#biografia article .foto-Luca{
+    margin-bottom: 1em;
+}
+
 #biografia article .didascalia{
     text-align: center;
     margin-top: 0;
