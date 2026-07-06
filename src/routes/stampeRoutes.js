@@ -13,13 +13,17 @@ router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
     //validazione server-side
+    //campi obbligatori
     if(!collocazione || !String(collocazione).trim() || !autore || !String(autore).trim() || !titolo || !String(titolo).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });
     }
-    //setto a null eventuali valori facoltativi vuoti
+    collocazione=collocazione.trim();
+    autore=autore.trim();
+    titolo=titolo.trim();
+    //campi facoltativi
     data_str=validaStringa(data_str);
     stampa=validaStringa(stampa);
     dimensioni=validaStringa(dimensioni);
@@ -210,13 +214,16 @@ router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadm
     let {autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
+    //campi obbligatori
     if (!autore || !String(autore).trim() || !titolo || !String(titolo).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
     }
-    //setto a null eventuali valori facoltativi vuoti
+    autore=autore.trim();
+    titolo=titolo.trim();
+    //campi facoltativi
     data_str=validaStringa(data_str);
     stampa=validaStringa(stampa);
     dimensioni=validaStringa(dimensioni);

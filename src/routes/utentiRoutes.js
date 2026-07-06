@@ -104,7 +104,7 @@ router.delete("/api/utente/:id", autenticaToken, autorizzaRuoli('superadmin', 'a
             message: "Identificativo non valido."
         });
     }
-    if(id===userId){
+    if(parseInt(id, 10)===userId){//faccio parsing perché id è passato come stringa
         return res.status(400).json({
             success: false,
             message: "Non puoi eliminare te stesso."

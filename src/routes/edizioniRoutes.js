@@ -13,13 +13,17 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
     //validazione server-side
+    //campi obbligatori
     if (!collocazione || !String(collocazione).trim() || !titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
         });//400: richiesta mal formata
     }
-    //setto a null eventuali valori facoltativi vuoti
+    collocazione=collocazione.trim();
+    titolo=titolo.trim();
+    autore=autore.trim();
+    //campi facoltativi
     link_rism=validaUrl(link_rism);
     if(link_rism===false){
         return res.status(400).json({
@@ -217,13 +221,16 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
     let {link_rism, autore, titolo, data_str, editore, descrizione, note}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
+    //campi obbligatori
     if (!titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
         });
     }
-    //setto a null eventuali valori facoltativi vuoti
+    titolo=titolo.trim();
+    autore=autore.trim();
+    //campi facoltativi
     link_rism=validaUrl(link_rism);
     if(link_rism===false){
         return res.status(400).json({

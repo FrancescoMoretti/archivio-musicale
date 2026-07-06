@@ -13,25 +13,29 @@ router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     const userId=req.utente.id;//id dell'utente che sta creando il contenuto
     const files=req.files;//immagini
     //validazione server-side
+    //campi obbligatori
     if(!codice || !String(codice).trim() || !titolo || !String(titolo).trim() || !descrizione || !String(descrizione).trim() || !data_inizio || !String(data_inizio).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (codice, titolo, descrizione e data di inizio)."
         });
     }
+    codice=codice.trim();
+    titolo=titolo.trim();
+    descrizione=descrizione.trim();
     if(isNaN(Date.parse(data_inizio))){
         return res.status(400).json({
             success: false,
             message: "Data di inizio non valida."
         });
     }
+    //campi facoltativi
     if(files && files.length>2){
         return res.status(400).json({
             success: false,
             message: "Puoi caricare al massimo 2 immagini per evento."
         });
     }
-    //setto a null eventuali valori facoltativi vuoti
     link_evento=validaUrl(link_evento);
     if(link_evento===false){
         return res.status(400).json({
@@ -262,19 +266,22 @@ router.put("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', '
     let {link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
+    //campi obbligatori
     if(!titolo || !String(titolo).trim() || !descrizione || !String(descrizione).trim() || !data_inizio || !String(data_inizio).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (titolo, descrizione e data di inizio)."
         });
     }
+    titolo=titolo.trim();
+    descrizione=descrizione.trim();
     if(isNaN(Date.parse(data_inizio))){
         return res.status(400).json({
             success: false,
             message: "Data di inizio non valida."
         });
     }
-    //setto a null eventuali valori facoltativi vuoti
+    //campi facoltativi
     link_evento=validaUrl(link_evento);
     if(link_evento===false){
         return res.status(400).json({
