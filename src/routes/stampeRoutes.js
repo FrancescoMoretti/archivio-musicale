@@ -5,6 +5,7 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
+const {validaStringa, validaUrl}=require('../utils/validazione');
 
 //endpoint per inserimento stampa
 router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -19,15 +20,9 @@ router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin',
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!data_str || !String(data_str).trim()){
-        data_str=null;
-    }
-    if(!stampa || !String(stampa).trim()){
-        stampa=null;
-    }
-    if(!dimensioni || !String(dimensioni).trim()){
-        dimensioni=null;
-    }
+    data_str=validaStringa(data_str);
+    stampa=validaStringa(stampa);
+    dimensioni=validaStringa(dimensioni);
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryStampa=`INSERT INTO stampe(collocazione, autore, titolo, data_str, stampa, dimensioni, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
@@ -222,15 +217,9 @@ router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadm
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!data_str || !String(data_str).trim()){
-        data_str=null;
-    }
-    if(!stampa || !String(stampa).trim()){
-        stampa=null;
-    }
-    if(!dimensioni || !String(dimensioni).trim()){
-        dimensioni=null;
-    }
+    data_str=validaStringa(data_str);
+    stampa=validaStringa(stampa);
+    dimensioni=validaStringa(dimensioni);
     const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=?, updated_by=? WHERE collocazione=?";
     try {
         const [result]=await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, userId, collocazione]);

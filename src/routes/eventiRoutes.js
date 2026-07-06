@@ -5,6 +5,7 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
+const {validaStringa, validaUrl, validaUrlSocial}=require('../utils/validazione');
 
 //endpoint per inserimento evento
 router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -31,53 +32,26 @@ router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin',
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!link_evento || !String(link_evento).trim()){
-        link_evento=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_evento);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link all'evento non valido."
-            });
-        }
+    link_evento=validaUrl(link_evento);
+    if(link_evento===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link all'evento non valido."
+        });
     }
-    if(!link_facebook || !String(link_facebook).trim()){
-        link_facebook=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_facebook);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link a Facebook non valido."
-            });
-        }
+    link_facebook=validaUrlSocial(link_facebook, 'facebook');
+    if(link_facebook===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link a Facebook non valido."
+        });
     }
-    if(!link_instagram || !String(link_instagram).trim()){
-        link_instagram=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_evento);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link a Instagram non valido."
-            });
-        }
+    link_instagram=validaUrlSocial(link_instagram, 'instagram');
+    if(link_instagram===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link a Instagram non valido."
+        });
     }
     if(!data_fine || !String(data_fine).trim()){
         data_fine=null;
@@ -301,53 +275,26 @@ router.put("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', '
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!link_evento || !String(link_evento).trim()){
-        link_evento=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_evento);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link all'evento non valido."
-            });
-        }
+    link_evento=validaUrl(link_evento);
+    if(link_evento===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link all'evento non valido."
+        });
     }
-    if(!link_facebook || !String(link_facebook).trim()){
-        link_facebook=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_facebook);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link a Facebook non valido."
-            });
-        }
+    link_facebook=validaUrlSocial(link_facebook, 'facebook');
+    if(link_facebook===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link a Facebook non valido."
+        });
     }
-    if(!link_instagram || !String(link_instagram).trim()){
-        link_instagram=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_instagram);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link a Instagram non valido."
-            });
-        }
+    link_instagram=validaUrlSocial(link_instagram, 'instagram');
+    if(link_instagram===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link a Instagram non valido."
+        });
     }
     if(!data_fine || !String(data_fine).trim()){
         data_fine=null;

@@ -40,6 +40,9 @@ app.use(express.static('public'));
 const authRoutes=require('./src/routes/authRoutes');
 app.use(authRoutes);
 
+const utentiRoutes=require('./src/routes/utentiRoutes');
+app.use(utentiRoutes);
+
 const statisticheRoutes=require('./src/routes/statisticheRoutes');
 app.use(statisticheRoutes);
 

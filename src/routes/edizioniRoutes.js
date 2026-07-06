@@ -5,6 +5,7 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
+const {validaStringa, validaUrl}=require('../utils/validazione');
 
 //endpoint per inserimento edizione
 router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{
@@ -19,34 +20,17 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
         });//400: richiesta mal formata
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!link_rism || !String(link_rism).trim()){
-        link_rism=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_rism);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link Rism non valido."
-            });
-        }
+    link_rism=validaUrl(link_rism);
+    if(link_rism===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link RISM non valido."
+        });
     }
-    if(!data_str || !String(data_str).trim()){
-        data_str=null;
-    }
-    if(!editore || !String(editore).trim()){
-        editore=null;
-    }
-    if(!descrizione || !String(descrizione).trim()){
-        descrizione=null;
-    }
-    if(!note || !String(note).trim()){
-        note=null;
-    }
+    data_str=validaStringa(data_str);
+    editore=validaStringa(editore);
+    descrizione=validaStringa(descrizione);
+    note=validaStringa(note);
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryEdizione=`INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -240,34 +224,17 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
         });
     }
     //setto a null eventuali valori facoltativi vuoti
-    if(!link_rism || !String(link_rism).trim()){
-        link_rism=null;
-    }else{
-        //validazione formato url
-        try{
-            const url=new URL(link_rism);
-            if(url.protocol!=="http:" && url.protocol!=="https:"){
-                throw new Error("Protocollo non consentito.");
-            }
-        }catch{
-            return res.status(400).json({
-                success: false,
-                message: "Link Rism non valido."
-            });
-        }
+    link_rism=validaUrl(link_rism);
+    if(link_rism===false){
+        return res.status(400).json({
+            success: false,
+            message: "Link RISM non valido."
+        });
     }
-    if(!data_str || !String(data_str).trim()){
-        data_str=null;
-    }
-    if(!editore || !String(editore).trim()){
-        editore=null;
-    }
-    if(!descrizione || !String(descrizione).trim()){
-        descrizione=null;
-    }
-    if(!note || !String(note).trim()){
-        note=null;
-    }
+    data_str=validaStringa(data_str);
+    editore=validaStringa(editore);
+    descrizione=validaStringa(descrizione);
+    note=validaStringa(note);
     const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=?, updated_by=? WHERE collocazione=?";
     try{
         const [result]=await pool.query(query, [link_rism, autore, titolo, data_str, editore, descrizione, note, userId, collocazione]);

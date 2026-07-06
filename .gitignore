@@ -138,8 +138,5 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-#script di servizio
-hash.js
-
 #certificato pubblico database Aiven
 ca.pem
