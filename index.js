@@ -10,6 +10,8 @@ keepAlive(pool);//funzione di keepalive per non far andare il db in timeout
 const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 
 const app=express();
+app.set('trust proxy', 1);//mi fido di un livello di proxy (leggo l'IP dietro al proxy per un livello)
+
 const PORT=process.env.PORT || 3000;
 
 app.use(cors());

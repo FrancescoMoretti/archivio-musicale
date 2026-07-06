@@ -21,6 +21,19 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
     //setto a null eventuali valori facoltativi vuoti
     if(!link_rism || !String(link_rism).trim()){
         link_rism=null;
+    }else{
+        //validazione formato url
+        try{
+            const url=new URL(link_rism);
+            if(url.protocol!=="http:" && url.protocol!=="https:"){
+                throw new Error("Protocollo non consentito.");
+            }
+        }catch{
+            return res.status(400).json({
+                success: false,
+                message: "Link Rism non valido."
+            });
+        }
     }
     if(!data_str || !String(data_str).trim()){
         data_str=null;

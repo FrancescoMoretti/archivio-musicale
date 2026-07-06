@@ -1,4 +1,5 @@
 const jwt=require('jsonwebtoken');
+const rateLimit=require('express-rate-limit');
 
 //middleware di verifica del token JWT
 const autenticaToken=(req, res, next)=>{
@@ -109,4 +110,16 @@ const autenticaTokenMorbido=(...ruoliAmmessi)=>{
     }
 };
 
-module.exports={autenticaToken, autorizzaRuoli, autenticaTokenMorbido};
+//limitatore di tentativi di login per prevenire brute-force
+const loginLimiter=rateLimit({
+    windowMs: 15*60*1000,//15 minuti
+    max: 10,//10 tentativi
+    standardHeaders: true,//info su rate limit negli header RateLimit-*
+    legacyHeaders: false,//disabilito vecchi header
+    message: {
+        success: false,
+        message: "Troppi tentativi di accesso, riprova tra 15 minuti."
+    }
+});
+
+module.exports={autenticaToken, autorizzaRuoli, autenticaTokenMorbido, loginLimiter};

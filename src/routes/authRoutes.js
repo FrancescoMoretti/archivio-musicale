@@ -5,7 +5,7 @@ const jwt=require('jsonwebtoken');
 const bcrypt=require('bcryptjs');
 
 const pool=require('../db');
-const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, loginLimiter}=require('../middleware/auth');
 
 //rotta segreta per gestire login
 router.get("/accedi", (req, res)=>{
@@ -41,7 +41,7 @@ router.get("/accedi", (req, res)=>{
 });
 
 //endpoint per login
-router.post("/api/login", async (req, res)=>{
+router.post("/api/login", loginLimiter, async (req, res)=>{
     const {email, password} = req.body;
     //validazione server-side
     if(!email || !String(email).trim() || !password || !String(password).trim()){

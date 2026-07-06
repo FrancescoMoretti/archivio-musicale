@@ -18,6 +18,12 @@ router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin',
             message: "Campi obbligatori mancanti (codice, titolo, descrizione e data di inizio)."
         });
     }
+    if(isNaN(Date.parse(data_inizio))){
+        return res.status(400).json({
+            success: false,
+            message: "Data di inizio non valida."
+        });
+    }
     if(files && files.length>2){
         return res.status(400).json({
             success: false,
@@ -36,6 +42,11 @@ router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     }
     if(!data_fine || !String(data_fine).trim()){
         data_fine=null;
+    }else if(isNaN(Date.parse(data_fine))){
+        return res.status(400).json({
+            success: false,
+            message: "Data di fine non valida."
+        });
     }
     //controllo data_finale>data_iniziale
     if(data_fine && new Date(data_fine)< new Date(data_inizio)){
