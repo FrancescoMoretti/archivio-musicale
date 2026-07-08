@@ -12,8 +12,8 @@ Font sans-serif: "Ubuntu";
     --colorD: #444;
     --sfondoScuro: #222;
     --grigioChiaro: #cbcac5;
-    --carta1: #faebd7;/*antiquewhite*/
-    --carta2: #ffe4c4;/*bisque*/
+    --carta1: #faebd7c1;/*antiquewhite (con trasparenza)*/
+    --carta2: #ffe4c4c1;/*bisque (con trasparenza)*/
     --carta3: #fcdcadc1;
 }
 
@@ -814,6 +814,9 @@ footer .material-symbols-outlined{
 #informativa{
     width: 65%;
     margin: auto auto 1em auto;
+    background-color: var(--carta1);
+    padding: 0 5% 2.5% 5%;
+    border-radius: 10%;
 }
 
 #informativa #versione{
@@ -980,4 +983,10 @@ footer .material-symbols-outlined{
         margin-top: 1em;
     }
 /*fine restyling pagina dettaglio*/
+
+/*inizio restyling informativa*/
+#informativa{
+    border-radius: 0%;
+}
+/*fine restyling informativa*/
 }
