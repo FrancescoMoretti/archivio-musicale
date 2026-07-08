@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     }
 
     //elementi fissi
-    const precBtn=document.getElementById("prec-btn");
-    const succBtn=document.getElementById("succ-btn");
+    const precButtons=document.querySelectorAll(".prec-btn");
+    const succButtons=document.querySelectorAll(".succ-btn");
     const searchBar=document.getElementById("search-bar");
     const tbody=document.querySelector('tbody');
 
@@ -33,17 +33,21 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     await caricaContenuti();
 
     //gestione bottone precedente
-    precBtn.addEventListener("click", async () => {//se non sono alla prima pagina posso andare indietro
-        if (schermata > 1) {
-            schermata--;
-            await caricaContenuti();
-        }
+    precButtons.forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+            if (schermata>1){
+                schermata--;
+                await caricaContenuti();
+            }
+        });
     });
 
     //gestione bottone successivo
-    succBtn.addEventListener("click", async () => {
-        schermata++;
-        await caricaContenuti();
+    succButtons.forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+            schermata++;
+            await caricaContenuti();
+        });
     });
 
     //gestione barra di ricerca
@@ -71,15 +75,15 @@ document.addEventListener("DOMContentLoaded", async ()=>{
                 mostraPagina(result.contenuti, result.totali);
             }else{
                 tbody.innerHTML="<tr><td colspan='3'>"+result.message+"</td></tr>";
-                precBtn.style.visibility="hidden";
-                succBtn.style.visibility="hidden";
+                precButtons.forEach(btn=>btn.style.visibility="hidden");
+                succButtons.forEach(btn=>btn.style.visibility="hidden");
                 return;
             }
         } catch (err) {
             tbody.innerHTML="<tr><td colspan='3'>Errore di rete</td></tr>";
             console.error(err);
-            precBtn.style.visibility="hidden";
-            succBtn.style.visibility="hidden";
+            precButtons.forEach(btn=>btn.style.visibility="hidden");
+            succButtons.forEach(btn=>btn.style.visibility="hidden");
         }
     };
 
@@ -88,8 +92,8 @@ document.addEventListener("DOMContentLoaded", async ()=>{
         //se non ci sono elementi da mostrare
         if(lista_da_mostrare.length===0){
             tbody.innerHTML="<tr><td colspan='3'>Nessun contenuto trovato.</td></tr>";
-            precBtn.style.visibility="hidden";
-            succBtn.style.visibility="hidden";
+            precButtons.forEach(btn=>btn.style.visibility="hidden");
+            succButtons.forEach(btn=>btn.style.visibility="hidden");
             tbody.style.height="auto";
             return;
         }
@@ -134,15 +138,15 @@ document.addEventListener("DOMContentLoaded", async ()=>{
         document.getElementById("schermata").textContent=`Pagina ${schermata}`;
         //gestione bottoni
         const paginaCorrente=(schermata-1)*righe;
-        if (schermata===1) {
-            precBtn.style.visibility="hidden";
-        } else {
-            precBtn.style.visibility="visible";
+        if(schermata===1){
+            precButtons.forEach(btn=>btn.style.visibility="hidden");
+        }else{
+            precButtons.forEach(btn=>btn.style.visibility="visible");
         }
-        if (paginaCorrente+righe>=totale) {
-            succBtn.style.visibility="hidden";
-        } else {
-            succBtn.style.visibility="visible";
+        if(paginaCorrente+righe>=totale){
+            succButtons.forEach(btn=>btn.style.visibility="hidden");
+        }else{
+            succButtons.forEach(btn=>btn.style.visibility="visible");
         }
     };
 });

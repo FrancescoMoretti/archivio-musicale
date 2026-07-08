@@ -265,14 +265,21 @@ footer .material-symbols-outlined{
     font-size: 1.15em;
     width: 100%;
 }
+
+.lista-contenuti{
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+
     /*inizio stile tabella*/
     table{
-        width: 60%;
+        width: 100%;
         border-collapse: collapse;
         border: 2px solid var(--sfondoScuro);
         margin: auto;
         margin-top: 1em;
         font-family: "Ubuntu", sans-serif;
+        grid-column: span 3;
     }
 
     table th,
@@ -329,6 +336,15 @@ footer .material-symbols-outlined{
     font-family: "Ubuntu", sans-serif;
     font-size: 1.05em;
     margin: 1em auto;
+    grid-column: span 5;
+}
+
+.lista-contenuti #paginazione .mobile-btn{
+    display: none;
+}
+
+.lista-contenuti button{
+    margin: auto;
 }
 /*fine stile pagine lista*/
 
@@ -946,6 +962,7 @@ footer .material-symbols-outlined{
 /*inizio restyling privacy*/
     #informativa{
         width: 90%;
+        border-radius: 0%;
     }
 /*fine restyling privacy*/
 
@@ -956,6 +973,27 @@ footer .material-symbols-outlined{
 
     #ricerca-sec div label{
         display: none;
+    }
+
+    .lista-contenuti{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .lista-contenuti .pc-btn{
+        display: none;
+    }
+
+    .lista-contenuti #paginazione{
+        display: flex;
+    }
+
+    .lista-contenuti #paginazione span{
+        margin-top: 5%;
+    }
+
+    .lista-contenuti #paginazione .mobile-btn{
+        display: block;
     }
 
     table{
@@ -983,10 +1021,4 @@ footer .material-symbols-outlined{
         margin-top: 1em;
     }
 /*fine restyling pagina dettaglio*/
-
-/*inizio restyling informativa*/
-#informativa{
-    border-radius: 0%;
-}
-/*fine restyling informativa*/
 }
