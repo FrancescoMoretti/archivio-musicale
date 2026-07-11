@@ -59,7 +59,7 @@ h2{
 }
 
 h3{
-    font-size: 1.5em;
+    font-size: 1.75em;
 }
 
 p, q, address{
@@ -699,6 +699,12 @@ footer .material-symbols-outlined{
 /*fine stile pagine contenuti*/
 
 /*inizio stile pagina eventi e biografia*/
+#eventi #contatti-sec{
+    border-radius: 15%;
+    background-color: var(--carta3);
+    padding: 0 5% 2.5% 5%;
+}
+
 #eventi #contatti-sec address{
     font-style: normal;
     text-align: center;
@@ -725,7 +731,7 @@ footer .material-symbols-outlined{
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     column-gap: 1em;
-    padding: 2em;
+    padding: 0 5% 2.5% 5%;
     background-color: var(--carta2);
     border-radius: 15%;
 }
@@ -735,11 +741,6 @@ footer .material-symbols-outlined{
     margin-bottom: 4em;
 }
 
-#biografia article{
-    margin-top: 2em;
-    margin-bottom: 2em;
-}
-
 #eventi-sec article:nth-child(odd){
     background-color: var(--carta3);
 }
@@ -747,6 +748,9 @@ footer .material-symbols-outlined{
 #eventi-sec article .testata,
 #biografia article .testata{
     grid-column: span 4;
+}
+
+#eventi-sec article .testata{
     margin: 0;
 }
 
@@ -963,6 +967,7 @@ footer .material-symbols-outlined{
     #informativa{
         width: 90%;
         border-radius: 0%;
+        margin: auto;
     }
 /*fine restyling privacy*/
 
