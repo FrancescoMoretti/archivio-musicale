@@ -830,7 +830,7 @@ footer .material-symbols-outlined{
 #informativa{
     width: 65%;
     margin: auto auto 1em auto;
-    background-color: var(--carta1);
+    background-color: var(--carta2);
     padding: 0 5% 2.5% 5%;
     border-radius: 10%;
 }
