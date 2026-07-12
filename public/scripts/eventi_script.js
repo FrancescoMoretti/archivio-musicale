@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async function(){
         numeroArticoli=3;//mostro solo ultimi 3 eventi
     }
     const sec=document.getElementById("eventi-sec");
-    const message=sec.querySelector('p');
+    //const message=sec.querySelector('p');
     const altriBtn=document.getElementById("show-more-btn");
     //chiamata iniziale
     await caricaEventi();
@@ -120,13 +120,17 @@ document.addEventListener("DOMContentLoaded", async function(){
                     }
                 }
             }else{
-                message.textContent=result.message || "Errore durante il recupero degli eventi."
+                const message=document.createElement('p');
+                message.textContent=result.message || "Errore durante il recupero degli eventi.";
+                sec.appendChild(message);
                 if(altriBtn){
                     altriBtn.style.display="none";
                 }
             }
         }catch(err){
+            const message=document.createElement('p');
             message.textContent="Errore di rete: impossibile raggiungere il server.";
+            sec.appendChild(message);
             console.error(err);
             if(altriBtn){
                 altriBtn.style.display="none";

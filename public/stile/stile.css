@@ -714,16 +714,28 @@ footer .material-symbols-outlined{
     font-weight: bold;
 }
 
+#eventi-sec{
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    margin-top: 2em;
+}
+
+#eventi-sec h2{
+    margin: 0;
+}
+
 #eventi-sec p:not(article p){
     text-align: center;
     font-weight: bold;
     font-size: 1.5em;
     font-family: "EB Garamond";
+    margin-top: 0;
 }
 
 #show-more-btn{
     display: none;
-    margin: 0 auto 2em auto;
+    margin: 2em auto 2em auto;
 }
 
 #eventi-sec article,
@@ -734,11 +746,6 @@ footer .material-symbols-outlined{
     padding: 0 5% 2.5% 5%;
     background-color: var(--carta2);
     border-radius: 15%;
-}
-
-#eventi-sec article{
-    margin-top: 4em;
-    margin-bottom: 4em;
 }
 
 #eventi-sec article:nth-child(odd){
@@ -960,6 +967,15 @@ footer .material-symbols-outlined{
     #eventi-sec article{
         display: flex;
         flex-direction: column;
+    }
+
+    #eventi-sec article .collegamenti{
+        display: flex;
+        flex-direction: column;
+    }
+
+    #eventi-sec article .collegamenti a{
+        margin-bottom: 1em;
     }
 /*fine restyling eventi e biografia*/
 
