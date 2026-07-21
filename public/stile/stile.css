@@ -686,7 +686,9 @@ footer .material-symbols-outlined{
     }
 
     .slide{
-        width: 100%;
+        flex-grow: 0;
+        flex-shrink: 0;
+        flex-basis: 100%;
     }
 
     #slider p{
