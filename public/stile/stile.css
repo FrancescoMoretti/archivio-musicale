@@ -686,6 +686,7 @@ footer .material-symbols-outlined{
     }
 
     .slide{
+        /*per vedere correttamente lo slider anche su Firefox*/
         flex-grow: 0;
         flex-shrink: 0;
         flex-basis: 100%;
