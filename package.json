@@ -2,6 +2,9 @@
   "name": "archivio_musicale_luca_moretti",
   "version": "1.0.0",
   "description": "Digitalizzazione di un archivio musicale",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -27,6 +30,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
     "multer-storage-cloudinary": "^2.2.1",

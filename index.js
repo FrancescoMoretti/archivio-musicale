@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express=require('express');
-const cors=require('cors');
 const path=require('path');
 const cookieParser=require('cookie-parser');
+const helmet=require('helmet');
 
 const pool=require('./src/db');
 const keepAlive=require('./src/utils/dbKeepAlive');
@@ -11,10 +11,12 @@ const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 
 const app=express();
 app.set('trust proxy', 1);//mi fido di un livello di proxy (leggo l'IP dietro al proxy per un livello)
+app.use(helmet({
+    contentSecurityPolicy: false
+}));
 
 const PORT=process.env.PORT || 3000;
 
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

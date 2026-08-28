@@ -2,10 +2,10 @@ const express=require('express');
 const router=express.Router();
 
 const pool=require('../db');
-const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, publicLimiter}=require('../middleware/auth');
 
 //endpoint per conteggio reperti
-router.get("/api/conta-reperti", async (req, res)=>{
+router.get("/api/conta-reperti", publicLimiter, async (req, res)=>{
     try{
         const [risultato]=await pool.query("SELECT (SELECT COUNT(*) FROM edizioni) + (SELECT COUNT(*) FROM stampe) AS somma_reperti");
         if(risultato[0].somma_reperti<=0){
@@ -66,7 +66,7 @@ router.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin'
     }
 });
 
-//endoint per sitemap
+//endpoint per sitemap
 router.get("/sitemap.xml", async (req, res)=>{
     try{
         const urlBase="https://www.archiviolm.it";//dominio di base

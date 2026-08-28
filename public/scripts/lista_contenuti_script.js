@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             }
         } catch (err) {
             tbody.innerHTML="<tr><td colspan='3'>Errore di rete</td></tr>";
-            console.error(err);
+            //console.error(err);
             precButtons.forEach(btn=>btn.style.visibility="hidden");
             succButtons.forEach(btn=>btn.style.visibility="hidden");
         }

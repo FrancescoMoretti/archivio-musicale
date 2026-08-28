@@ -16,7 +16,7 @@ function validaUrl(value){
     try{
         const url=new URL(value);
         if(url.protocol==='http:' || url.protocol==="https:"){
-            return value;//url valido
+            return url.href;//url valido
         }else{
             return false;//url non valido
         }

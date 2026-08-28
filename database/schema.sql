@@ -17,6 +17,9 @@ CREATE TABLE utenti(
     psw_cambiata BOOLEAN DEFAULT 0,
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tentativi_falliti INT NOT NULL DEFAULT 0,
+    bloccato_fino DATETIME NULL,
+    blocchi_consecutivi INT NOT NULL DEFAULT 0,
     FOREIGN KEY (created_by) REFERENCES utenti(id) ON DELETE SET NULL
 );
 

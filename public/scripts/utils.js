@@ -8,5 +8,5 @@ function escapeHTML(value){
     }else{
         div.textContent="";
     }
-    return div.innerHTML;
+    return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", "&#39;");
 };

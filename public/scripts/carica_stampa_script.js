@@ -59,6 +59,6 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         //mostro la sezione con la scheda
         document.querySelector('main.articolo').style.visibility = "visible";
     } catch (err) {
-        console.error("Errore nel caricamento della stampa: ", err);
+        //console.error("Errore nel caricamento della stampa: ", err);
     }
 });

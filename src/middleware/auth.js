@@ -110,16 +110,29 @@ const autenticaTokenMorbido=(...ruoliAmmessi)=>{
     }
 };
 
-//limitatore di tentativi di login per prevenire brute-force
+//limitatore di tentativi di login per prevenire brute-force (da un ip verso profili diversi)
 const loginLimiter=rateLimit({
     windowMs: 15*60*1000,//15 minuti
     max: 10,//10 tentativi
     standardHeaders: true,//info su rate limit negli header RateLimit-*
     legacyHeaders: false,//disabilito vecchi header
+    skipSuccessfulRequests: true,//login riusciti non consumano i tentativi
     message: {
         success: false,
         message: "Troppi tentativi di accesso, riprova tra 15 minuti."
     }
 });
 
-module.exports={autenticaToken, autorizzaRuoli, autenticaTokenMorbido, loginLimiter};
+//limitatore di richieste pubbliche
+const publicLimiter=rateLimit({
+    windowMs: 60*1000,//1 minuto
+    max: 60,//60 richieste
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        success: false,
+        message: "Troppe richieste, riprova tra qualche minuto."
+    }
+});
+
+module.exports={autenticaToken, autorizzaRuoli, autenticaTokenMorbido, loginLimiter, publicLimiter};

@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", async function(){
             const message=document.createElement('p');
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             sec.appendChild(message);
-            console.error(err);
+            //console.error(err);
             if(altriBtn){
                 altriBtn.style.display="none";
             }

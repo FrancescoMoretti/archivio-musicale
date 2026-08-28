@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
     const params=new URLSearchParams(window.location.search);
     const collocazione=params.get("collocazione");
-    //const titolo=document.getElementById("titolo");
     const scheda=document.getElementById("scheda");
     const immaginiDiv=document.getElementById("immagini");
     //collocazione non specificata o non valida
@@ -64,6 +63,6 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         //mostro la sezione con la scheda
         document.querySelector('main.articolo').style.visibility = "visible";
     }catch(err){
-        console.error("Errore nel caricamento dell'edizione: ", err);
+        //console.error("Errore nel caricamento dell'edizione: ", err);
     }
 });

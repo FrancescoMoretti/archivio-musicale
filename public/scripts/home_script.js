@@ -11,6 +11,6 @@ document.addEventListener("DOMContentLoaded", async function(){
             message.textContent=result.message;
         }
     }catch(err){
-        console.error(err);
+        //console.error(err);
     }
 });

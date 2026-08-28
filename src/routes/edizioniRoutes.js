@@ -3,7 +3,7 @@ const router=express.Router();
 
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
 const {validaStringa, validaUrl}=require('../utils/validazione');
 
@@ -129,7 +129,7 @@ router.delete("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('sup
 });
 
 //endpoint per lista edizioni
-router.get("/api/edizioni", async (req, res)=>{
+router.get("/api/edizioni", publicLimiter, async (req, res)=>{
     const {limit, offset, filtro}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0
@@ -171,7 +171,7 @@ router.get("/api/edizioni", async (req, res)=>{
 });
 
 //endpoint per lettura edizione
-router.get("/api/edizione/:collocazione", autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
+router.get("/api/edizione/:collocazione", publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.params;
     //validazione server-side
     if(!collocazione || !String(collocazione).trim()){

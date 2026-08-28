@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             addUtenteForm()//gestisco ruoli per creazione utente
         }
     } catch (err) {
-        console.error("Errore nell'endpoint me: ", err);
+        //console.error("Errore nell'endpoint me: ", err);
     };
 
     function cambiaPassword(){

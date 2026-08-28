@@ -3,7 +3,7 @@ const router=express.Router();
 
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
 const {validaStringa, validaUrl, validaUrlSocial}=require('../utils/validazione');
 
@@ -169,7 +169,7 @@ router.delete("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin'
 });
 
 //endpoint per visualizzare eventi
-router.get("/api/eventi", autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
+router.get("/api/eventi", publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {limit, offset}=req.query;
     const limite=parseInt(limit, 10) || 5;//converto in intero base 10, oppure assegno 5
     const inizio=parseInt(offset, 10) || 0;//converto in intero base 10, oppure assegno 0

@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
-            console.error(err);
+            //console.error(err);
         }
     });
 
@@ -121,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }catch(err){
             tbody.innerHTML = "<tr><td colspan='6'>Errore di rete: impossibile raggiungere il server.</td></tr>";
-            console.error(err);
+            //console.error(err);
         }
     });
 
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
-            console.error(err);
+            //console.error(err);
         }
     });
 
@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }catch(err){
             tbody.innerHTML="<tr><td colspan='7'>Errore di rete: impossibile raggiungere il server.</td></tr>";
-            console.error(err);
+            //console.error(err);
         }
     });
 
@@ -266,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
-            console.error(err);
+            //console.error(err);
         }
     });
 });
