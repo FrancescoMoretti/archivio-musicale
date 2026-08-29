@@ -59,6 +59,7 @@ app.use(eventiRouter);
 
 //favicon
 app.get("/favicon.ico", (req, res)=>{
+    res.set("Cross-Origin-Resource-Policy", "cross-origin");//permetto il recupero del favicon da altre origini
     res.sendFile(__dirname+"/favicon.ico");
 });
 

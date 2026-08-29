@@ -179,27 +179,14 @@ Il progetto adotta le seguenti misure, introdotte e verificate iterativamente du
 - **Query parametrizzate** ovunque: nessuna concatenazione di stringhe SQL, protezione da SQL injection;
 - **Escaping HTML lato client** (`escapeHTML`) su tutti i dati generati dall'utente prima dell'inserimento via `innerHTML`, per prevenire XSS stored;
 - **Validazione URL** (`validaUrl`/`validaUrlSocial`) su tutti i link facoltativi, con controllo esplicito del protocollo (`http`/`https`) e, per i social, del dominio effettivo;
-- **Password**: hashing con `bcrypt` (mai salvate in chiaro), verifica costante-tempo in fase di login/cambio password;
-- **Sessioni**: JWT in cookie `httpOnly`, `sameSite: Lax`, `secure` in produzione, scadenza a 1 ora;
-- **Rate limiting** sul login (10 tentativi/15 min per IP), con `trust proxy` configurato per leggere correttamente l'IP reale dietro un eventuale reverse proxy;
+- **Password**: hashing con `bcrypt` (mai salvate in chiaro);
+- **Blocco account**: dopo 3 tentativi di login falliti l'account viene bloccato temporaneamente, con backoff esponenziale sui blocchi consecutivi (15 min, 1h, 4h... fino a un tetto di 24h), a mitigazione di attacchi di forza bruta mirati a un singolo utente;
+- **Mitigazione dei side-channel temporali sul login**: anche quando l'email non risulta registrata viene comunque eseguito un confronto bcrypt "fantasma", per non lasciare trapelare dai tempi di risposta quali indirizzi email sono effettivamente censiti nel sistema;
+- **Sessioni**: JWT in cookie `httpOnly`, `sameSite: Lax`, `secure` in produzione, scadenza a 1 ora, invalidazione forzata (nuovo login richiesto) dopo il cambio password;
+- **Rate limiting** sul login (10 tentativi/15 min per IP, i tentativi riusciti non vengono conteggiati), con `trust proxy` configurato per leggere correttamente l'IP reale dietro un eventuale reverse proxy;
 - **Upload immagini**: whitelist di tipi MIME, limite di dimensione (5MB) e di numero di file, gestione centralizzata degli errori di upload;
 - **Autorizzazione granulare per ruolo** su ogni endpoint sensibile, con una variante "morbida" per esporre/nascondere campi (es. collocazione) in base al ruolo di chi consulta;
 - **Header anti-cache** sulle risposte autenticate, per evitare che pagine riservate restino accessibili dalla cache del browser dopo il logout;
-
-## Variabili d'ambiente
-
-```
-PORT=
-DB_HOST=
-DB_PORT=
-DB_USER=
-DB_PASSWORD=
-DB_NAME=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-JWT_SECRET=
-```
 
 ## Licenza
 
