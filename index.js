@@ -25,8 +25,7 @@ app.use(helmet({
             formAction: ["'self'"],//i form che uso possono inviare dati solo allo stesso server in cui si trova il sito
             frameAncestors: ["'self'"],//impedisce che il sito venga incorporato in un <iframe> su un dominio esterno
             upgradeInsecureRequests: []
-        },
-        reportOnly: true//temporaneo solo per test
+        }
     }
 }));
 
