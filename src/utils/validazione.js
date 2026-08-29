@@ -42,4 +42,23 @@ function validaUrlSocial(value, social){
     }
 };
 
-module.exports={validaStringa, validaUrl, validaUrlSocial};
+//validazione nuove password
+function validaPassword(password, datiUtente=[]){
+    if(password.length<10){
+        return "La password deve contenere almeno 10 caratteri.";
+    }
+    if(!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)){
+        return "La password deve contenere sia lettere che numeri";
+    }
+    //evito che la password contenga dati facilmente intuibili
+    const passwordMinuscola=password.toLowerCase();
+    for(const dato of datiUtente){
+        if(dato && passwordMinuscola.includes(String(dato).toLowerCase())){
+            return "La password non può contenere la tua email o il tuo nome.";
+        }
+    }
+    //se arrivo qui => tutti i controlli sono stati superati
+    return null;//password valida
+};
+
+module.exports={validaStringa, validaUrl, validaUrlSocial, validaPassword};

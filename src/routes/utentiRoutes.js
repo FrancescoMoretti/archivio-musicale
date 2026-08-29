@@ -5,6 +5,7 @@ const bcrypt=require('bcryptjs');
 const pool=require('../db');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 const {hashPassword}=require('../utils/hash');
+const {validaPassword}=require('../utils/validazione');
 
 //endpoint per creazione utenti
 router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
@@ -205,6 +206,14 @@ router.patch("/api/utente/password", autenticaToken, async (req, res)=>{
             return res.status(400).json({
                 success: false,
                 message: "La nuova password coincide con la password attuale."
+            });
+        }
+        //validazione della nuova password
+        const erroreValidazione=validaPassword(newPsw, [req.utente.email, req.utente.nome]);
+        if(erroreValidazione){
+            return res.status(400).json({
+                success: false,
+                message: erroreValidazione
             });
         }
         //genero l'hash della nuova password
