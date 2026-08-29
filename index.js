@@ -12,7 +12,22 @@ const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 const app=express();
 app.set('trust proxy', 1);//mi fido di un livello di proxy (leggo l'IP dietro al proxy per un livello)
 app.use(helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            imgSrc: ["'self'", "https://res.cloudinary.com"],
+            connectSrc: ["'self'"],
+            objectSrc: ["'none'"],//blocca <object> e <embed>
+            baseUri: ["'self'"],//limita <base href> alla stessa origine
+            formAction: ["'self'"],//i form che uso possono inviare dati solo allo stesso server in cui si trova il sito
+            frameAncestors: ["'self'"],//impedisce che il sito venga incorporato in un <iframe> su un dominio esterno
+            upgradeInsecureRequests: []
+        },
+        reportOnly: true//temporaneo solo per test
+    }
 }));
 
 const PORT=process.env.PORT || 3000;

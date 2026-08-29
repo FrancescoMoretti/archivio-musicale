@@ -116,18 +116,18 @@ flowchart LR
 
 ## Ruoli e permessi
 
-| Ruolo | Consultazione pubblica | Inserimento/modifica contenuti | Gestione utenti | Vede dati riservati |
-|---|---|---|---|---|
-| Visitatore (non autenticato) | ✅ | ❌ | ❌ | ❌ |
-| `editor` | ✅ | ✅ | ❌ | ✅ |
-| `admin` | ✅ | ✅ | ✅ (solo `editor`) | ✅ |
-| `superadmin` | ✅ | ✅ | ✅ (`admin` ed `editor`) | ✅ |
+| Ruolo | Consultazione pubblica | Inserimento/modifica contenuti | Gestione utenti |
+|---|---|---|---|
+| Visitatore (non autenticato) | ✅ | ❌ | ❌ |
+| `editor` | ✅ | ✅ | ❌ |
+| `admin` | ✅ | ✅ | ✅ (solo `editor`) |
+| `superadmin` | ✅ | ✅ | ✅ (`admin` ed `editor`) |
 
 L'autenticazione avviene tramite JWT firmato, salvato in un cookie `httpOnly`; il ruolo è incluso nel payload e verificato ad ogni richiesta protetta.
 
 ## Funzionalità
 
-- Catalogo pubblico di edizioni/manoscritti e stampe, con ricerca per autore/titolo e paginazione
+- Catalogo pubblico di edizioni/manoscritti e stampe, con ricerca per autore/titolo
 - Schede di dettaglio con galleria immagini (slider per contenuti con più immagini)
 - Sezione eventi, con link opzionali al sito ufficiale, Facebook e Instagram (validati lato server)
 - Area riservata per operatori: inserimento, modifica e cancellazione di edizioni, stampe ed eventi, con upload multiplo di immagini su Cloudinary

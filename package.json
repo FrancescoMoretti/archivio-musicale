@@ -32,7 +32,6 @@
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
-    "multer-storage-cloudinary": "^2.2.1",
     "mysql2": "^3.22.2"
   },
   "devDependencies": {
