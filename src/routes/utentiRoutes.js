@@ -68,7 +68,7 @@ router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin')
 
 //endpoint per lista degli utenti
 router.get("/api/utenti", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
-    let query=`SELECT u.id, u.email, u.nome, u.ruolo, u.created_at, c.email AS email_creatore FROM utenti u LEFT JOIN utenti c ON u.created_by=c.id`;
+    let query=`SELECT u.id, u.email, u.nome, u.ruolo, u.created_at, c.email AS email_creatore FROM utenti u LEFT JOIN utenti c ON u.created_by=c.id, u.tentativi_falliti, u.bloccato_fino, u.blocchi_consecutivi`;
     try{
         const [rows]=await pool.query(query);
         if(rows.length===0){

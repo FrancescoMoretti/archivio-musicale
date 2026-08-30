@@ -112,6 +112,11 @@ document.addEventListener("DOMContentLoaded", function(){
                             `;
                         }
                     }
+                    stringaHTML+=`
+                        <td>${escapeHTML(utente.tentativi_falliti)}</td>
+                        <td>${escapeHTML(utente.bloccato_fino)}</td>
+                        <td>${escapeHTML(utente.blocchi_consecutivi)}</td>
+                    `;
                     riga.innerHTML=stringaHTML;
                     tbody.appendChild(riga);
                 });
