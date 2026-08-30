@@ -77,6 +77,11 @@ app.get("/favicon.ico", (req, res)=>{
     res.sendFile(__dirname+"/favicon.ico");
 });
 
+//endpoint da pingare per keepalive di Render
+app.get('/health', (req, res)=>{
+    res.sendStatus(200);
+});
+
 //404
 app.use((req, res)=>{
     //così rimane il nome del file non trovato nell'url
