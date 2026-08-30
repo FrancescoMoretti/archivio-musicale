@@ -69,7 +69,7 @@ router.get("/api/monitor-contenuti", autenticaToken, autorizzaRuoli('superadmin'
 //endpoint per sitemap
 router.get("/sitemap.xml", async (req, res)=>{
     try{
-        const urlBase="https://www.archiviolm.it";//dominio di base
+        const urlBase="https://archivio-musicale-luca-moretti.onrender.com";//dominio di base
         //lista pagine statiche
         const pagineStatiche=[
             '', //index.html
