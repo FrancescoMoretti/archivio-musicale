@@ -112,10 +112,18 @@ document.addEventListener("DOMContentLoaded", function(){
                             `;
                         }
                     }
+                    let tentativiFalliti=escapeHTML(utente.tentativi_falliti);
+                    if(!tentativiFalliti){
+                        tentativiFalliti=0;
+                    }
+                    let blocchi=escapeHTML(utente.blocchi_consecutivi);
+                    if(!blocchi){
+                        blocchi=0;
+                    }
                     stringaHTML+=`
-                        <td>${escapeHTML(utente.tentativi_falliti)}</td>
+                        <td>${tentativiFalliti}</td>
                         <td>${escapeHTML(utente.bloccato_fino)}</td>
-                        <td>${escapeHTML(utente.blocchi_consecutivi)}</td>
+                        <td>${blocchi}</td>
                     `;
                     riga.innerHTML=stringaHTML;
                     tbody.appendChild(riga);
