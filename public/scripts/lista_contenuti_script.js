@@ -100,11 +100,12 @@ document.addEventListener("DOMContentLoaded", async ()=>{
         lista_da_mostrare.forEach(contenuto=>{
             const tr=document.createElement("tr");
             const tdAutore=document.createElement("td");
+            tdAutore.classList.add("nome-autore");
             tdAutore.textContent=contenuto.autore;
             const tdTitolo=document.createElement("td");
             let titolo=contenuto.titolo;
-            if(titolo.length>75){
-                titolo=titolo.slice(0, 75)+"...";
+            if(titolo.length>100){
+                titolo=titolo.slice(0, 100)+"...";
             }
             //aggiungo link per SEO
             const linkTitolo=document.createElement("a");

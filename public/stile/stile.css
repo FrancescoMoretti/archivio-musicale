@@ -331,6 +331,11 @@ footer .material-symbols-outlined{
     }
     /*fine stile tabella*/
 
+.lista-contenuti table td.nome-autore{
+    /*mando a capo i nomi degli autori anche prima degli spazi*/
+    word-break: break-all;
+}
+
 .lista-contenuti #paginazione{
     text-align: center;
     font-family: "Ubuntu", sans-serif;
