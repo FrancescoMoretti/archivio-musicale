@@ -116,13 +116,17 @@ document.addEventListener("DOMContentLoaded", function(){
                     if(!tentativiFalliti){
                         tentativiFalliti=0;
                     }
+                    let bloccatoFino=utente.bloccato_fino;
+                    if(!(bloccatoFino==="/")){
+                        bloccatoFino=new Date(bloccatoFino).toLocaleTimeString('it-IT');
+                    }
                     let blocchi=escapeHTML(utente.blocchi_consecutivi);
                     if(!blocchi){
                         blocchi=0;
                     }
                     stringaHTML+=`
                         <td>${tentativiFalliti}</td>
-                        <td>${escapeHTML(utente.bloccato_fino)}</td>
+                        <td>${bloccatoFino}</td>
                         <td>${blocchi}</td>
                     `;
                     riga.innerHTML=stringaHTML;
