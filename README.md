@@ -12,14 +12,13 @@ Applicazione web full-stack per la digitalizzazione e la consultazione pubblica 
 - [Funzionalità](#funzionalità)
 - [API](#api)
 - [Sicurezza](#sicurezza)
-- [Variabili d'ambiente](#variabili-dambiente)
 - [Licenza](#licenza)
 
 ## Panoramica
 
 Il sito espone al pubblico il catalogo dell'archivio (edizioni/manoscritti, stampe, eventi), e offre un'area riservata dove operatori autorizzati (editor, admin, superadmin) possono inserire, modificare e cancellare i contenuti, gestire gli utenti e monitorare le modifiche apportate all'archivio.
 
-I dati testuali sono conservati in un database MySQL ospitato su **Aiven**, mentre le immagini sono gestite tramite **Cloudinary**.
+Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testuali sono conservati in un database MySQL ospitato su **Aiven** (Amsterdam, UE), mentre le immagini sono gestite tramite **Cloudinary**.
 
 ## Stack tecnologico
 
@@ -36,7 +35,7 @@ I dati testuali sono conservati in un database MySQL ospitato su **Aiven**, ment
 - Costruzione dinamica del DOM lato client tramite fetch verso le API
 
 **Hosting**
-- Staging su homelab personale, in vista di una migrazione futura su un servizio di hosting a pagamento
+- Applicazione Node.js in produzione su **Render**
 
 ## Architettura
 
@@ -48,7 +47,7 @@ flowchart LR
         Admin(["operatore (editor/admin/superadmin)"])
     end
 
-    subgraph "Server (Node.js/Express)"
+    subgraph "Server Node.js/Express (Render)"
         S_public["/public"]
         S_private["/private (editor)"]
         S_admin["/admin (admin/superadmin)"]
@@ -171,6 +170,7 @@ Tutti gli endpoint restituiscono JSON nella forma `{ success, message, ... }`, s
 | GET | `/api/conta-reperti` | pubblico |
 | GET | `/api/monitor-contenuti` | admin, superadmin |
 | GET | `/sitemap.xml` | pubblico |
+| GET | `/health` | pubblico (usato per keepalive Render)
 
 ## Sicurezza
 
@@ -179,7 +179,7 @@ Il progetto adotta le seguenti misure, introdotte e verificate iterativamente du
 - **Query parametrizzate** ovunque: nessuna concatenazione di stringhe SQL, protezione da SQL injection;
 - **Escaping HTML lato client** (`escapeHTML`) su tutti i dati generati dall'utente prima dell'inserimento via `innerHTML`, per prevenire XSS stored;
 - **Validazione URL** (`validaUrl`/`validaUrlSocial`) su tutti i link facoltativi, con controllo esplicito del protocollo (`http`/`https`) e, per i social, del dominio effettivo;
-- **Password**: hashing con `bcrypt` (mai salvate in chiaro);
+- **Password**: hashing con `bcrypt` (mai salvate in chiaro); requisiti minimi di robustezza (lunghezza, varietà di caratteri, assenza di dati personali riconoscibili) applicati al cambio password, obbligatorio al primo accesso;
 - **Blocco account**: dopo 3 tentativi di login falliti l'account viene bloccato temporaneamente, con backoff esponenziale sui blocchi consecutivi (15 min, 1h, 4h... fino a un tetto di 24h), a mitigazione di attacchi di forza bruta mirati a un singolo utente;
 - **Mitigazione dei side-channel temporali sul login**: anche quando l'email non risulta registrata viene comunque eseguito un confronto bcrypt "fantasma", per non lasciare trapelare dai tempi di risposta quali indirizzi email sono effettivamente censiti nel sistema;
 - **Sessioni**: JWT in cookie `httpOnly`, `sameSite: Lax`, `secure` in produzione, scadenza a 1 ora, invalidazione forzata (nuovo login richiesto) dopo il cambio password;
@@ -187,6 +187,8 @@ Il progetto adotta le seguenti misure, introdotte e verificate iterativamente du
 - **Upload immagini**: whitelist di tipi MIME, limite di dimensione (5MB) e di numero di file, gestione centralizzata degli errori di upload;
 - **Autorizzazione granulare per ruolo** su ogni endpoint sensibile, con una variante "morbida" per esporre/nascondere campi (es. collocazione) in base al ruolo di chi consulta;
 - **Header anti-cache** sulle risposte autenticate, per evitare che pagine riservate restino accessibili dalla cache del browser dopo il logout;
+
+- **Content Security Policy** (via Helmet), che limita script, stili e immagini alle sole origini attese, come ulteriore barriera in caso di XSS;
 
 ## Licenza
 
