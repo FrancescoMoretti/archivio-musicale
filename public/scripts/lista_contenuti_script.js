@@ -104,9 +104,9 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             tdAutore.textContent=contenuto.autore;
             const tdTitolo=document.createElement("td");
             let titolo=contenuto.titolo;
-            if(titolo.length>100){
+            /*if(titolo.length>100){
                 titolo=titolo.slice(0, 100)+"...";
-            }
+            }*/
             //aggiungo link per SEO
             const linkTitolo=document.createElement("a");
             linkTitolo.href=`${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
