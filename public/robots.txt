@@ -1,5 +1,7 @@
 User-agent: *
 
+Sitemap: https://archivio-musicale-luca-moretti.onrender.com/sitemap.xml
+
 #blocco cartelle admin e private, le pagine di login, 403 e 404
 Disallow: /admin/
 Disallow: /private/
