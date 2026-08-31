@@ -21,6 +21,27 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa() {
         const listaImmagini = result.immagini || [];//array di URL a cloudinary
         //cambio il titolo della pagina per SEO
         document.title=`${contenuto.titolo} - ${contenuto.autore} | Archivio musicale Luca Moretti`;
+        //costruzione meta descrizione
+        let metaTesto=`${contenuto.titolo} di ${contenuto.autore}`;
+        if(contenuto.data_str){
+            metaTesto+=`, ${contenuto.data_str}`;
+        }
+        if(contenuto.stampa){
+            metaTesto+=`. Tecnica: ${contenuto.stampa}`;
+        }
+        if(contenuto.dimensioni){
+            metaTesto+=`. Dimensioni: ${contenuto.dimensioni}.`;
+        }
+        //pulizia degli spazi e limite a 160 caratteri
+        metaTesto=metaTesto.replace(/\s+/g, ' ').trim();
+        if(metaTesto.length>160){
+            metaTesto=metaTesto.substring(0, 157).trim()+"...";
+        }
+        //creazione e iniezione del tag <meta name="description"...>
+        let metaDescrizione=document.createElement('meta');
+        metaDescrizione.name="description";
+        metaDescrizione.content=metaTesto;
+        document.head.appendChild(metaDescrizione);
         //popolazione della scheda dell'articolo
         titolo.textContent=contenuto.titolo;
         let stringaHTML=`
