@@ -78,7 +78,7 @@ router.get("/sitemap.xml", async (req, res)=>{
             '/lista_edizioni.html'
         ];
         //preparazione query
-        const queryEdizioni="SELECT collocazione FROM edizioni";
+        const queryEdizioni="SELECT collocazione, updated_at FROM edizioni";
         //esecuzione query
         const [edizioni]=await pool.query(queryEdizioni);
         //intestazione sitemap
@@ -90,7 +90,7 @@ router.get("/sitemap.xml", async (req, res)=>{
         });
         //aggiunta edizioni
         edizioni.forEach(edizione=>{
-            xml+=`  <url>\n    <loc>${urlBase}/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}</loc>\n  </url>\n`;
+            xml+=`  <url>\n    <loc>${urlBase}/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}</loc>\n    <lastmod>${new Date(edizione.updated_at).toISOString().split('T')[0]}</lastmod>\n  </url>\n`;
         });
         //chiusura tag principale
         xml+='</urlset>';
