@@ -1,4 +1,4 @@
-# Archivio Musicale Luca Moretti
+# Archivio musicale Luca Moretti
 
 Applicazione web full-stack per la digitalizzazione e la consultazione pubblica dell'Archivio musicale Luca Moretti: edizioni, manoscritti, stampe, fotografie ed eventi correlati, con un'area riservata per la gestione dei contenuti da parte di utenti autorizzati.
 
