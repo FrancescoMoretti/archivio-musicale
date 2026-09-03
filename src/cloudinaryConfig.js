@@ -33,11 +33,14 @@ const uploadToCloudinary=(buffer, folder)=>{
         const stream=cloudinary.uploader.upload_stream(
             { folder: `archivio_musicale/${folder}` },
             (error, result)=>{
-                if (error) reject(error);
-                else resolve({
-                    imageUrl: result.secure_url,
-                    publicId: result.public_id
-                });
+                if(error){
+                    reject(error);
+                }else{
+                    resolve({
+                        imageUrl: result.secure_url,
+                        publicId: result.public_id
+                    });
+                }
             }
         );
         stream.end(buffer);

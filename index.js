@@ -97,6 +97,6 @@ app.use((err, req, res, next)=>{
     });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, ()=>{
     console.log(`Server in esecuzione sulla porta ${PORT}`);
 });
