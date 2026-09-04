@@ -47,12 +47,14 @@ router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin')
         const hashPsw=await hashPassword(password);
         //inserisco l'utente nel db
         const [risultato]=await pool.query("INSERT INTO utenti (email, password, nome, ruolo, created_by) VALUES (?, ?, ?, ?, ?)", [email, hashPsw, nome, ruolo, userId]);
+        //utente non inserito
         if(risultato.affectedRows!==1){
             return res.status(500).json({
                 success: false,
                 message: "Impossibile aggiungere l'utente."
             });
         }
+        //utente inserito
         return res.status(201).json({
             success: true,
             message: `Utente ${nome} creato con successo come ${ruolo}!`
@@ -220,6 +222,7 @@ router.patch("/api/utente/password", autenticaToken, async (req, res)=>{
         const hashPsw=await hashPassword(newPsw);
         //salvo l'hash della nuova password
         const [risultato]=await pool.query("UPDATE utenti SET password=?, psw_cambiata=1 WHERE id=?", [hashPsw, userId]);
+        //password non aggiornata
         if(risultato.affectedRows!==1){
             return res.status(500).json({
                 success: false,

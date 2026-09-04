@@ -108,17 +108,18 @@ router.delete("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('sup
         //cancello il contenuto dal DB
         const [result]=await pool.query("DELETE FROM edizioni WHERE collocazione=?", [collocazione]);
         //le immagini si cancellano a cascata
+        //cancellazione non avvenuta
         if(result.affectedRows===0){
             return res.status(404).json({
                 success: false,
                 message: "Edizione non presente nel database."
             });
-        }else{
-            return res.json({
-                success: true,
-                message: "Edizione eliminata con successo!"
-            });
         }
+        //cancellazione avvenuta
+        return res.json({
+            success: true,
+            message: "Edizione eliminata con successo!"
+        });
     }catch(err){
         console.error("Errore nell'endpoint DELETE edizione: ", err);
         return res.status(500).json({
@@ -222,7 +223,7 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     //campi obbligatori
-    if (!titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
+    if(!titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
@@ -245,12 +246,14 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
     const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=?, updated_by=? WHERE collocazione=?";
     try{
         const [result]=await pool.query(query, [link_rism, autore, titolo, data_str, editore, descrizione, note, userId, collocazione]);
+        //aggiornamento non avvenuto
         if(result.affectedRows===0){
             return res.status(404).json({
                 success: false,
                 message: "Contenuto non trovato."
             });
         }
+        //aggiornamento avvenuto
         return res.json({
             success: true,
             message: "Contenuto aggiornato con successo!"
