@@ -145,7 +145,7 @@ router.delete("/api/utente/:id", autenticaToken, autorizzaRuoli('superadmin', 'a
             const [risultato]=await pool.query("DELETE FROM utenti WHERE id=?", [id]);
             //cancellazione non avvenuta
             if(risultato.affectedRows===0){
-                return res.status(500).json({
+                return res.status(404).json({
                     success: false,
                     message: "Impossibile eliminare l'utente."
                 });
