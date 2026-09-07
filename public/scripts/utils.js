@@ -1,6 +1,7 @@
 //funzioni di utility
 
-//funzione per escaping dei dati prima di inserirli con innerHTML
+//escaping delle stringhe prima di inserirle con innerHTML
+//da usare per il frontend (escaping tramite div funziona solo nel browser)
 function escapeHTML(value){
     const div=document.createElement('div');
     if(value){
@@ -8,5 +9,10 @@ function escapeHTML(value){
     }else{
         div.textContent="";
     }
-    return div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", "&#39;");
+    return div.innerHTML
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", "&#39;")
+        .replaceAll(/&/g, '&amp;')
+        .replaceAll(/</g, '&lt;')
+        .replaceAll(/>/g, '&gt;');
 };

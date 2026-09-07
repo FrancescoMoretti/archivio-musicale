@@ -1,11 +1,84 @@
 const express=require('express');
 const router=express.Router();
+const fs=require('fs').promises;
+const path=require('path');
 
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
-const {validaStringa, validaUrl}=require('../utils/validazione');
+const {validaStringa, validaUrl, escapeHTMLBack}=require('../utils/validazione');
+
+//endpoint per rendering server-side per lettura edizione
+router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
+    const {collocazione}=req.query;
+    //validazione server-side
+    if(!collocazione){
+        return next();//nessuna collocazione
+    }
+    //preparazione query
+    const query="SELECT id, titolo, autore, data_str, editore, descrizione FROM edizioni WHERE collocazione=?";
+    const queryImg="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC LIMIT 1";//prendo l'immagine corrispondente con numero di ordine minore (e prendo una sola immagine)
+    try{
+        const [result]=await pool.query(query, [collocazione]);
+        //nessuna edizione trovata
+        if(result.length===0){
+            return next();
+        }
+        //edizione trovata
+        //estraggo i dati
+        const e=result[0];
+        //query per l'immagine
+        const [resultImg]=await pool.query(queryImg, [e.id]);
+        let urlImmagine;
+        if(resultImg.length===0){
+            //nessuna immagine trovata
+            urlImmagine='https://archivio-musicale-luca-moretti.onrender.com/immagini/logo_archivio_rettangolare.webp';
+        }else{
+            //immagine trovata
+            urlImmagine=resultImg[0].url_immagine;
+        }
+        //costruzione dati
+        //titolo
+        const titolo=`${e.titolo} - ${e.autore} | Archivio musicale Luca Moretti`;
+        //link canonico
+        const urlCanonical=`https://archivio-musicale-luca-moretti.onrender.com/edizione.html?collocazione=${encodeURIComponent(collocazione)}`;
+        //meta descrizione
+        let metaTesto=`${e.titolo} di ${e.autore}`;
+        if(e.data_str){
+            metaTesto+=`, ${e.data_str}`;
+        }
+        if(e.editore){
+            metaTesto+=`; Editore: ${e.editore}`;
+        }
+        if(e.descrizione){
+            metaTesto+=`. ${e.descrizione}`;
+        }
+        //pulizia degli spazi e limite a 160 caratteri
+        metaTesto=metaTesto.replace(/\s+/g, ' ').trim();
+        if(metaTesto.length>160){
+            metaTesto=metaTesto.substring(0, 157).trim()+"...";
+        }
+        //inserisco dati nel file html
+        let html=await fs.readFile(path.join(__dirname, '../../public/edizione.html'), 'utf-8');
+        html=html.replace(
+            '<title>Contenuto | Archivio musicale Luca Moretti</title>',
+            `<title>${escapeHTMLBack(titolo)}</title>
+            <meta name="description" content="${escapeHTMLBack(metaTesto)}">
+            <link rel="canonical" href="${escapeHTMLBack(urlCanonical)}">
+            <meta property="og:title" content="${escapeHTMLBack(titolo)}">
+            <meta property="og:description" content="${escapeHTMLBack(metaTesto)}">
+            <meta property="og:image" content="${escapeHTMLBack(urlImmagine)}">
+            <meta property="og:type" content="article">
+            <meta property="og:url" content="${escapeHTMLBack(urlCanonical)}">`
+        );
+        res.set('Content-Type', 'text/html');
+        return res.send(html);
+    }catch(err){
+        console.error("Errore nel rendering server-side di edizione.html: ", err);
+        next(err);
+    }
+});
 
 //endpoint per inserimento edizione
 router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{

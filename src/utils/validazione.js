@@ -61,4 +61,14 @@ function validaPassword(password, datiUtente=[]){
     return null;//password valida
 };
 
-module.exports={validaStringa, validaUrl, validaUrlSocial, validaPassword};
+//escaping delle strighe prima di usarle per rendering server-side (titoli e meta descrizioni per pagine dinamiche)
+function escapeHTMLBack(str){
+    return String(str)
+        .replaceAll(/&/g, '&amp;')
+        .replaceAll(/</g, '&lt;')
+        .replaceAll(/>/g, '&gt;')
+        .replaceAll(/"/g, '&quot;')
+        .replaceAll(/'/g, '&#39;');
+};
+
+module.exports={validaStringa, validaUrl, validaUrlSocial, validaPassword, escapeHTMLBack};

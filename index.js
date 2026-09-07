@@ -50,9 +50,6 @@ app.get('/lista_stampe.html', (req, res)=>{
 });
 //FINE DEVIAZIONI TEMPORANEE
 
-// Serve i file statici dalla cartella public
-app.use(express.static('public'));
-
 const authRoutes=require('./src/routes/authRoutes');
 app.use(authRoutes);
 
@@ -67,6 +64,9 @@ app.use(edizioniRoutes);
 
 const stampeRoutes=require('./src/routes/stampeRoutes');
 app.use(stampeRoutes);
+
+// Serve i file statici dalla cartella public
+app.use(express.static('public'));
 
 const eventiRouter=require('./src/routes/eventiRoutes');
 app.use(eventiRouter);
