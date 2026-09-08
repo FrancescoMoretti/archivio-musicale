@@ -1,18 +1,17 @@
 //funzioni di utility
 
-//escaping delle stringhe prima di inserirle con innerHTML
-//da usare per il frontend (escaping tramite div funziona solo nel browser)
-function escapeHTML(value){
-    const div=document.createElement('div');
-    if(value){
-        div.textContent=value;
-    }else{
-        div.textContent="";
-    }
-    return div.innerHTML
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", "&#39;")
+//escaping delle stringhe prima di inserirle in HTML
+function escapeHTML(str){
+    return String(str)
         .replaceAll(/&/g, '&amp;')
         .replaceAll(/</g, '&lt;')
-        .replaceAll(/>/g, '&gt;');
+        .replaceAll(/>/g, '&gt;')
+        .replaceAll(/"/g, '&quot;')
+        .replaceAll(/'/g, '&#39;');
 };
+
+//Backend: se module esiste => lo esporto
+//Frontend: il modulo è undefined => ignora l'esportazione
+if(typeof module!=='undefined' && module.exports){
+    module.exports={escapeHTML};
+}

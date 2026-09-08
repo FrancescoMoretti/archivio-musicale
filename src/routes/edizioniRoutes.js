@@ -7,7 +7,8 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
-const {validaStringa, validaUrl, escapeHTMLBack}=require('../utils/validazione');
+const {validaStringa, validaUrl}=require('../utils/validazione');
+const {escapeHTML}=require('../../public/scripts/utils');
 
 //endpoint per rendering server-side per lettura edizione
 router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
@@ -63,14 +64,14 @@ router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
         let html=await fs.readFile(path.join(__dirname, '../../public/edizione.html'), 'utf-8');
         html=html.replace(
             '<title>Contenuto | Archivio musicale Luca Moretti</title>',
-            `<title>${escapeHTMLBack(titolo)}</title>
-            <meta name="description" content="${escapeHTMLBack(metaTesto)}">
-            <link rel="canonical" href="${escapeHTMLBack(urlCanonical)}">
-            <meta property="og:title" content="${escapeHTMLBack(titolo)}">
-            <meta property="og:description" content="${escapeHTMLBack(metaTesto)}">
-            <meta property="og:image" content="${escapeHTMLBack(urlImmagine)}">
+            `<title>${escapeHTML(titolo)}</title>
+            <meta name="description" content="${escapeHTML(metaTesto)}">
+            <link rel="canonical" href="${escapeHTML(urlCanonical)}">
+            <meta property="og:title" content="${escapeHTML(titolo)}">
+            <meta property="og:description" content="${escapeHTML(metaTesto)}">
+            <meta property="og:image" content="${escapeHTML(urlImmagine)}">
             <meta property="og:type" content="article">
-            <meta property="og:url" content="${escapeHTMLBack(urlCanonical)}">`
+            <meta property="og:url" content="${escapeHTML(urlCanonical)}">`
         );
         res.set('Content-Type', 'text/html');
         return res.send(html);
