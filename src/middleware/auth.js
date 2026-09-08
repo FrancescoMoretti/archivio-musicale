@@ -28,6 +28,14 @@ const autenticaToken=(req, res, next)=>{
         const payload=jwt.verify(token, process.env.JWT_SECRET);
         //token valido
         req.utente=payload;//salvo i dati del token nella richiesta
+        const percorsiConsentiti=['/api/me', '/api/logout', '/api/utente/password'];//percorsi ammissibili senza aver cambiato la password
+        if(!payload.pswCambiata && req.path.startsWith('/api/') && !percorsiConsentiti.includes(req.path)){
+            return res.status(403).json({
+                success: false,
+                message: "È necessario cambiare la password prima di continuare.",
+                pswCambiataRchiesta: true
+            });
+        }
         next();//procedo al prossimo passaggio
     }catch(err){
         //token non valido

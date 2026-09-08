@@ -56,7 +56,7 @@ router.post("/api/login", loginLimiter, async (req, res)=>{
         //se l'utente non esiste
         if(rows.length===0){
             //confronto "fantasma" per non dare indizi sulla mail registrata o no
-            await bcrypt.compare(password, "$2b$10$........................................");
+            await bcrypt.compare(password, "$2b$10$.......................................................");
             return res.status(401).json({
                 success: false,
                 message: "Credenziali non valide."

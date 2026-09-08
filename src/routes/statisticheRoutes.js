@@ -79,8 +79,10 @@ router.get("/sitemap.xml", async (req, res)=>{
         ];
         //preparazione query
         const queryEdizioni="SELECT collocazione, updated_at FROM edizioni";
+        const queryStampe="SELECT collocazione, updated_at FROM stampe";
         //esecuzione query
         const [edizioni]=await pool.query(queryEdizioni);
+        const [stampe]=await pool.query(queryStampe);
         //intestazione sitemap
         let xml='<?xml version="1.0" encoding="UTF-8"?>\n';
         xml+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -91,6 +93,10 @@ router.get("/sitemap.xml", async (req, res)=>{
         //aggiunta edizioni
         edizioni.forEach(edizione=>{
             xml+=`  <url>\n    <loc>${urlBase}/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}</loc>\n    <lastmod>${new Date(edizione.updated_at).toISOString().split('T')[0]}</lastmod>\n  </url>\n`;
+        });
+        //aggiunta stampe
+        stampe.forEach(stampa=>{
+            xml+=`  <url>\n    <loc>${urlBase}/stampa.html?collocazione=${encodeURIComponent(stampa.collocazione)}</loc>\n    <lastmod>${new Date(stampa.updated_at).toISOString().split('T')[0]}</lastmod>\n  </url>\n`;
         });
         //chiusura tag principale
         xml+='</urlset>';
