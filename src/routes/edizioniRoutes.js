@@ -62,17 +62,7 @@ router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
         }
         //inserisco dati nel file html
         let html=await fs.readFile(path.join(__dirname, '../../public/edizione.html'), 'utf-8');
-        html=html.replace(
-            '<title>Contenuto | Archivio musicale Luca Moretti</title>',
-            `<title>${escapeHTML(titolo)}</title>
-            <meta name="description" content="${escapeHTML(metaTesto)}">
-            <link rel="canonical" href="${escapeHTML(urlCanonical)}">
-            <meta property="og:title" content="${escapeHTML(titolo)}">
-            <meta property="og:description" content="${escapeHTML(metaTesto)}">
-            <meta property="og:image" content="${escapeHTML(urlImmagine)}">
-            <meta property="og:type" content="article">
-            <meta property="og:url" content="${escapeHTML(urlCanonical)}">`
-        );
+        html=html.replace('<title>Contenuto | Archivio musicale Luca Moretti</title>', `<title>${escapeHTML(titolo)}</title>\n    <!--SEO globale-->\n    <meta name="description" content="${escapeHTML(metaTesto)}">\n    <link rel="canonical" href="${escapeHTML(urlCanonical)}">\n    <!--Open Graph-->\n    <meta property="og:site_name" content="Archivio musicale Luca Moretti">\n    <meta property="og:title" content="${escapeHTML(titolo)}">\n    <meta property="og:description" content="${escapeHTML(metaTesto)}">\n    <meta property="og:image" content="${escapeHTML(urlImmagine)}">\n    <meta property="og:type" content="article">\n    <meta property="og:url" content="${escapeHTML(urlCanonical)}">`);
         res.set('Content-Type', 'text/html');
         return res.send(html);
     }catch(err){
