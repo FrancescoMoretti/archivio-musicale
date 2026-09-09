@@ -21,7 +21,7 @@ Font sans-serif: "Ubuntu";
     background-color: var(--grigioChiaro);
 }
 
-body {
+body{
     margin: 0;
     text-align: center;
     padding-top: 5em;
@@ -38,7 +38,7 @@ body {
     background-color: var(--carta1);/*colore per fallback*/
 }
 
-main {
+main{
     flex: 1; /*occupa tutto lo spazio che avanza tra header e footer */
     margin-left: 2.5%;
     margin-right: 2.5%;
@@ -173,7 +173,7 @@ footer p{
 footer p a{
     font-style: italic;
     color: var(--bianco);
-    transition: 0.3s ease-out;
+    transition: color 0.3s ease-out;
 }
 
 footer p a:hover{
@@ -671,7 +671,7 @@ footer .material-symbols-outlined{
 #scheda a{
     color: var(--sfondoScuro);
     font-family: "Ubuntu", sans-serif;
-    transition: 0.3s ease-out;
+    transition: color 0.3s ease-out;
 }
 
 #scheda a:hover{
@@ -792,7 +792,7 @@ footer .material-symbols-outlined{
 
 #eventi-sec article a{
     color: var(--sfondoScuro);
-    transition: 0.3s ease-out;
+    transition: color 0.3s ease-out;
     font-weight: bold;
     margin: 0 2em 0 2em
 }
