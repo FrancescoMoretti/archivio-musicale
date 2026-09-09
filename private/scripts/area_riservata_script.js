@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function (){
             return;
         }
         //conferma
-        if (!confirm(`Sei sicuro di voler eliminare l'Edizione/Manoscritto ${collocazione}?`)) {
+        if(!confirm(`Sei sicuro di voler eliminare l'Edizione/Manoscritto ${collocazione}?`)){
             return;
         }
         message.textContent="Cancellazione in corso...";
@@ -86,18 +86,18 @@ document.addEventListener("DOMContentLoaded", function (){
                 credentials: "include"
             });
             //gestione reindirizzamenti
-            if (res.status===403) {
+            if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
-            if (res.ok && result.success) {
+            if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
-            } else {
+            }else{
                 message.textContent=result.message || "Errore durante la cancellazione.";
             }
-        } catch (err) {
+        }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             //console.error(err);
         }
@@ -122,10 +122,10 @@ document.addEventListener("DOMContentLoaded", function (){
         salvaBtn.disabled=true;
         modificaForm.style.display="none";
         modificaForm.reset();
-        try {
+        try{
             const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`);
             const result=await res.json();
-            if (res.ok && result.success) {
+            if(res.ok && result.success){
                 message.textContent="Contenuto trovato!";
                 //popolamento del form di modifica
                 document.getElementById("update-collocazione-edizione").value=result.content.collocazione;
@@ -136,12 +136,12 @@ document.addEventListener("DOMContentLoaded", function (){
                 document.getElementById("update-editore-edizione").value=result.content.editore || "";
                 document.getElementById("update-descrizione-edizione").value=result.content.descrizione || "";
                 document.getElementById("update-note-edizione").value=result.content.note || "";
-                salvaBtn.disabled = false;
+                salvaBtn.disabled=false;
                 modificaForm.style.display="block";
-            } else {
+            }else{
                 message.textContent=result.message || "Errore durante la ricerca.";
             }
-        } catch (err) {
+        }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             //console.error(err);
         }
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function (){
             descrizione: document.getElementById("update-descrizione-edizione").value.trim(),
             note: document.getElementById("update-note-edizione").value.trim()
         };
-        try {
+        try{
             const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`, {
                 method: "PUT",
                 credentials: "include",
@@ -183,22 +183,22 @@ document.addEventListener("DOMContentLoaded", function (){
                 body: JSON.stringify(dati)
             });
             //gestione reindirizzamenti
-            if (res.status===403) {
+            if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
-            if (res.ok && result.success) {
+            if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
                 salvaBtn.disabled=true;
                 const cercaForm=document.getElementById("cerca-edizione-form");
                 cercaForm.querySelector('p').textContent="";
                 cercaForm.reset();
-            } else {
+            }else{
                 message.textContent=result.message || "Errore durante l'aggiornamento.";
             }
-        } catch (err) {
+        }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server."
             //console.error(err);
         }
