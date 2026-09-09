@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function (){
     //gestione form con radio button
     const radioBtn=document.querySelectorAll('input[name="tipo-form"]');
     radioBtn.forEach(btn=>{
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     //fetch di aggiunta edizioni (INSERIMENTO)
-    document.getElementById("aggiungi-edizione-form").addEventListener("submit", async (event) => {
+    document.getElementById("aggiungi-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const autore=form.elements["autore"].value.trim();
         const titolo=form.elements["titolo"].value.trim();
         if (!collocazione || !autore || !titolo) {
-            message.textContent = "Errore: Collocazione, autore e titolo sono obbligatori.";
+            message.textContent="Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
         message.textContent="Caricamento in corso...";
@@ -40,32 +40,32 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.set("collocazione", collocazione);
         formData.set("autore", autore);
         formData.set("titolo", titolo);
-        try {
+        try{
             const res=await fetch("/api/edizione", {
                 method: "POST",
                 credentials: "include",
                 body: formData
             });
             //gestione reindirizzamenti
-            if (res.status===403) {
+            if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
-            if (res.ok && result.success) {
+            if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
-            } else {
+            }else{
                 message.textContent=result.message || "Errore durante il salvataggio.";
             }
-        } catch (err) {
+        }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             //console.error(err);
         }
     });
 
     //fetch di cancellazione edizioni (ELIMINAZIONE)
-    document.getElementById("cancella-edizione-form").addEventListener("submit", async (event) => {
+    document.getElementById("cancella-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     //fetch di ricerca edizioni (MODIFICA)
-    document.getElementById("cerca-edizione-form").addEventListener("submit", async (event) => {
+    document.getElementById("cerca-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const cercaForm=event.target;
         const message=cercaForm.querySelector('p');
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     //fetch di modifica edizioni (MODIFICA)
-    document.getElementById("modifica-edizione-form").addEventListener("submit", async (event) => {
+    document.getElementById("modifica-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     //fetch di aggiunta stampe (INSERIMENTO)
-    document.getElementById("aggiungi-stampa-form").addEventListener("submit", async (event) => {
+    document.getElementById("aggiungi-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
