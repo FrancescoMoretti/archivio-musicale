@@ -2,12 +2,12 @@ document.addEventListener("DOMContentLoaded", function (){
     //gestione form con radio button
     const radioBtn=document.querySelectorAll('input[name="tipo-form"]');
     radioBtn.forEach(btn=>{
-        btn.addEventListener("change", function () {
-            document.getElementById("edizione-grid").style.display = "none";
-            document.getElementById("stampa-grid").style.display = "none";
-            document.getElementById("evento-grid").style.display = "none";
-            const selected = document.querySelector('input[name="tipo-form"]:checked').value;
-            switch (selected) {
+        btn.addEventListener("change", function(){
+            document.getElementById("edizione-grid").style.display="none";
+            document.getElementById("stampa-grid").style.display="none";
+            document.getElementById("evento-grid").style.display="none";
+            const selected=document.querySelector('input[name="tipo-form"]:checked').value;
+            switch(selected){
                 case '1':
                     document.getElementById("edizione-grid").style.display="grid";
                 break;
