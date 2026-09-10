@@ -73,9 +73,11 @@ router.get("/sitemap.xml", async (req, res)=>{
         //lista pagine statiche
         const pagineStatiche=[
             '', //index.html
+            '/catalogo.html',
             '/biografia.html',
             '/eventi.html',
-            '/lista_edizioni.html'
+            '/lista_edizioni.html',
+            '/lista_stampe.html'
         ];
         //preparazione query
         const queryEdizioni="SELECT collocazione, updated_at FROM edizioni";

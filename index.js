@@ -41,6 +41,7 @@ app.use('/admin', autenticaToken, autorizzaRuoli('admin', 'superadmin'), express
 app.use('/private', autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), express.static('private'));
 
 //DEVIAZIONI TEMPORANEE
+/*
 app.get('/catalogo.html', (req, res)=>{
     res.redirect(302, 'lista_edizioni.html');
 });
@@ -48,6 +49,7 @@ app.get('/catalogo.html', (req, res)=>{
 app.get('/lista_stampe.html', (req, res)=>{
     res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
 });
+*/
 //FINE DEVIAZIONI TEMPORANEE
 
 const authRoutes=require('./src/routes/authRoutes');
