@@ -995,6 +995,18 @@ footer .material-symbols-outlined{
     }
 /*fine restyling privacy*/
 
+/*inizio restyling catalogo*/
+    #catalogo .grid{
+        display: flex;
+        flex-direction: column;
+        gap: 3em;
+    }
+
+    #catalogo .link{
+        font-size: 1.25em;
+    }
+/*fine restyling catalogo*/
+
 /*inizio restyling pagine lista*/
     #ricerca-sec{
         width: 80%;

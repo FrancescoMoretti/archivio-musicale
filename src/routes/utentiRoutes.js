@@ -1,7 +1,6 @@
 const express=require('express');
 const router=express.Router();
 const bcrypt=require('bcryptjs');
-
 const pool=require('../db');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 const {hashPassword}=require('../utils/hash');

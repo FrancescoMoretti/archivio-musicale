@@ -3,7 +3,6 @@ const router=express.Router();
 const path=require('path');
 const jwt=require('jsonwebtoken');
 const bcrypt=require('bcryptjs');
-
 const pool=require('../db');
 const {autenticaToken, autorizzaRuoli, loginLimiter}=require('../middleware/auth');
 

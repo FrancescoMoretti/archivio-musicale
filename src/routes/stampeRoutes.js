@@ -2,7 +2,6 @@ const express=require('express');
 const router=express.Router();
 const fs=require('fs').promises;
 const path=require('path');
-
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
