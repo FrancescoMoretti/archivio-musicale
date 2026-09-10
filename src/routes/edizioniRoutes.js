@@ -77,7 +77,7 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
     const files=req.files;//immagini
     //validazione server-side
     //campi obbligatori
-    if (!collocazione || !String(collocazione).trim() || !titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
+    if(!collocazione || !String(collocazione).trim() || !titolo || !String(titolo).trim() || !autore || !String(autore).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (collocazione, autore, titolo)."
@@ -103,13 +103,14 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
     const queryEdizione=`INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const queryImmagine=`INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
     const connection=await pool.getConnection();
-    try {
+    try{
         await connection.beginTransaction();
         const [result]=await connection.execute(queryEdizione, [collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, userId]);
+        //edizione non inserita => lascio che vada nel catch
         const edizioneId=result.insertId;//id dell'edizione inserita
         //caricamento immagini su cloudinary
-        if (files && files.length>0) {
-            for (let i=0; i<files.length; i++) {
+        if(files && files.length>0){
+            for(let i=0; i<files.length; i++){
                 const file=files[i];
                 const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "edizioni");
                 publicIds.push(publicId);
@@ -121,7 +122,7 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
             success: true,
             message: "Contenuto salvato con successo!"
         });
-    } catch (err) {
+    }catch(err){
         await connection.rollback();
         try{
             if(publicIds.length>0){
@@ -134,15 +135,15 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
             console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
         }
         console.error("Errore nell'endpoint POST edizione: ", err);
-        if(err.code==='ER_DUP_ENTRY') {
-            return res.status(400).json({ 
+        if(err.code==='ER_DUP_ENTRY'){
+            return res.status(400).json({
                 success: false,
                 message: "Errore: collocazione è già esistente." });
         }
-        return res.status(500).json({ 
+        return res.status(500).json({
             success: false,
             message: "Errore interno durante il salvataggio." });
-    } finally {
+    }finally{
         connection.release();
     }
 });
@@ -157,8 +158,11 @@ router.delete("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('sup
             message: "Collocazione non valida."
         });
     }
+    //preparazione query
+    const queryImmagini="SELECT i.url_immagine FROM immagini_edizioni i JOIN edizioni e ON i.edizione_id=e.id WHERE e.collocazione=?";
+    const queryEdizioni="DELETE FROM edizioni WHERE collocazione=?";
     try{
-        const [immagini]=await pool.query(`SELECT i.url_immagine FROM immagini_edizioni i JOIN edizioni e ON i.edizione_id=e.id WHERE e.collocazione=?`, [collocazione]);
+        const [immagini]=await pool.query(queryImmagini, [collocazione]);
         if(immagini.length>0){
             const publicIds=immagini.map(img=>{
                 //estraggo il public_id dall'url dell'immagine ('.../v12345/campione.jpg'=>'campione')
@@ -169,7 +173,7 @@ router.delete("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('sup
             await cloudinary.api.delete_resources(publicIds);
         }
         //cancello il contenuto dal DB
-        const [result]=await pool.query("DELETE FROM edizioni WHERE collocazione=?", [collocazione]);
+        const [result]=await pool.query(queryEdizioni, [collocazione]);
         //le immagini si cancellano a cascata
         //cancellazione non avvenuta
         if(result.affectedRows===0){
@@ -206,8 +210,8 @@ router.get("/api/edizioni", publicLimiter, async (req, res)=>{
     let whereClause="";//clausola where
     //gestione filtro
     if(filtro){
-        whereClause = " WHERE e.autore LIKE ? OR e.titolo LIKE ?";//spazio all'inizio
-        const filtroLike = `%${filtro}%`;
+        whereClause=" WHERE e.autore LIKE ? OR e.titolo LIKE ?";//spazio all'inizio
+        const filtroLike=`%${filtro}%`;
         paramsTotali.push(filtroLike, filtroLike);
         paramsContenuti.push(filtroLike, filtroLike);
     }
@@ -217,9 +221,9 @@ router.get("/api/edizioni", publicLimiter, async (req, res)=>{
     queryContenuti+=" ORDER BY e.autore ASC LIMIT ? OFFSET ?";//spazio all'inizio
     paramsContenuti.push(limite, inizio);
     try{
-        const [risultatoTotale] = await pool.query(queryTotali, paramsTotali);
-        const totali = risultatoTotale[0].totali;
-        const [righe] = await pool.query(queryContenuti, paramsContenuti);
+        const [risultatoTotale]=await pool.query(queryTotali, paramsTotali);
+        const totali=risultatoTotale[0].totali;
+        const [righe]=await pool.query(queryContenuti, paramsContenuti);
         return res.json({
             success: true,
             contenuti: righe,
@@ -251,10 +255,10 @@ router.get("/api/edizione/:collocazione", publicLimiter, autenticaTokenMorbido('
     }
     const queryContenuti=`SELECT ${campiSelect} FROM edizioni WHERE collocazione=?`;
     const queryImmagini="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
-    try {
+    try{
         const [edizioneRisultato]=await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
-        if (edizioneRisultato.length===0) {
+        if(edizioneRisultato.length===0){
             return res.status(404).json({
                 success: false,
                 message: "Edizione/Manoscritto non trovato."
@@ -286,7 +290,7 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     //campi obbligatori
-    if(!titolo || !String(titolo).trim() || !autore || !String(autore).trim()) {
+    if(!titolo || !String(titolo).trim() || !autore || !String(autore).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
