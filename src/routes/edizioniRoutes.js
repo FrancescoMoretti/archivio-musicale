@@ -310,6 +310,7 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
     editore=validaStringa(editore);
     descrizione=validaStringa(descrizione);
     note=validaStringa(note);
+    //preparazione query
     const query="UPDATE edizioni SET link_rism=?, autore=?, titolo=?, data_str=?, editore=?, descrizione=?, note=?, updated_by=? WHERE collocazione=?";
     try{
         const [result]=await pool.query(query, [link_rism, autore, titolo, data_str, editore, descrizione, note, userId, collocazione]);
@@ -318,7 +319,7 @@ router.put("/api/edizione/:collocazione", autenticaToken, autorizzaRuoli('supera
             return res.status(404).json({
                 success: false,
                 message: "Contenuto non trovato."
-            });
+            });//404: not found
         }
         //aggiornamento avvenuto
         return res.json({
