@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
+document.addEventListener("DOMContentLoaded", async function caricaEdizione(){
     const params=new URLSearchParams(window.location.search);
     const collocazione=params.get("collocazione");
     const scheda=document.getElementById("scheda");
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
         const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`);
         const result=await res.json();
         //contenuto non trovato
-        if (!res.ok || !result.success) {
+        if(!res.ok || !result.success){
             window.location.href="/404.html";
             return;
         }
@@ -42,14 +42,14 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
             stringaHTML+=`<li><span>Note</span>: ${escapeHTML(contenuto.note)}</li>`;
         }
         stringaHTML+=`</ul>`;
-        scheda.innerHTML = stringaHTML;
+        scheda.innerHTML=stringaHTML;
         //gestione delle immagini
-        const n_immagini = listaImmagini.length;
+        const n_immagini=listaImmagini.length;
         //se ho una sola immagine la metto come immagine
-        if (n_immagini === 1) {
-            immaginiDiv.innerHTML = `<img src="${escapeHTML(listaImmagini[0])}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`;
-        } else if (n_immagini > 1) {
-            immaginiDiv.innerHTML = `
+        if(n_immagini===1){
+            immaginiDiv.innerHTML=`<img src="${escapeHTML(listaImmagini[0])}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`;
+        }else if(n_immagini > 1){
+            immaginiDiv.innerHTML=`
                 <div id="slider">
                     <div id="slider-track">
                         ${listaImmagini.map(url => `<img class="slide" src="${escapeHTML(url)}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`).join("")}
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione() {
             inizializzaSlider();
         }
         //mostro la sezione con la scheda
-        document.querySelector('main.articolo').style.visibility = "visible";
+        document.querySelector('main.articolo').style.visibility="visible";
     }catch(err){
         //console.error("Errore nel caricamento dell'edizione: ", err);
     }

@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 body: JSON.stringify({oldPsw, newPsw, confirmPsw})
             });
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }

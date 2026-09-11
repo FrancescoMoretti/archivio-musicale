@@ -8,7 +8,7 @@ const {validaPassword}=require('../utils/validazione');
 
 //endpoint per creazione utenti
 router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
-    const {email, password, nome, ruolo} = req.body;//dati del nuovo utente, presi dalla richiesta
+    const {email, password, nome, ruolo}=req.body;//dati del nuovo utente, presi dalla richiesta
     const userRuolo=req.utente.ruolo;//ruolo di chi invia la richiesta, preso dal token
     const userId=req.utente.id;//id di chi invia la richiesta, preso dal token
     //validazione server-side

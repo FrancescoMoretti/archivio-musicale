@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(){
     //gestione form con radio button
-    const radioBtn = document.querySelectorAll('input[name="tipo-form"');
+    const radioBtn=document.querySelectorAll('input[name="tipo-form"');
     radioBtn.forEach(btn=>{
         btn.addEventListener("change", function(){
             document.getElementById("utenti-grid").style.display="none";
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function(){
             //aggiornamento contenuti
             if(res.ok && result.success){
                 tbody.innerHTML="";//pulisco tabella
-                result.utenti.forEach(utente => {
+                result.utenti.forEach(utente=>{
                     const riga=document.createElement('tr');//creo riga
                     const dataLocale=new Date(utente.created_at).toLocaleDateString('it-IT');//formattazione della data
                     let stringaHTML=`
@@ -133,11 +133,11 @@ document.addEventListener("DOMContentLoaded", function(){
                     tbody.appendChild(riga);
                 });
             }else{
-                tbody.innerHTML = "<tr><td colspan='6'>" + result.message + "</td></tr>";
+                tbody.innerHTML="<tr><td colspan='6'>" + result.message + "</td></tr>";
                 return;
             }
         }catch(err){
-            tbody.innerHTML = "<tr><td colspan='6'>Errore di rete: impossibile raggiungere il server.</td></tr>";
+            tbody.innerHTML="<tr><td colspan='6'>Errore di rete: impossibile raggiungere il server.</td></tr>";
             //console.error(err);
         }
     });

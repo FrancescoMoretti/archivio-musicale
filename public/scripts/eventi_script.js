@@ -140,6 +140,6 @@ document.addEventListener("DOMContentLoaded", async function(){
 
     //gestione bottone altri
     if(altriBtn){
-        altriBtn.addEventListener("click", () => caricaEventi());
+        altriBtn.addEventListener("click", ()=>caricaEventi());
     }
 });

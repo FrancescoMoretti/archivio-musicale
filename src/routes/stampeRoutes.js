@@ -10,11 +10,11 @@ const {validaStringa}=require('../utils/validazione');
 const {escapeHTML}=require('../../public/scripts/utils');
 
 //endpoint per rendering server-side per lettura stampa
-router.get("stampa.html", publicLimiter, async (req, res, next)=>{
+router.get("/stampa.html", publicLimiter, async (req, res, next)=>{
     const {collocazione}=req.query;
     //validazione server-side
     if(!collocazione){
-        return next();
+        return next();//nessuna collocazione
     }
     //preparazione query
     const query="SELECT id, titolo, autore, data_str, stampa, dimensioni FROM stampe WHERE collocazione=?";
@@ -98,7 +98,7 @@ router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     try{
         await connection.beginTransaction();
         const [result]=await connection.execute(queryStampa, [collocazione, autore, titolo, data_str, stampa, dimensioni, userId]);
-        const stampaId = result.insertId;//id della stampa inserita
+        const stampaId=result.insertId;//id della stampa inserita
         //caricamento delle immagini su cloudinary
         if(files && files.length>0){
             for(let i=0; i<files.length; i++){
@@ -126,7 +126,7 @@ router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin',
             console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
         }
         console.error("Errore nell'endpoint POST stampa: ", err);
-        if (err.code === 'ER_DUP_ENTRY') {
+        if(err.code==='ER_DUP_ENTRY'){
             return res.status(400).json({
                 success: false,
                 message: "Errore: il numero identificativo è già esistente." });
@@ -227,7 +227,7 @@ router.get("/api/stampe", publicLimiter, async (req, res)=>{
 });
 
 //endpoint per lettura stampa
-router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res) => {
+router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.params;
     //validazione server-side
     if(!collocazione || !String(collocazione).trim()){
@@ -243,10 +243,10 @@ router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('su
     }
     const queryContenuti=`SELECT ${campiSelect} FROM stampe WHERE collocazione=?`;
     const queryImmagini="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
-    try {
+    try{
         const [stampaRisultato]=await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
-        if (stampaRisultato.length===0) {
+        if(stampaRisultato.length===0){
             return res.status(404).json({
                 success: false,
                 message: "Stampa/Foto non trovata."
@@ -262,7 +262,7 @@ router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('su
             immagini: listaUrlImmagini,
             n_immagini: listaUrlImmagini.length
         });
-    } catch (err) {
+    }catch(err){
         console.error("Errore nell'endpoint GET stampa: ", err);
         return res.status(500).json({
             success: false,
@@ -272,13 +272,13 @@ router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('su
 });
 
 //endpoint per aggiornamento stampa
-router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res) => {
+router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
     const {collocazione}=req.params;
     let {autore, titolo, data_str, stampa, dimensioni}=req.body;
     const userId=req.utente.id;//id dell'utente che sta modificando il contenuto
     //validazione server-side
     //campi obbligatori
-    if (!autore || !String(autore).trim() || !titolo || !String(titolo).trim()) {
+    if(!autore || !String(autore).trim() || !titolo || !String(titolo).trim()){
         return res.status(400).json({
             success: false,
             message: "Campi obbligatori mancanti (autore, titolo)."
@@ -290,10 +290,10 @@ router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadm
     data_str=validaStringa(data_str);
     stampa=validaStringa(stampa);
     dimensioni=validaStringa(dimensioni);
-    const query = "UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=?, updated_by=? WHERE collocazione=?";
-    try {
+    const query="UPDATE stampe SET autore=?, titolo=?, data_str=?, stampa=?, dimensioni=?, updated_by=? WHERE collocazione=?";
+    try{
         const [result]=await pool.query(query, [autore, titolo, data_str, stampa, dimensioni, userId, collocazione]);
-        if (result.affectedRows===0){
+        if(result.affectedRows===0){
             return res.status(404).json({
                 success: false,
                 message: "Stampa/Foto non trovata."
@@ -303,7 +303,7 @@ router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadm
             success: true,
             message: "Stampa/Foto aggiornata con successo!"
         });
-    } catch (err) {
+    }catch(err){
         console.error("Errore nell'endpoint PUT stampa: ", err);
         return res.status(500).json({
             success: false,

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function (){
+document.addEventListener("DOMContentLoaded", function(){
     //gestione form con radio button
     const radioBtn=document.querySelectorAll('input[name="tipo-form"]');
     radioBtn.forEach(btn=>{
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function (){
         const collocazione=form.elements["collocazione"].value.trim();
         const autore=form.elements["autore"].value.trim();
         const titolo=form.elements["titolo"].value.trim();
-        if (!collocazione || !autore || !titolo) {
+        if(!collocazione || !autore || !titolo){
             message.textContent="Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function (){
         const message=form.querySelector('p');
         //validazione client-side
         const collocazione=document.getElementById("delete-collocazione-edizione").value.trim();
-        if (!collocazione){
+        if(!collocazione){
             message.textContent="Errore: Collocazione non inserita."
             return;
         }
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function (){
             return;
         }
         message.textContent="Cancellazione in corso...";
-        try {
+        try{
             const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}`, {
                 method: "DELETE",
                 credentials: "include"
@@ -214,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function (){
         const collocazione=form.elements["collocazione"].value.trim();
         const autore=form.elements["autore"].value.trim();
         const titolo=form.elements["titolo"].value.trim();
-        if (!collocazione || !autore || !titolo) {
+        if(!collocazione || !autore || !titolo){
             message.textContent="Errore: Collocazione, autore e titolo sono obbligatori.";
             return;
         }
@@ -223,25 +223,25 @@ document.addEventListener("DOMContentLoaded", function (){
         formData.set("collocazione", collocazione);
         formData.set("autore", autore);
         formData.set("titolo", titolo);
-        try {
+        try{
             const res=await fetch("/api/stampa", {
                 method: "POST",
                 credentials: "include",
                 body: formData
             });
             //gestione reindirizzamenti
-            if (res.status===403) {
+            if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }
             const result=await res.json();
-            if (res.ok && result.success) {
+            if(res.ok && result.success){
                 message.textContent=result.message;
                 form.reset();
-            } else {
+            }else{
                 message.textContent=result.message || "Errore durante il salvataggio.";
             }
-        } catch (err) {
+        }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             //console.error(err);
         }
@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", function (){
         if(!confirm(`Sei sicuro di voler eliminare la Stampa/Foto ${collocazione}?`)){
             return;
         }
-        message.textContent = "Cancellazione in corso...";
+        message.textContent="Cancellazione in corso...";
         try{
             const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`, {
                 method: "DELETE",
@@ -298,15 +298,15 @@ document.addEventListener("DOMContentLoaded", function (){
             return;
         }
         const modificaForm=document.getElementById("modifica-stampa-form");
-        const message2 = modificaForm.querySelector('p');
+        const message2=modificaForm.querySelector('p');
         const salvaBtn=modificaForm.querySelector('input[type="submit"]');
         message2.textContent="";
-        message.textContent = "Ricerca in corso...";
-        salvaBtn.disabled = true;
-        modificaForm.style.display = "none";
+        message.textContent="Ricerca in corso...";
+        salvaBtn.disabled=true;
+        modificaForm.style.display="none";
         modificaForm.reset();
         try{
-            const res= await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`);
+            const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}`);
             const result=await res.json();
             if(res.ok && result.success){
                 message.textContent="Contenuto trovato!";
@@ -362,7 +362,7 @@ document.addEventListener("DOMContentLoaded", function (){
                 body: JSON.stringify(dati)
             });
             //gestione reindirizzamenti
-            if (res.status === 403) {
+            if(res.status===403){
                 window.location.href="/403.html";
                 return;
             }

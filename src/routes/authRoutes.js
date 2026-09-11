@@ -8,7 +8,7 @@ const {autenticaToken, autorizzaRuoli, loginLimiter}=require('../middleware/auth
 
 //rotta segreta per gestire login
 router.get("/accedi", (req, res)=>{
-    const token = req.cookies.token;//recupero il token
+    const token=req.cookies.token;//recupero il token
     //se il token c'è
     if(token){
         try{
@@ -41,7 +41,7 @@ router.get("/accedi", (req, res)=>{
 
 //endpoint per login
 router.post("/api/login", loginLimiter, async (req, res)=>{
-    const {email, password} = req.body;
+    const {email, password}=req.body;
     //validazione server-side
     if(!email || !String(email).trim() || !password || !String(password).trim()){
         return res.status(400).json({
@@ -109,7 +109,7 @@ router.post("/api/login", loginLimiter, async (req, res)=>{
         //generazione del cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV !== 'development',
+            secure: process.env.NODE_ENV!=='development',
             maxAge: 3600000,//1 ora (in millisecondi)
             sameSite: "Lax"
         });
@@ -131,7 +131,7 @@ router.post("/api/login", loginLimiter, async (req, res)=>{
 router.post("/api/logout", (req, res)=>{
     res.clearCookie('token', {
         httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
+        secure: process.env.NODE_ENV!=="development",
         sameSite: "Lax",
         path: '/'//rimuovo per tutto il sito
     });

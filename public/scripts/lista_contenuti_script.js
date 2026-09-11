@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     //gestione bottone precedente
     precButtons.forEach(btn=>{
         btn.addEventListener("click", async ()=>{
-            if (schermata>1){
+            if(schermata>1){
                 schermata--;
                 await caricaContenuti();
             }
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     });
 
     //gestione barra di ricerca
-    searchBar.addEventListener("input", async () => {
+    searchBar.addEventListener("input", async ()=>{
         clearTimeout(timeoutRicerca);//se l'utente sta ancora scrivendo cancello il timer
         timeoutRicerca=setTimeout(async ()=>{
             schermata=1;//torno alla prima pagina
@@ -60,14 +60,14 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     });
 
     //funzione principale che carica contenuti dal server
-    async function caricaContenuti() {
+    async function caricaContenuti(){
         const offset=(schermata - 1) * righe;
         //costruisco URL con i parametri
         let url=`${endpoint}?limit=${righe}&offset=${offset}`;
-        if (searchBar.value) {
+        if(searchBar.value){
             url+=`&filtro=${encodeURIComponent(searchBar.value)}`;
         }
-        try {
+        try{
             const res=await fetch(url);
             const result=await res.json();
             //aggiornamento contenuti
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
                 succButtons.forEach(btn=>btn.style.visibility="hidden");
                 return;
             }
-        } catch (err) {
+        }catch(err){
             tbody.innerHTML="<tr><td colspan='3'>Errore di rete</td></tr>";
             //console.error(err);
             precButtons.forEach(btn=>btn.style.visibility="hidden");
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
         }
     };
 
-    function mostraPagina(lista_da_mostrare, totale) {
+    function mostraPagina(lista_da_mostrare, totale){
         tbody.innerHTML="";
         //se non ci sono elementi da mostrare
         if(lista_da_mostrare.length===0){
@@ -114,14 +114,14 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             tdTitolo.appendChild(linkTitolo);
             //GESTIONE COLONNA IMMAGINE
             const tdImmagine=document.createElement("td");
-            if (contenuto.url_immagine) {
+            if(contenuto.url_immagine){
                 const img=document.createElement("img");
                 const miniaturaUrl=contenuto.url_immagine.replace('/upload/', '/upload/w_100,c_thumb/');//w_100,c_thumb servono per scaricare l'immagine in versione miniatura
                 img.src=miniaturaUrl;
                 img.alt=`Copertina di ${contenuto.titolo}`;
                 img.loading="lazy";
                 tdImmagine.appendChild(img);
-            } else {
+            }else{
                 tdImmagine.className="no-img";
                 tdImmagine.textContent="No Img";
             }
