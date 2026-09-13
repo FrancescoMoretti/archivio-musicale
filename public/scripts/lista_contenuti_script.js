@@ -87,17 +87,17 @@ document.addEventListener("DOMContentLoaded", async ()=>{
         }
     };
 
-    function mostraPagina(lista_da_mostrare, totale){
+    function mostraPagina(listaDaMostrare, totale){
         tbody.innerHTML="";
         //se non ci sono elementi da mostrare
-        if(lista_da_mostrare.length===0){
+        if(listaDaMostrare.length===0){
             tbody.innerHTML="<tr><td colspan='3'>Nessun contenuto trovato.</td></tr>";
             precButtons.forEach(btn=>btn.style.visibility="hidden");
             succButtons.forEach(btn=>btn.style.visibility="hidden");
             tbody.style.height="auto";
             return;
         }
-        lista_da_mostrare.forEach(contenuto=>{
+        listaDaMostrare.forEach(contenuto=>{
             const tr=document.createElement("tr");
             const tdAutore=document.createElement("td");
             tdAutore.classList.add("nome-autore");
