@@ -19,9 +19,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione(){
         const contenuto=result.content;//dati della risorsa
         const listaImmagini=result.immagini || [];//array di URL a cloudinary
         //popolazione della scheda dell'articolo
-        let stringaHTML=`
-            <ul>
-                <li class="titolo">${escapeHTML(contenuto.titolo)}</li>`;
+        let stringaHTML="";
         if(contenuto.collocazione){
             stringaHTML+=`<li><span>Collocazione</span>: ${escapeHTML(contenuto.collocazione)}</li>`;
         }
@@ -41,8 +39,8 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione(){
         if(contenuto.note){
             stringaHTML+=`<li><span>Note</span>: ${escapeHTML(contenuto.note)}</li>`;
         }
-        stringaHTML+=`</ul>`;
-        scheda.innerHTML=stringaHTML;
+        //inserisco la stringa html nell'ul già esistente
+        scheda.querySelector('ul').insertAdjacentHTML("beforeend", stringaHTML);
         //gestione delle immagini
         const n_immagini=listaImmagini.length;
         //se ho una sola immagine la metto come immagine

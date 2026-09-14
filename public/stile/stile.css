@@ -631,6 +631,7 @@ footer .material-symbols-outlined{
 
 .articolo .grid{
     align-items: start;
+    margin-top: 2.5%;
 }
 
 .articolo img{
@@ -659,9 +660,12 @@ footer .material-symbols-outlined{
     margin-bottom: 0.75em;
 }
 
-#scheda .titolo{
+#scheda h1{
     font-size: 1.25em;
     font-weight: bold;
+    font-family: "Ubuntu", sans-serif;
+    text-align: justify;
+    margin-top: 0;
 }
 
 #scheda span{

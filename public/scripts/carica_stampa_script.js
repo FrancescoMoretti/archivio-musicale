@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function caricaStampa(){
     const params=new URLSearchParams(window.location.search);
     const collocazione=params.get("collocazione");
-    const titolo=document.getElementById("titolo");
     const scheda=document.getElementById("scheda");
     const immaginiDiv=document.getElementById("immagini");
     //collocazione non specificata o non valida
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa(){
         const contenuto=result.content;//dati della risorsa
         const listaImmagini=result.immagini || [];//array di URL a cloudinary
         //popolazione della scheda dell'articolo
-        titolo.textContent=contenuto.titolo;
         let stringaHTML=`
             <ul>
                 <li><span>Autore</span>: ${escapeHTML(contenuto.autore)}</li>
