@@ -1062,6 +1062,11 @@ footer .material-symbols-outlined{
     
     .articolo .grid #scheda{
         margin-top: 1em;
+        width: 100%;
+    }
+
+    .articolo .grid #scheda h1{
+        text-align: center;
     }
 /*fine restyling pagina dettaglio*/
 }
