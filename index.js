@@ -40,18 +40,6 @@ app.use('/admin', autenticaToken, autorizzaRuoli('admin', 'superadmin'), express
 //servo file statici dalla cartella /provate solo ai superadmin, admin o editor
 app.use('/private', autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), express.static('private'));
 
-//DEVIAZIONI TEMPORANEE
-/*
-app.get('/catalogo.html', (req, res)=>{
-    res.redirect(302, 'lista_edizioni.html');
-});
-
-app.get('/lista_stampe.html', (req, res)=>{
-    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
-});
-*/
-//FINE DEVIAZIONI TEMPORANEE
-
 const authRoutes=require('./src/routes/authRoutes');
 app.use(authRoutes);
 
@@ -67,7 +55,7 @@ app.use(edizioniRoutes);
 const stampeRoutes=require('./src/routes/stampeRoutes');
 app.use(stampeRoutes);
 
-// Serve i file statici dalla cartella public
+//serve i file statici dalla cartella public
 app.use(express.static('public'));
 
 const eventiRouter=require('./src/routes/eventiRoutes');
@@ -86,8 +74,7 @@ app.get('/health', (req, res)=>{
 
 //404
 app.use((req, res)=>{
-    //così rimane il nome del file non trovato nell'url
-    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));//così rimane il nome del file non trovato nell'url
 });
 
 //handler per erorri non gestiti
