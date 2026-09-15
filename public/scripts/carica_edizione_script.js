@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione(){
             immaginiDiv.innerHTML=`
                 <div id="slider">
                     <div id="slider-track">
-                        ${listaImmagini.map(url => `<img class="slide" src="${escapeHTML(url)}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`).join("")}
+                        ${listaImmagini.map(url=>`<img class="slide" src="${escapeHTML(url)}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`).join("")}
                     </div>
                 </div>
             `;

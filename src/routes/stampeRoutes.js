@@ -260,8 +260,7 @@ router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('su
         return res.json({
             success: true,
             content: content,
-            immagini: listaUrlImmagini,
-            n_immagini: listaUrlImmagini.length
+            immagini: listaUrlImmagini
         });
     }catch(err){
         console.error("Errore nell'endpoint GET stampa: ", err);
