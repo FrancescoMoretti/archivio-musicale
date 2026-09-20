@@ -16,7 +16,7 @@ Applicazione web full-stack per la digitalizzazione e la consultazione pubblica 
 
 ## Panoramica
 
-Il sito espone al pubblico il catalogo dell'archivio (edizioni/manoscritti, stampe, eventi), e offre un'area riservata dove operatori autorizzati (editor, admin, superadmin) possono inserire, modificare e cancellare i contenuti, gestire gli utenti e monitorare le modifiche apportate all'archivio.
+Il sito espone al pubblico il catalogo dell'archivio (edizioni/manoscritti, stampe, eventi) e offre un'area riservata dove operatori autorizzati (editor, admin, superadmin) possono inserire, modificare e cancellare i contenuti, gestire gli utenti e monitorare le modifiche apportate all'archivio.
 
 Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testuali sono conservati in un database MySQL ospitato su **Aiven** (Amsterdam, UE), mentre le immagini sono gestite tramite **Cloudinary**.
 
@@ -29,10 +29,11 @@ Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testua
 - `bcryptjs` per l'hashing delle password
 - `multer` (in memoria) + Cloudinary SDK per l'upload delle immagini
 - `express-rate-limit` per la protezione da brute-force sul login
+- `dotenv` per la configurazione
 
 **Frontend**
 - HTML, CSS, JavaScript vanilla
-- Costruzione dinamica del DOM lato client tramite fetch verso le API
+- Costruzione dinamica del DOM lato client tramite fetch verso le API, con alcune pagine di dettaglio arricchite da un piccolo rendering server-side (titolo, intestazione)
 
 **Hosting**
 - Applicazione Node.js in produzione su **Render**
@@ -193,3 +194,5 @@ Il progetto adotta le seguenti misure, introdotte e verificate iterativamente du
 ## Licenza
 
 Codice pubblicato solo a scopo dimostrativo/portfolio. Tutti i diritti riservati — vedi [LICENSE](./LICENSE).
+
+**Autore:** Francesco Moretti ([@FrancescoMoretti](https://github.com/FrancescoMoretti))
