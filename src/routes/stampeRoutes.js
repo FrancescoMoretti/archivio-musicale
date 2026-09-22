@@ -6,7 +6,7 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
-const {validaStringa}=require('../utils/validazione');
+const {validaStringa}=require('express-mysql-cloudinary-kit');
 const {escapeHTML}=require('../../public/scripts/utils');
 
 //endpoint per rendering server-side per lettura stampa

@@ -4,7 +4,7 @@ const bcrypt=require('bcryptjs');
 const pool=require('../db');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 const {hashPassword}=require('../utils/hash');
-const {validaPassword}=require('../utils/validazione');
+const {validaPassword}=require('express-mysql-cloudinary-kit');
 
 //endpoint per creazione utenti
 router.post("/api/utente", autenticaToken, autorizzaRuoli('superadmin', 'admin'), async (req, res)=>{
