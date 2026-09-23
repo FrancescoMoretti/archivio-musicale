@@ -1,19 +1,20 @@
-const mysql=require('mysql2/promise');
 const fs=require('fs');
 require('dotenv').config();
+const {createPool}=require('express-mysql-cloudinary-kit');
 
-const pool=mysql.createPool({
+const pool=createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    ssl: {
-        ca: process.env.DB_CA_CERT || fs.readFileSync('./ca.pem')
-    },
+    ca: process.env.DB_CA_CERT || fs.readFileSync('./ca.pem')
+    /*
+    di default:
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queuLimit: 0
+    */
 });
 
 module.exports=pool;
