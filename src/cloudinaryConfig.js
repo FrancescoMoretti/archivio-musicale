@@ -1,50 +1,17 @@
-const cloudinary=require('cloudinary').v2;
-const multer=require('multer');
 require('dotenv').config();
+const {createCloudinary}=require('express-mysql-cloudinary-kit');
 
-cloudinary.config({
+const {cloudinary, upload, uploadToCloudinary}=createCloudinary({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    folderPrefix: 'archivio_musicale'
+    /*
+    di default:
+    allowedMimeTypes: image/jpeg, image/png, image/webp
+    maxFileSize: 5*1024*1024 (5MB)
+    maxFiles: 5
+    */
 });
-
-
-const storage=multer.memoryStorage();
-
-//limito il tipo di file che possono essere caricati
-const ALLOWED_MIME_TYPES=['image/jpeg', 'image/png', 'image/webp'];
-
-const fileFilter=(req, file, cb)=>{
-    if(ALLOWED_MIME_TYPES.includes(file.mimetype)){
-        cb(null, true);
-    }else{
-        cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', file.fieldname));
-    }
-};
-
-const upload=multer({storage: storage, fileFilter, limits:{
-    fileSize: 5*1024*1024,//5MB per file
-    files: 5
-}});
-
-//funzione di upload su cloudinary
-const uploadToCloudinary=(buffer, folder)=>{
-    return new Promise((resolve, reject)=>{
-        const stream=cloudinary.uploader.upload_stream(
-            { folder: `archivio_musicale/${folder}` },
-            (error, result)=>{
-                if(error){
-                    reject(error);
-                }else{
-                    resolve({
-                        imageUrl: result.secure_url,
-                        publicId: result.public_id
-                    });
-                }
-            }
-        );
-        stream.end(buffer);
-    });
-};
 
 module.exports={cloudinary, upload, uploadToCloudinary};
