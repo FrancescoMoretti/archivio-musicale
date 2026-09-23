@@ -5,7 +5,7 @@ const cookieParser=require('cookie-parser');
 const helmet=require('helmet');
 
 const pool=require('./src/db');
-const keepAlive=require('./src/utils/dbKeepAlive');
+const keepAlive=require('express-mysql-cloudinary-kit');
 keepAlive(pool);//funzione di keepalive per non far andare il db in timeout
 const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 
