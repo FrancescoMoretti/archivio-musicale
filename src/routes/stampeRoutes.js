@@ -6,8 +6,7 @@ const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
 const gestioneErroriUpload=require('../middleware/images');
-const {validaStringa}=require('express-mysql-cloudinary-kit');
-const {escapeHTML}=require('../../public/scripts/utils');
+const {validaStringa, escapeHTML}=require('express-mysql-cloudinary-kit');
 
 //endpoint per rendering server-side per lettura stampa
 router.get("/stampa.html", publicLimiter, async (req, res, next)=>{

@@ -58,6 +58,11 @@ app.use(stampeRoutes);
 //serve i file statici dalla cartella public
 app.use(express.static('public'));
 
+//includo libreria per script frontend
+app.use('/lib', express.static(
+  path.join(path.dirname(require.resolve('express-mysql-cloudinary-kit/package.json')), 'client')
+));
+
 const eventiRouter=require('./src/routes/eventiRoutes');
 app.use(eventiRouter);
 

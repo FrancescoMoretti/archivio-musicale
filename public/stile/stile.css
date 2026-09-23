@@ -699,7 +699,7 @@ footer .material-symbols-outlined{
         flex-basis: 100%;
     }
 
-    #slider p{
+    #slider .info-text{
         font-size: 1em;
         color: var(--colorD);
         text-align: center;
