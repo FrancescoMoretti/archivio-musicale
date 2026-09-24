@@ -1,7 +1,9 @@
 const express=require('express');
 const router=express.Router();
 const pool=require('../db');
-const {autenticaToken, autorizzaRuoli, publicLimiter}=require('../middleware/auth');
+const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
+const {createPublicLimiter}=require('express-mysql-cloudinary-kit');
+const publicLimiter=createPublicLimiter();
 
 //endpoint per conteggio reperti
 router.get("/api/conta-reperti", publicLimiter, async (req, res)=>{

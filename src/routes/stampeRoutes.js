@@ -4,8 +4,9 @@ const fs=require('fs').promises;
 const path=require('path');
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
-const {validaStringa, escapeHTML, gestioneErroriUpload}=require('express-mysql-cloudinary-kit');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const {validaStringa, escapeHTML, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
+const publicLimiter=createPublicLimiter();
 
 //endpoint per rendering server-side per lettura stampa
 router.get("/stampa.html", publicLimiter, async (req, res, next)=>{

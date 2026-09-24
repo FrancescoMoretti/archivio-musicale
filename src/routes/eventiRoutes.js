@@ -2,8 +2,9 @@ const express=require('express');
 const router=express.Router();
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
-const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
-const {validaUrl, validaUrlSocial, gestioneErroriUpload}=require('express-mysql-cloudinary-kit');
+const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
+const {validaUrl, validaUrlSocial, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
+const publicLimiter=createPublicLimiter();
 
 //endpoint per inserimento evento
 router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array("immagini"), async (req, res)=>{

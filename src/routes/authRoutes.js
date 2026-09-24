@@ -4,7 +4,9 @@ const path=require('path');
 const jwt=require('jsonwebtoken');
 const bcrypt=require('bcryptjs');
 const pool=require('../db');
-const {autenticaToken, autorizzaRuoli, loginLimiter}=require('../middleware/auth');
+const {autenticaToken}=require('../middleware/auth');
+const {createLoginLimiter}=require('express-mysql-cloudinary-kit');
+const loginLimiter=createLoginLimiter();
 
 //rotta segreta per gestire login
 router.get("/accedi", (req, res)=>{
