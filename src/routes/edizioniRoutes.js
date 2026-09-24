@@ -5,8 +5,7 @@ const path=require('path');
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido, publicLimiter}=require('../middleware/auth');
-const gestioneErroriUpload=require('../middleware/images');
-const {validaStringa, validaUrl, escapeHTML}=require('express-mysql-cloudinary-kit');
+const {validaStringa, validaUrl, escapeHTML, gestioneErroriUpload}=require('express-mysql-cloudinary-kit');
 
 //endpoint per rendering server-side per lettura edizione
 router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
