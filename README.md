@@ -90,24 +90,23 @@ flowchart LR
 ├── index.js                     # entry point del server Express
 ├── database/
 │   ├── schema.sql                # definizione delle tabelle
-│   └── seed.sql                  # utente superadmin iniziale
 ├── src/
 │   ├── db.js                     # crea pool MySQL (Aiven, SSL)
 │   ├── cloudinaryConfig.js        # configura Cloudinary + multer
 │   ├── middleware/
-│   │   ├── auth.js               # autenticazione JWT, accesso per ruolo
-│   ├── routes/
-│   │   ├── authRoutes.js          # login, logout, sessione (/api/me)
-│   │   ├── utentiRoutes.js        # CRUD utenti, cambio password
-│   │   ├── edizioniRoutes.js      # CRUD edizioni/manoscritti
-│   │   ├── stampeRoutes.js        # CRUD stampe/fotografie
-│   │   ├── eventiRoutes.js        # CRUD eventi
-│   │   └── statisticheRoutes.js   # statistiche, monitoraggio, sitemap
+│   │   └── auth.js               # autenticazione JWT, accesso per ruolo
+│   └── routes/
+│       ├── authRoutes.js          # login, logout, sessione (/api/me)
+│       ├── utentiRoutes.js        # CRUD utenti, cambio password
+│       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti
+│       ├── stampeRoutes.js        # CRUD stampe/fotografie
+│       ├── eventiRoutes.js        # CRUD eventi
+│       └── statisticheRoutes.js   # statistiche, monitoraggio, sitemap
 ├── public/                       # area pubblica
 ├── private/                      # area riservata editor
 └── admin/                        # area riservata admin/superadmin
 ```
-> Validazione, hashing, keepalive del DB, gestione errori upload, rate limiting, escaping HTML lato client, slider immagini, error handler generico, gestore 404 e favicon sono forniti da [`express-mysql-cloudinary-kit`](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit), installata come dipendenza.
+> Validazione, hashing, keepalive del DB, gestione errori upload, rate limiting, escaping HTML lato client, slider immagini, error handler generico, gestore 404, gestore del favicon e gestore del filtro per barre di ricerca sono forniti da [`express-mysql-cloudinary-kit`](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit), installata come dipendenza.
 
 ## Ruoli e permessi
 
