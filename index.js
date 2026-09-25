@@ -5,7 +5,7 @@ const cookieParser=require('cookie-parser');
 const helmet=require('helmet');
 
 const pool=require('./src/db');
-const {keepAlive, errorHandler}=require('express-mysql-cloudinary-kit');
+const {keepAlive, errorHandler, createNotFoundHandler, createFaviconHandler}=require('express-mysql-cloudinary-kit');
 keepAlive(pool);//funzione di keepalive per non far andare il db in timeout
 const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 
@@ -67,10 +67,8 @@ const eventiRouter=require('./src/routes/eventiRoutes');
 app.use(eventiRouter);
 
 //favicon
-app.get("/favicon.ico", (req, res)=>{
-    res.set("Cross-Origin-Resource-Policy", "cross-origin");//permetto il recupero del favicon da altre origini
-    res.sendFile(__dirname+"/favicon.ico");
-});
+app.get("/favicon.ico",
+    createFaviconHandler(path.join(__dirname, "favicon.ico")));
 
 //endpoint da pingare per keepalive di Render
 app.get('/health', (req, res)=>{
@@ -78,9 +76,7 @@ app.get('/health', (req, res)=>{
 });
 
 //404
-app.use((req, res)=>{
-    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));//così rimane il nome del file non trovato nell'url
-});
+app.use(createNotFoundHandler(path.join(__dirname, 'public')));
 
 //handler per erorri non gestiti
 app.use(errorHandler);
