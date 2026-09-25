@@ -107,7 +107,7 @@ flowchart LR
 ├── private/                      # area riservata editor
 └── admin/                        # area riservata admin/superadmin
 ```
-> Validazione, hashing, keepalive del DB, gestione errori upload, rate limiting, escaping HTML lato client e slider immagini sono forniti da [`express-mysql-cloudinary-kit`](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit), installata come dipendenza.
+> Validazione, hashing, keepalive del DB, gestione errori upload, rate limiting, escaping HTML lato client, slider immagini, error handler generico, gestore 404 e favicon sono forniti da [`express-mysql-cloudinary-kit`](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit), installata come dipendenza.
 
 ## Ruoli e permessi
 
