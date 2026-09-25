@@ -25,12 +25,10 @@ Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testua
 
 **Backend**
 - Node.js + Express 5
-- MySQL (driver `mysql2`, connessione via pool) — hosting su Aiven
 - JWT (`jsonwebtoken`) per l'autenticazione via cookie `httpOnly`
-- `bcryptjs` per l'hashing delle password
-- `multer` (in memoria) + Cloudinary SDK per l'upload delle immagini
-- `express-rate-limit` per la protezione da brute-force sul login
+- `bcryptjs` per verifica delle password in fase di login
 - `dotenv` per la configurazione
+- Moduli comuni (pool MySQL su Aiven, condig Cloudinary/multer, validazione escaping HTML, hashing delle password in fase di salvataggio, rate limiting e slider di immagini) sono estratti dalla libreria: ['express-mysql-cloudinary-kit'](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit)
 
 **Frontend**
 - HTML, CSS, JavaScript vanilla
@@ -94,26 +92,22 @@ flowchart LR
 │   ├── schema.sql                # definizione delle tabelle
 │   └── seed.sql                  # utente superadmin iniziale
 ├── src/
-│   ├── db.js                     # pool di connessione MySQL (Aiven, con SSL)
-│   ├── cloudinaryConfig.js        # config Cloudinary + multer (validazione upload)
+│   ├── db.js                     # crea pool MySQL (Aiven, SSL)
+│   ├── cloudinaryConfig.js        # configura Cloudinary + multer
 │   ├── middleware/
-│   │   ├── auth.js               # autenticazione JWT, autorizzazione per ruolo, rate limiter login
-│   │   └── images.js             # gestione errori di upload (multer)
+│   │   ├── auth.js               # autenticazione JWT, accesso per ruolo
 │   ├── routes/
 │   │   ├── authRoutes.js          # login, logout, sessione (/api/me)
 │   │   ├── utentiRoutes.js        # CRUD utenti, cambio password
 │   │   ├── edizioniRoutes.js      # CRUD edizioni/manoscritti
 │   │   ├── stampeRoutes.js        # CRUD stampe/fotografie
 │   │   ├── eventiRoutes.js        # CRUD eventi
-│   │   └── statisticheRoutes.js   # conteggi, monitoraggio contenuti, sitemap
-│   └── utils/
-│       ├── validazione.js         # validazione stringhe/URL/URL social riutilizzabile
-│       ├── hash.js                # hashing password riutilizzabile
-│       └── dbKeepAlive.js         # ping periodico al DB per evitare timeout
-├── public/                       # sito pubblico (catalogo, schede, login)
+│   │   └── statisticheRoutes.js   # statistiche, monitoraggio, sitemap
+├── public/                       # area pubblica
 ├── private/                      # area riservata editor
 └── admin/                        # area riservata admin/superadmin
 ```
+> Validazione, hashing, keepalive del DB, gestione errori upload, rate limiting, escaping HTML lato client e slider immagini sono forniti da [`express-mysql-cloudinary-kit`](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit), installata come dipendenza.
 
 ## Ruoli e permessi
 
