@@ -5,7 +5,7 @@ const path=require('path');
 const pool=require('../db');
 const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
-const {validaStringa, validaUrl, escapeHTML, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
+const {validaStringa, validaUrl, escapeHTML, costruisciFiltro, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
 const publicLimiter=createPublicLimiter();
 
 //endpoint per rendering server-side per lettura edizione
@@ -207,16 +207,12 @@ router.get("/api/edizioni", publicLimiter, async (req, res)=>{
     let queryContenuti=`SELECT e.id, e.collocazione, e.titolo, e.autore, i.url_immagine FROM edizioni e LEFT JOIN immagini_edizioni i ON e.id=i.edizione_id AND i.ordine=1`;
     let paramsContenuti=[];
     let paramsTotali=[];
-    let whereClause="";//clausola where
     //gestione filtro
-    if(filtro){
-        whereClause=" WHERE e.autore LIKE ? OR e.titolo LIKE ?";//spazio all'inizio
-        const filtroLike=`%${filtro}%`;
-        paramsTotali.push(filtroLike, filtroLike);
-        paramsContenuti.push(filtroLike, filtroLike);
-    }
+    const {whereClause, parametri}=costruisciFiltro(["e.autore", "e.titolo"], filtro);
     queryTotali+=whereClause;
     queryContenuti+=whereClause;
+    paramsTotali.push(...parametri);//...<=>spread operator: parametri è un array e con "..." davanti vengono passati gli elementi che contiene separatamente
+    paramsContenuti.push(...parametri);//...<=>spread operator: parametri è un array e con "..." davanti vengono passati gli elementi che contiene separatamente
     //gestione ordinamento
     queryContenuti+=" ORDER BY e.autore ASC LIMIT ? OFFSET ?";//spazio all'inizio
     paramsContenuti.push(limite, inizio);
