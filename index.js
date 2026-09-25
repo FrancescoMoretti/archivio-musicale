@@ -5,7 +5,7 @@ const cookieParser=require('cookie-parser');
 const helmet=require('helmet');
 
 const pool=require('./src/db');
-const {keepAlive}=require('express-mysql-cloudinary-kit');
+const {keepAlive, errorHandler}=require('express-mysql-cloudinary-kit');
 keepAlive(pool);//funzione di keepalive per non far andare il db in timeout
 const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 
@@ -83,13 +83,7 @@ app.use((req, res)=>{
 });
 
 //handler per erorri non gestiti
-app.use((err, req, res, next)=>{
-    console.error("Errore non gestito: ", err);
-    res.status(err.status || 500).json({
-        success: false,
-        message: "Errore interno lato server."
-    });
-});
+app.use(errorHandler);
 
 app.listen(PORT, ()=>{
     console.log(`Server in esecuzione sulla porta ${PORT}`);
