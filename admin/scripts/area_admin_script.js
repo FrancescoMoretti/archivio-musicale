@@ -7,15 +7,21 @@ document.addEventListener("DOMContentLoaded", function(){
             document.getElementById("monitoraggio-grid").style.display="none";
             document.getElementById("correzione-grid").style.display="none";
             const selected=document.querySelector('input[name="tipo-form"]:checked').value;
+            const viewport=window.innerWidth;//larghezza della finestra
+            //gestione formato grid o flex (flex-direction column tramite css) in base alla larghezza (viewport) della finestra
+            let formato="grid";
+            if(viewport<=768){
+                formato="flex";
+            }
             switch(selected){
                 case '1':
-                    document.getElementById("utenti-grid").style.display="grid";
+                    document.getElementById("utenti-grid").style.display=formato;
                 break;
                 case '2':
-                    document.getElementById("monitoraggio-grid").style.display="grid";
+                    document.getElementById("monitoraggio-grid").style.display=formato;
                 break;
                 case '3':
-                    document.getElementById("correzione-grid").style.display="grid";
+                    document.getElementById("correzione-grid").style.display=formato;
                 break;
             }
         });

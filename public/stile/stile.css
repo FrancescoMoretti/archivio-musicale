@@ -938,6 +938,13 @@ footer .material-symbols-outlined{
         grid-column: span 2;
     }
 /*fine restyling articoli biografia e eventi*/
+
+/*inizio restyling pagina login e cambio password*/
+#login form,
+#cambia-password-div{
+    width: 80%;
+}
+/*fine restyling pagina login e cambio password*/
 }
 
 /*Stile alternativo per schermi con meno di 768px*/
@@ -1069,4 +1076,17 @@ footer .material-symbols-outlined{
         text-align: center;
     }
 /*fine restyling pagina dettaglio*/
+
+/*inizio restyling pagina login e cambio password*/
+#login form,
+#cambia-password-div{
+    width: 90%;
+}
+/*fine restyling pagina login e cambio password*/
+
+/*inizio restyling pagine gestione*/
+.area-riservata .grid{
+    flex-direction: column;
+}
+/*fine restyling pagine gestione*/
 }
