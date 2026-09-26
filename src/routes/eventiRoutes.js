@@ -74,7 +74,7 @@ router.post("/api/evento", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryEvento=`INSERT INTO eventi(codice, link_evento, link_facebook, link_instagram, titolo, descrizione, data_inizio, data_fine, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const queryImmagine=`INSERT INTO immagini_eventi(evento_id, url_immagine, ordine) VALUES (?, ?, ?)`;
+    const queryImmagine=`INSERT INTO immagini_eventi(evento_id, url_immagine) VALUES (?, ?)`;
     const connection=await pool.getConnection();
     try{
         await connection.beginTransaction();
@@ -193,7 +193,7 @@ router.get("/api/eventi", publicLimiter, autenticaTokenMorbido('superadmin', 'ad
         }
         const eventiIds=eventi.map(evento=>evento.id);//costruisco array con id degli eventi
         //query per estrarre le immagini degli eventi da mostarre
-        const queryImmagini=`SELECT evento_id, url_immagine, ordine FROM immagini_eventi WHERE evento_id IN (${eventiIds.map(()=>'?').join(',')}) ORDER BY ordine ASC`;
+        const queryImmagini=`SELECT evento_id, url_immagine FROM immagini_eventi WHERE evento_id IN (${eventiIds.map(()=>'?').join(',')}) ORDER BY id ASC`;
         const [immagini]=await connection.execute(queryImmagini, eventiIds);
         //associo immagini al rispettivo evento
         const eventiDaMostrare=eventi.map(evento=>{

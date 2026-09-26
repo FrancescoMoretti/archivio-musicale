@@ -45,7 +45,6 @@ CREATE TABLE immagini_edizioni(
     id INT AUTO_INCREMENT PRIMARY KEY,
     edizione_id INT NOT NULL,
     url_immagine VARCHAR(255) NOT NULL,
-    ordine INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (edizione_id) REFERENCES edizioni(id) ON DELETE CASCADE
 );
@@ -70,7 +69,6 @@ CREATE TABLE immagini_stampe(
     id INT AUTO_INCREMENT PRIMARY KEY,
     stampa_id INT NOT NULL,
     url_immagine VARCHAR(255) NOT NULL,
-    ordine INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (stampa_id) REFERENCES stampe(id) ON DELETE CASCADE
 );
@@ -97,6 +95,5 @@ CREATE TABLE immagini_eventi(
     id INT AUTO_INCREMENT PRIMARY KEY,
     evento_id INT NOT NULL,
     url_immagine VARCHAR(255) NOT NULL,
-    ordine INT DEFAULT 0,
     FOREIGN KEY (evento_id) REFERENCES eventi(id) ON DELETE CASCADE
 );

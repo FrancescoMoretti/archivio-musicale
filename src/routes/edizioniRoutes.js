@@ -17,7 +17,7 @@ router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
     }
     //preparazione query
     const query="SELECT id, titolo, autore, data_str, editore, descrizione FROM edizioni WHERE collocazione=?";
-    const queryImg="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC LIMIT 1";//prendo l'immagine corrispondente con numero di ordine minore (e prendo una sola immagine)
+    const queryImg="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY id ASC LIMIT 1";//prendo l'immagine corrispondente con id minore (e prendo una sola immagine)
     try{
         const [result]=await pool.query(query, [collocazione]);
         //nessuna edizione trovata
@@ -101,7 +101,7 @@ router.post("/api/edizione", autenticaToken, autorizzaRuoli('superadmin', 'admin
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryEdizione=`INSERT INTO edizioni (collocazione, link_rism, autore, titolo, data_str, editore, descrizione, note, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const queryImmagine=`INSERT INTO immagini_edizioni (edizione_id, url_immagine, ordine) VALUES (?, ?, ?)`;
+    const queryImmagine=`INSERT INTO immagini_edizioni (edizione_id, url_immagine) VALUES (?, ?)`;
     const connection=await pool.getConnection();
     try{
         await connection.beginTransaction();
@@ -204,7 +204,7 @@ router.get("/api/edizioni", publicLimiter, async (req, res)=>{
     //query per contare le righe che avrà la tabella
     let queryTotali="SELECT COUNT(*) AS totali FROM edizioni e";
     //query per estrarre contenuti e url dell'immagine, uso left join per estrarre anche edizioni senza immagini
-    let queryContenuti=`SELECT e.id, e.collocazione, e.titolo, e.autore, i.url_immagine FROM edizioni e LEFT JOIN immagini_edizioni i ON e.id=i.edizione_id AND i.ordine=1`;
+    let queryContenuti=`SELECT e.id, e.collocazione, e.titolo, e.autore, i.url_immagine FROM edizioni e LEFT JOIN immagini_edizioni i ON i.id=(SELECT MIN(i2.id) FROM immagini_edizioni i2 WHERE i2.edizione_id=e.id)`;
     let paramsContenuti=[];
     let paramsTotali=[];
     //gestione filtro
@@ -250,7 +250,7 @@ router.get("/api/edizione/:collocazione", publicLimiter, autenticaTokenMorbido('
         campiSelect+=", collocazione";
     }
     const queryContenuti=`SELECT ${campiSelect} FROM edizioni WHERE collocazione=?`;
-    const queryImmagini="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY ordine ASC";
+    const queryImmagini="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY id ASC";
     try{
         const [edizioneRisultato]=await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata

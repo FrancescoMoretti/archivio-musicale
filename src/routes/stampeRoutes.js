@@ -17,7 +17,7 @@ router.get("/stampa.html", publicLimiter, async (req, res, next)=>{
     }
     //preparazione query
     const query="SELECT id, titolo, autore, data_str, stampa, dimensioni FROM stampe WHERE collocazione=?";
-    const queryImg="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC LIMIT 1";
+    const queryImg="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY id ASC LIMIT 1";
     try{
         const [result]=await pool.query(query, [collocazione]);
         //nessuna stampa trovata
@@ -93,7 +93,7 @@ router.post("/api/stampa", autenticaToken, autorizzaRuoli('superadmin', 'admin',
     let publicIds=[];//id pubblici delle immagini caricate su cloudinary
     //preparazione query
     const queryStampa=`INSERT INTO stampe(collocazione, autore, titolo, data_str, stampa, dimensioni, created_by) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    const queryImmagine=`INSERT INTO immagini_stampe(stampa_id, url_immagine, ordine) VALUES (?, ?, ?)`;
+    const queryImmagine=`INSERT INTO immagini_stampe(stampa_id, url_immagine) VALUES (?, ?)`;
     const connection=await pool.getConnection();
     try{
         await connection.beginTransaction();
@@ -192,7 +192,7 @@ router.get("/api/stampe", publicLimiter, async (req, res)=>{
     //query per contare le righe che avrà la tabella
     let queryTotali=`SELECT COUNT(*) AS totali FROM stampe s`;
     //query per estrarre contenuti e url dell'immagine, uso left join per estrarre stampe senza immagine
-    let queryContenuti=`SELECT s.id, s.collocazione, s.autore, s.titolo, i.url_immagine FROM stampe s LEFT JOIN immagini_stampe i ON s.id=i.stampa_id AND i.ordine=1`;
+    let queryContenuti=`SELECT s.id, s.collocazione, s.autore, s.titolo, i.url_immagine FROM stampe s LEFT JOIN immagini_stampe i ON i.id=(SELECT MIN(i2.id) FROM immagini_stampe i2 WHERE i2.stampa_id=s.id)`;
     let paramsContenuti=[];
     let paramsTotali=[];
     //gestione filtro
@@ -238,7 +238,7 @@ router.get("/api/stampa/:collocazione", publicLimiter, autenticaTokenMorbido('su
         campiSelect+=", collocazione";
     }
     const queryContenuti=`SELECT ${campiSelect} FROM stampe WHERE collocazione=?`;
-    const queryImmagini="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY ordine ASC";
+    const queryImmagini="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY id ASC";
     try{
         const [stampaRisultato]=await pool.query(queryContenuti, [collocazione]);
         //risorsa non trovata
