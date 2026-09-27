@@ -6,7 +6,7 @@ const helmet=require('helmet');
 
 const pool=require('./src/db');
 const {keepAlive, errorHandler, createNotFoundHandler, createFaviconHandler}=require('express-mysql-cloudinary-kit');
-keepAlive(pool);//funzione di keepalive per non far andare il db in timeout
+keepAlive(pool);//funzione di keepalive per non far andare il db (Aiven) in timeout
 const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
 
 const app=express();
