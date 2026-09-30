@@ -55,6 +55,9 @@ app.use(edizioniRoutes);
 const stampeRoutes=require('./src/routes/stampeRoutes');
 app.use(stampeRoutes);
 
+const eventiRouter=require('./src/routes/eventiRoutes');
+app.use(eventiRouter);
+
 //serve i file statici dalla cartella public
 app.use(express.static('public'));
 
@@ -63,12 +66,8 @@ app.use('/lib', express.static(
   path.join(path.dirname(require.resolve('express-mysql-cloudinary-kit/package.json')), 'client')
 ));
 
-const eventiRouter=require('./src/routes/eventiRoutes');
-app.use(eventiRouter);
-
 //favicon
-app.get("/favicon.ico",
-    createFaviconHandler(path.join(__dirname, "favicon.ico")));
+app.get("/favicon.ico", createFaviconHandler(path.join(__dirname, "favicon.ico")));
 
 //endpoint da pingare per keepalive di Render
 app.get('/health', (req, res)=>{
