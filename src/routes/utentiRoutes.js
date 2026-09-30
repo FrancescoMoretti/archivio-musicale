@@ -1,7 +1,7 @@
 const express=require('express');
 const router=express.Router();
 const bcrypt=require('bcryptjs');
-const pool=require('../db');
+const pool=require('../config/db');
 const {autenticaToken, autorizzaRuoli}=require('../middleware/auth');
 const {validaPassword, hashPassword}=require('express-mysql-cloudinary-kit');
 

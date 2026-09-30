@@ -1,7 +1,7 @@
 const express=require('express');
 const router=express.Router();
-const pool=require('../db');
-const {cloudinary, upload, uploadToCloudinary}=require('../cloudinaryConfig');
+const pool=require('../config/db');
+const {cloudinary, upload, uploadToCloudinary}=require('../config/cloudinary');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 const {validaUrl, validaUrlSocial, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
 const publicLimiter=createPublicLimiter();

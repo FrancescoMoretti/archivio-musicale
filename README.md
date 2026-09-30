@@ -28,7 +28,7 @@ Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testua
 - JWT (`jsonwebtoken`) per l'autenticazione via cookie `httpOnly`
 - `bcryptjs` per verifica delle password in fase di login
 - `dotenv` per la configurazione
-- Moduli comuni (pool MySQL su Aiven, condig Cloudinary/multer, validazione escaping HTML, hashing delle password in fase di salvataggio, rate limiting e slider di immagini) sono estratti dalla libreria: ['express-mysql-cloudinary-kit'](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit)
+- Moduli comuni (pool MySQL su Aiven, config Cloudinary/multer, validazione escaping HTML, hashing delle password in fase di salvataggio, rate limiting e slider di immagini) sono estratti dalla libreria: ['express-mysql-cloudinary-kit'](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit)
 
 **Frontend**
 - HTML, CSS, JavaScript vanilla
@@ -91,8 +91,9 @@ flowchart LR
 ├── database/
 │   ├── schema.sql                # definizione delle tabelle
 ├── src/
-│   ├── db.js                     # crea pool MySQL (Aiven, SSL)
-│   ├── cloudinaryConfig.js        # configura Cloudinary + multer
+│   ├── config
+│   │   ├── db.js                # crea pool MySQL (Aiven, SSL)
+│   │   └── cloudinary.js        # configura Cloudinary + multer
 │   ├── middleware/
 │   │   └── auth.js               # autenticazione JWT, accesso per ruolo
 │   └── routes/
@@ -173,6 +174,7 @@ Il progetto adotta le seguenti misure, introdotte e verificate iterativamente du
 
 - **Query parametrizzate** ovunque: nessuna concatenazione di stringhe SQL, protezione da SQL injection;
 - **Escaping HTML lato client** (`escapeHTML`) su tutti i dati generati dall'utente prima dell'inserimento via `innerHTML`, per prevenire XSS stored;
+- **Gestione centralizzata degli errori non previsti**: un error handler globale intercetta le eccezioni non gestite nelle rotte e risponde con un JSON uniforme (500), invece di lasciare la richiesta senza risposta.
 - **Validazione URL** (`validaUrl`/`validaUrlSocial`) su tutti i link facoltativi, con controllo esplicito del protocollo (`http`/`https`) e, per i social, del dominio effettivo;
 - **Password**: hashing con `bcrypt` (mai salvate in chiaro); requisiti minimi di robustezza (lunghezza, varietà di caratteri, assenza di dati personali riconoscibili) applicati al cambio password, obbligatorio al primo accesso;
 - **Blocco account**: dopo 3 tentativi di login falliti l'account viene bloccato temporaneamente, con backoff esponenziale sui blocchi consecutivi (15 min, 1h, 4h... fino a un tetto di 24h), a mitigazione di attacchi di forza bruta mirati a un singolo utente;
@@ -182,7 +184,6 @@ Il progetto adotta le seguenti misure, introdotte e verificate iterativamente du
 - **Upload immagini**: whitelist di tipi MIME, limite di dimensione (5MB) e di numero di file, gestione centralizzata degli errori di upload;
 - **Autorizzazione granulare per ruolo** su ogni endpoint sensibile, con una variante "morbida" per esporre/nascondere campi (es. collocazione) in base al ruolo di chi consulta;
 - **Header anti-cache** sulle risposte autenticate, per evitare che pagine riservate restino accessibili dalla cache del browser dopo il logout;
-
 - **Content Security Policy** (via Helmet), che limita script, stili e immagini alle sole origini attese, come ulteriore barriera in caso di XSS;
 
 ## Licenza

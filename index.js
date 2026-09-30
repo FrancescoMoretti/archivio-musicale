@@ -4,7 +4,7 @@ const path=require('path');
 const cookieParser=require('cookie-parser');
 const helmet=require('helmet');
 
-const pool=require('./src/db');
+const pool=require('./src/config/db');
 const {keepAlive, errorHandler, createNotFoundHandler, createFaviconHandler}=require('express-mysql-cloudinary-kit');
 keepAlive(pool);//funzione di keepalive per non far andare il db (Aiven) in timeout
 const {autenticaToken, autorizzaRuoli}=require('./src/middleware/auth');
