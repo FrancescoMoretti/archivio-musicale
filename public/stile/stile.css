@@ -394,6 +394,23 @@ footer .material-symbols-outlined{
     padding: 0 1.5em 1em 1.5em;
 }
 
+.area-riservata .grid .element #immagini{
+    margin-top: 1em;
+}
+
+.area-riservata .grid img{
+    border-radius: 0%;
+    width: 10em;
+}
+
+.area-riservata .grid img:hover{
+    transform: none;
+}
+
+.area-riservata .grid .element p{
+    text-align: center;
+}
+
 .area-riservata #utenti-grid .element:nth-of-type(3){
     grid-column: span 2;
 }

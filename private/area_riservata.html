@@ -22,6 +22,7 @@
   <script src="/scripts/user_detail_script.js" defer></script>
   <script src="/scripts/logout_script.js" defer></script>
   <script src="scripts/area_riservata_script.js" defer></script>
+  <script src="/lib/slider.js" defer></script>
 </head>
 
 <body id="area-riservata">
@@ -153,6 +154,20 @@
           </div>
           <input type="submit" value="Salva modifiche" disabled>
         </form>
+      </div>
+      <div class="element">
+        <h3>Lista immagini:</h3>
+        <form id="cerca-immagini-edizione-form" action="/api/edizione/:collocazione/immagini" method="GET">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="search-collocazione-immagini-edizione" class="required">Collocazione: </label>
+            <input type="text" id="search-collocazione-immagini-edizione" placeholder="A-001" maxlength="10" required>
+          </div>
+          <input type="submit" value="Cerca immagini">
+        </form>
+        <div id="immagini">
+          <!--silder immagini-->
+        </div>
       </div>
     </div>
     <div class="grid" id="stampa-grid">

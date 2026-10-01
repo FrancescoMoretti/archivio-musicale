@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     });
 
-    //fetch di aggiunta edizioni (INSERIMENTO)
+    //fetch POST edizione
     document.getElementById("aggiungi-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di cancellazione edizioni (ELIMINAZIONE)
+    //fetch DELETE edizione
     document.getElementById("cancella-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di ricerca edizioni (MODIFICA)
+    //fetch GET edizione
     document.getElementById("cerca-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const cercaForm=event.target;
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di modifica edizioni (MODIFICA)
+    //fetch PUT edizione
     document.getElementById("modifica-edizione-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -210,7 +210,80 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di aggiunta stampe (INSERIMENTO)
+    //fetch GET edizione/:collocazione/immagini
+    document.getElementById("cerca-immagini-edizione-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const immaginiDiv=document.getElementById("immagini");
+        //svuoto immaginiDiv
+        immaginiDiv.innerHTML="";
+        //validazione client-side
+        const collocazione=document.getElementById("search-collocazione-immagini-edizione").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: collocazione non inserita.";
+            return;
+        }
+        message.textContent="Ricerca edizione in corso...";
+        try{
+            const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}/immagini`);
+            const result=await res.json();
+            //edizione non trovata
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante la ricerca.";
+                return;
+            }
+            message.textContent="Edizione trovata!";
+            const immagini=result.immagini;
+            //se non ho immagini
+            if(immagini.length===0){
+                const p=document.createElement('p');
+                p.textContent="L'edizione indicata non ha immagini.";
+                immaginiDiv.appendChild(p);
+                return;
+            }
+            //se ho una sola immagine
+            if(immagini.length===1){
+                const img=document.createElement('img');
+                img.src=immagini[0].url_immagine;
+                const p=document.createElement('p');
+                p.textContent="Id immagine: "+immagini[0].id;
+                immaginiDiv.appendChild(img);
+                immaginiDiv.appendChild(p);
+                return;
+            }
+            //se ho più immagini => costruisco slider
+            immaginiDiv.innerHTML=`
+            <div id="slider">
+                <div id="slider-track">
+                </div>
+            </div>
+            `;
+            const sliderTrack=document.getElementById("slider-track");
+            immagini.forEach(immagine=>{
+                const img=document.createElement('img');
+                img.src=immagine.url_immagine;
+                img.className="slide";
+                sliderTrack.appendChild(img);
+            });
+            window.inizializzaSlider();
+            //gestione didascalia con id dell'immagine
+            const slider=document.getElementById("slider");
+            const p=document.createElement('p');
+            p.textContent="Id immagine: "+immagini[0].id;
+            slider.appendChild(p);
+            let indiceCorrente=0;
+            slider.addEventListener("click", ()=>{
+                indiceCorrente=(indiceCorrente+1)%immagini.length;
+                p.textContent="Id immagine: "+immagini[indiceCorrente].id;
+            });
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            //console.error(err);
+        }
+    });
+
+    //fetch POST stampa
     document.getElementById("aggiungi-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -253,7 +326,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di cancellazione stampe (ELMINAZIONE)
+    //fetch DELETE stampa
     document.getElementById("cancella-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -292,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di ricerca stampe (MODIFICA)
+    //fetch GET stampa
     document.getElementById("cerca-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const cercaForm=event.target;
@@ -334,7 +407,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di modifica stampe (MODIFICA)
+    //fetch PUT stampa
     document.getElementById("modifica-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -389,7 +462,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di aggiunta eventi (INSERIMENTO)
+    //fetch POST evento
     document.getElementById("aggiungi-evento-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -439,7 +512,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di cancellazione eventi (ELIMINAZIONE)
+    //fetch DELETE evento
     document.getElementById("cancella-evento-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -478,7 +551,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di ricerca eventi (MODIFICA)
+    //fetch GET evento
     document.getElementById("cerca-evento-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -534,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
-    //fetch di modifica eventi (MODIFICA)
+    //fetch PUT evento
     document.getElementById("modifica-evento-form").addEventListener("submit", async (event)=>{
         event.preventDefault();
         const form=event.target;
@@ -626,4 +699,6 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         });
     });
+
+
 });

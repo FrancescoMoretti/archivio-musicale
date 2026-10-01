@@ -391,6 +391,46 @@ router.patch("/api/edizioni", autenticaToken, autorizzaRuoli('superadmin', 'admi
     }
 });
 
+//endpoint per lista immagini edizione
+router.get("/api/edizione/:collocazione/immagini", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {collocazione}=req.params;
+    //validazione server-side
+    //campi obbligatori
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
+    //preparazione query
+    const queryEdizione="SELECT id FROm edizioni WHERE collocazione=?";
+    const queryImmagini="SELECT id, url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY id";
+    try{
+        const [resultEdizione]=await pool.query(queryEdizione, [collocazione]);
+        //edizione non trovata
+        if(resultEdizione.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Edizione non trovata."
+            });//404: not found
+        }
+        //edizione trovata
+        const id=resultEdizione[0].id;//estraggo l'id dell'edizione
+        const [resultImmagini]=await pool.query(queryImmagini, [id]);
+        //immagini trovate (vale anche se sono 0)
+        return res.json({
+            success: true,
+            immagini: resultImmagini
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint GET edizione/:collocazione/immagini: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero delle immagini."
+        });
+    }
+});
+
 router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;
