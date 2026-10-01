@@ -1085,6 +1085,14 @@ footer .material-symbols-outlined{
 /*fine restyling pagina login e cambio password*/
 
 /*inizio restyling pagine gestione*/
+.area-riservata #radio-div{
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    margin: auto;
+    gap: 1em;
+}
+
 .area-riservata .grid{
     flex-direction: column;
 }
