@@ -403,7 +403,7 @@ router.get("/api/edizione/:collocazione/immagini", autenticaToken, autorizzaRuol
         });
     }
     //preparazione query
-    const queryEdizione="SELECT id FROm edizioni WHERE collocazione=?";
+    const queryEdizione="SELECT id FROM edizioni WHERE collocazione=?";
     const queryImmagini="SELECT id, url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY id";
     try{
         const [resultEdizione]=await pool.query(queryEdizione, [collocazione]);

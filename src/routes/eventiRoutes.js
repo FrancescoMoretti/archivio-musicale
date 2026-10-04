@@ -339,6 +339,242 @@ router.put("/api/evento/:codice", autenticaToken, autorizzaRuoli('superadmin', '
     }
 });
 
+//endpoint per lista immagini evento
+router.get("/api/evento/:codice/immagini", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {codice}=req.params;
+    //validazione server-side
+    //campi obbligatori
+    if(!codice || !String(codice).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "codice non valida."
+        });
+    }
+    //preparazione query
+    const queryEvento="SELECT id FROM eventi WHERE codice=?";
+    const queryImmagini="SELECT id, url_immagine FROM immagini_eventi WHERE evento_id=? ORDER BY id";
+    try{
+        const [resultEvento]=await pool.query(queryEvento, [codice]);
+        //evento non trovato
+        if(resultEvento.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Evento non trovato."
+            });//404: not found
+        }
+        //evento trovato
+        const id=resultEvento[0].id;//estraggo l'id dell'evento
+        const [resultImmagini]=await pool.query(queryImmagini, [id]);
+        //immagini trovate (vale anche se sono 0)
+        return res.json({
+            success: true,
+            immagini: resultImmagini
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint GET evento/:codice/immagini: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero delle immagini."
+        });
+    }
+});
+
+//endpoint per inserimento immagine evento
+router.post("/api/evento/:codice/immagine", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array('immagini'), async (req, res)=>{
+    let {codice}=req.params;
+    let files=req.files;//immagini
+    //validazione server-side
+    if(!codice || !String(codice).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "codice non valida."
+        });//400: bad request
+    }
+    //nessuna immagine inserita
+    if(!files || files.length===0){
+        return res.status(400).json({
+            success: false,
+            message: "Nessuna immagine fornita."
+        });//400: bad request
+    }
+    //preparazione query
+    const queryEvento="SELECT id FROM eventi WHERE codice=?";
+    const queryContaImmagini="SELECT COUNT(*) AS numero_immagini FROM immagini_eventi WHERE evento_id=?";
+    const queryImmagini="INSERT INTO immagini_eventi (evento_id, url_immagine) VALUES(?, ?)";
+    let id=null;
+    try{
+        const [resultEvento]=await pool.query(queryEvento, [codice]);
+        //evento non trovato
+        if(resultEvento.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Evento non trovato."
+            });
+        }
+        //evento trovato
+        id=resultEvento[0].id;//estraggo l'id dell'evento
+        const [resultContaImmagini]=await pool.query(queryContaImmagini, [id]);
+        if(resultContaImmagini[0].numero_immagini+files.length>2){
+            //troppe immagini
+            return res.status(400).json({
+                success: false,
+                message: "Un evento può avere al massimo 2 immagini."
+            });
+        }
+    }catch(err){
+        console.error("Errore nell'endpoint POST evento/:codice/immagine: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero dell'evento."
+        });
+    }
+    //se ho una sola immagine
+    if(files.length===1){
+        let idCloudinary=null;
+        try{
+            //caricament su cloudinary
+            const file=files[0];
+            const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "eventi");
+            idCloudinary=publicId;
+            //query inserimento immagine
+            await pool.query(queryImmagini, [id, imageUrl]);
+            return res.json({
+                success: true,
+                message: "Immagine inserita con successo!"
+            });
+        }catch(err){
+            try{
+                if(idCloudinary){
+                    await cloudinary.uploader.destroy(idCloudinary);
+                    console.log("Pulizia dell'immagine parzialmente caricata su Cloudinary completata.");
+                }
+            }catch(cloudinaryErr){
+                console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+            }
+            console.error("Errore nell'endpoint POST evento/:codice/immagine: ", err);
+            return res.status(500).json({
+                success: false,
+                message: "Errore interno durante l'inserimento."
+            });
+        }
+    }
+    //se ho più immagini => uso connection
+    const connection=await pool.getConnection();
+    let publicIds=[];//id pubblici delle immagini caricate su cloudinary
+    try{
+        await connection.beginTransaction();
+        //caricamento delle immagini su cloudinary
+        for(let i=0; i<files.length; i++){
+            const file=files[i];
+            const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "eventi");
+            publicIds.push(publicId);
+            //query inserimento immagine
+            await connection.execute(queryImmagini, [id, imageUrl]);
+        }
+        await connection.commit();
+        return res.json({
+            success: true,
+            message: "Immagini inserite con successo!"
+        });
+    }catch(err){
+        await connection.rollback();
+        try{
+            if(publicIds.length>0){
+                for(let i=0; i<publicIds.length; i++){
+                    await cloudinary.uploader.destroy(publicIds[i]);
+                }
+                console.log("Pulizia delle immagini parzialmente caricate su Cloudinary completata.");
+            }
+        }catch(cloudinaryErr){
+            console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+        }
+        console.error("Errore nell'endpoint POST evento/:codice/immagine: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante l'inserimento."
+        });
+    }finally{
+        connection.release();   
+    }
+});
+
+//endpoint per cancellazione immagine evento
+router.delete("/api/evento/:codice/immagine/:id", autenticaToken, autorizzaRuoli("superadmin", "admin", "editor"), async (req, res)=>{
+    const {codice, id}=req.params;
+    //validazione server-side
+    if(!codice || !String(codice).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Codice non valida."
+        });//400: bad request
+    }
+    if(!id || !String(id).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Id dell'immagine non valido."
+        });//400: bad request
+    }
+    //preparazione query
+    const queryEvento="SELECT id FROM eventi WHERE codice=?";
+    let idEvento=null;
+    const queryImmagine="SELECT url_immagine FROM immagini_eventi WHERE id=? AND evento_id=?";
+    const queryCancellazione="DELETE FROM immagini_eventi WHERE id=?";
+    try{
+        const [resultEvento]=await pool.query(queryEvento, [codice]);
+        //evento non trovato
+        if(resultEvento.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Evento non trovato."
+            });
+        }
+        idEvento=resultEvento[0].id;//estraggo l'id dell'evento
+    }catch(err){
+        console.error("Errore nell'endpoint DELETE evento/:codice/immagine/:id: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero dell'evento."
+        });
+    }
+    //evento trovato
+    try{
+        const [resultImmagine]=await pool.query(queryImmagine, [id, idEvento]);
+        //immagine non trovata
+        if(resultImmagine.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Immagine non trovata."
+            });//404: not found
+        }
+        //immagine trovata
+        //estraggo il public_id dall'url dell'immagine ('.../v12345/campione.jpg'=>'campione')
+        const nomeFile=resultImmagine[0].url_immagine.split('/').pop().split('.')[0];
+        const publicId=`archivio_musicale/evento/${nomeFile}`;
+        //cancello immagine da cloudinary
+        await cloudinary.uploader.destroy(publicId);
+        //cancello immagine dal DB
+        const [resultCancellazione]=await pool.query(queryCancellazione, [id]);
+        //cancellazione non avvenuta
+        if(resultCancellazione.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Immagine non presente nel database."
+            });//404: not found
+        }
+        //cancellazione avvenuta
+        return res.json({
+            success: true,
+            message: "Immagine eliminata con successo"
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint DELETE evento/:codice/immagine/:id: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante la cancellazione."
+        });
+    }
+});
+
 router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;

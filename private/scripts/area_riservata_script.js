@@ -876,6 +876,152 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
+    //fetch GET evento/:codice/immagini
+    document.getElementById("cerca-immagini-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const immaginiDiv=document.getElementById("immagini-evento");
+        //svuoto immaginiDiv
+        immaginiDiv.innerHTML="";
+        //validazione client-side
+        const codice=document.getElementById("search-codice-immagini-evento").value.trim();
+        if(!codice){
+            message.textContent="Errore: codice non inserita.";
+            return;
+        }
+        message.textContent="Ricerca evento in corso...";
+        try{
+            const res=await fetch(`/api/evento/${encodeURIComponent(codice)}/immagini`);
+            const result=await res.json();
+            //evento non trovata
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante la ricerca.";
+                return;
+            }
+            message.textContent="Evento trovato!";
+            const immagini=result.immagini;
+            //se non ho immagini
+            if(immagini.length===0){
+                const p=document.createElement('p');
+                p.textContent="L'evento indicata non ha immagini.";
+                immaginiDiv.appendChild(p);
+                return;
+            }
+            //se ho una sola immagine
+            if(immagini.length===1){
+                const img=document.createElement('img');
+                img.src=immagini[0].url_immagine;
+                const p=document.createElement('p');
+                p.textContent="Id immagine: "+immagini[0].id;
+                immaginiDiv.appendChild(img);
+                immaginiDiv.appendChild(p);
+                return;
+            }
+            //se ho più immagini => costruisco slider
+            immaginiDiv.innerHTML=`
+            <div id="slider">
+                <div id="slider-track">
+                </div>
+            </div>
+            `;
+            const sliderTrack=document.getElementById("slider-track");
+            immagini.forEach(immagine=>{
+                const img=document.createElement('img');
+                img.src=immagine.url_immagine;
+                img.className="slide";
+                sliderTrack.appendChild(img);
+            });
+            window.inizializzaSlider();
+            //gestione didascalia con id dell'immagine
+            const slider=document.getElementById("slider");
+            const p=document.createElement('p');
+            p.textContent="Id immagine: "+immagini[0].id;
+            slider.appendChild(p);
+            let indiceCorrente=0;
+            slider.addEventListener("click", ()=>{
+                indiceCorrente=(indiceCorrente+1)%immagini.length;
+                p.textContent="Id immagine: "+immagini[indiceCorrente].id;
+            });
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            //console.error(err);
+        }
+    });
+
+    //fetch POST evento/:codice/immagine
+    document.getElementById("aggiungi-immagine-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const codice=document.getElementById("codice-evento-add-immagine").value.trim();
+        const files=document.getElementById("add-immagine-evento").files;
+        //validazione client-side
+        if(!codice){
+            message.textContent="Errore: codice è un campo obbligatorio.";
+            return;
+        }
+        if(files.length===0){
+            message.textContent="Errore: nessuna immagine inserita.";
+            return;
+        }
+        if(files.length>2){
+            message.textContent="Errore: un evento può avere al massimo 2 immagini.";
+            return;
+        }
+        message.textContent="Caricamento in corso...";
+        //preparazione dati
+        const formData=new FormData(form);
+        try{
+            const res=await fetch(`/api/evento/${encodeURIComponent(codice)}/immagine`, {
+                method: "POST",
+                credentials: "include",
+                body: formData
+            });
+            const result=await res.json();
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante l'inserimento.";
+                return;
+            }
+            message.textContent=result.message;
+            form.reset();
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiugere il server.";
+            //console.error(err);
+        }
+    });
+
+    //fetch DELETE evento/:codice/immagine/:id
+    document.getElementById("cancella-immagine-evento-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const codice=document.getElementById("codice-evento-delete-immagine").value.trim();
+        const id=document.getElementById("id-delete-immagine-evento").value.trim();
+        //validazione client-side
+        if(!codice || !id){
+            message.textContent="Errore: codice e id sono campi obbligatori.";
+            return;
+        }
+        message.textContent="Cancellazione in corso...";
+        try{
+            const res=await fetch(`/api/evento/${encodeURIComponent(codice)}/immagine/${encodeURIComponent(id)}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            const result=await res.json();
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante la cancellazione.";
+                return;
+            }
+            message.textContent=result.message;
+            form.reset();
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            console.error(err);
+        }
+    });
+
     //data_inizio<data_fine
     function integritaDate(event){
         const inputInizio=event.target;//input type="date"

@@ -319,7 +319,7 @@ router.get("/api/stampa/:collocazione/immagini", autenticaToken, autorizzaRuoli(
         });
     }
     //preparazione query
-    const queryStampa="SELECT id FROm stampe WHERE collocazione=?";
+    const queryStampa="SELECT id FROM stampe WHERE collocazione=?";
     const queryImmagini="SELECT id, url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY id";
     try{
         const [resultStampa]=await pool.query(queryStampa, [collocazione]);
@@ -327,7 +327,7 @@ router.get("/api/stampa/:collocazione/immagini", autenticaToken, autorizzaRuoli(
         if(resultStampa.length===0){
             return res.status(404).json({
                 success: false,
-                message: " non trovata."
+                message: "Stampa non trovata."
             });//404: not found
         }
         //stampa trovata
