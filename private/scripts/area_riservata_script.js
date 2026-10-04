@@ -283,6 +283,44 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
+    //fetch POST edizione/:collocazione/immagine
+    document.getElementById("aggiungi-immagine-edizione-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        //validazione client-side
+        const collocazione=document.getElementById("collocazione-edizione-add-immagine").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: collocazione è un campo obbligatorio.";
+            return;
+        }
+        const files=document.getElementById("add-immagine-edizione").files;
+        if(files.length===0){
+            message.textContent="Errore: nessuna immagine inserita.";
+            return;
+        }
+        message.textContent="Caricamento in corso...";
+        //preparazione dati
+        const formData=new FormData(form);
+        try{
+            const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}/immagine`, {
+                method: "POST",
+                credentials: "include",
+                body: formData
+            });
+            const result=await res.json();
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante l'inserimento.";
+                return;
+            }
+            message.textContent=result.message;
+            form.reset();
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiugere il server.";
+            //console.error(err);
+        }
+    });
+
     //fetch POST stampa
     document.getElementById("aggiungi-stampa-form").addEventListener("submit", async (event)=>{
         event.preventDefault();

@@ -169,6 +169,36 @@
           <!--silder immagini-->
         </div>
       </div>
+      <div class="element">
+        <h3>Aggiunta immagini:</h3>
+        <form id="aggiungi-immagine-edizione-form" action="/api/edizione/:collocazione/immagine" method="POST" enctype="multipart/form-data">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="collocazione-edizione-add-immagine" class="required">Collocazione: </label>
+            <input type="text" id="collocazione-edizione-add-immagine" placeholder="A-001" maxlength="10" required>
+          </div>
+          <div>
+            <label for="add-immagine-edizione" class="required">Immagine: </label>
+            <input type="file" name="immagini" id="add-immagine-edizione" accept="image/*" multiple>
+          </div>
+          <input type="submit" value="Aggiungi immagine">
+        </form>
+      </div>
+      <div class="element">
+        <h3>Eliminazione immagini:</h3>
+        <form id="cancella-immagine-edizione-form" action="/api/edizione/:collocazione/immagine/:id" method="DELETE">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="collocazione-edizione-delete-immagine" class="required">Collocazione: </label>
+            <input type="text" id="collocazione-edizione-delete-immagine" placeholder="A-001" maxlength="10" required>
+          </div>
+          <div>
+            <label for="id-delete-immagine-edizione" class="required">Id immagine: </label>
+            <input type="number" id="id-delete-immagine-edizione" placeholder="1" min="1" required>
+          </div>
+          <input type="submit" value="Elimina immagine">
+        </form>
+      </div>
     </div>
     <div class="grid" id="stampa-grid">
       <div class="element">

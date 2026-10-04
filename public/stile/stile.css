@@ -474,9 +474,9 @@ footer .material-symbols-outlined{
         justify-content: left;
     }
 
-    form div:has(input[type="number"]){
+    /*form div:has(input[type="number"]){
         display: block;
-    }
+    }*/
 
     form p{
         text-align: center;
