@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function(){
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
-        const immaginiDiv=document.getElementById("immagini");
+        const immaginiDiv=document.getElementById("immagini-edizione");
         //svuoto immaginiDiv
         immaginiDiv.innerHTML="";
         //validazione client-side
@@ -528,6 +528,148 @@ document.addEventListener("DOMContentLoaded", function(){
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiungere il server.";
             //console.error(err);
+        }
+    });
+
+    //fetch GET stampa/:collocazione/immagini
+    document.getElementById("cerca-immagini-stampa-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const immaginiDiv=document.getElementById("immagini-stampa");
+        //svuoto immaginiDiv
+        immaginiDiv.innerHTML="";
+        //validazione client-side
+        const collocazione=document.getElementById("search-collocazione-immagini-stampa").value.trim();
+        if(!collocazione){
+            message.textContent="Errore: collocazione non inserita.";
+            return;
+        }
+        message.textContent="Ricerca stampa in corso...";
+        try{
+            const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}/immagini`);
+            const result=await res.json();
+            //stampa non trovata
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante la ricerca.";
+                return;
+            }
+            message.textContent="Stampa trovata!";
+            const immagini=result.immagini;
+            //se non ho immagini
+            if(immagini.length===0){
+                const p=document.createElement('p');
+                p.textContent="La stampa indicata non ha immagini.";
+                immaginiDiv.appendChild(p);
+                return;
+            }
+            //se ho una sola immagine
+            if(immagini.length===1){
+                const img=document.createElement('img');
+                img.src=immagini[0].url_immagine;
+                const p=document.createElement('p');
+                p.textContent="Id immagine: "+immagini[0].id;
+                immaginiDiv.appendChild(img);
+                immaginiDiv.appendChild(p);
+                return;
+            }
+            //se ho più immagini => costruisco slider
+            immaginiDiv.innerHTML=`
+            <div id="slider">
+                <div id="slider-track">
+                </div>
+            </div>
+            `;
+            const sliderTrack=document.getElementById("slider-track");
+            immagini.forEach(immagine=>{
+                const img=document.createElement('img');
+                img.src=immagine.url_immagine;
+                img.className="slide";
+                sliderTrack.appendChild(img);
+            });
+            window.inizializzaSlider();
+            //gestione didascalia con id dell'immagine
+            const slider=document.getElementById("slider");
+            const p=document.createElement('p');
+            p.textContent="Id immagine: "+immagini[0].id;
+            slider.appendChild(p);
+            let indiceCorrente=0;
+            slider.addEventListener("click", ()=>{
+                indiceCorrente=(indiceCorrente+1)%immagini.length;
+                p.textContent="Id immagine: "+immagini[indiceCorrente].id;
+            });
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            //console.error(err);
+        }
+    });
+
+    //fetch POST stampa/:collocazione/immagine
+    document.getElementById("aggiungi-immagine-stampa-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const collocazione=document.getElementById("collocazione-stampa-add-immagine").value.trim();
+        const files=document.getElementById("add-immagine-stampa").files;
+        //validazione client-side
+        if(!collocazione){
+            message.textContent="Errore: collocazione è un campo obbligatorio.";
+            return;
+        }
+        if(files.length===0){
+            message.textContent="Errore: nessuna immagine inserita.";
+            return;
+        }
+        message.textContent="Caricamento in corso...";
+        //preparazione dati
+        const formData=new FormData(form);
+        try{
+            const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}/immagine`, {
+                method: "POST",
+                credentials: "include",
+                body: formData
+            });
+            const result=await res.json();
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante l'inserimento.";
+                return;
+            }
+            message.textContent=result.message;
+            form.reset();
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiugere il server.";
+            //console.error(err);
+        }
+    });
+
+    //fetch DELETE stampa/:collocazione/immagine/:id
+    document.getElementById("cancella-immagine-stampa-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const collocazione=document.getElementById("collocazione-stampa-delete-immagine").value.trim();
+        const id=document.getElementById("id-delete-immagine-stampa").value.trim();
+        //validazione client-side
+        if(!collocazione || !id){
+            message.textContent="Errore: collocazione e id sono campi obbligatori.";
+            return;
+        }
+        message.textContent="Cancellazione in corso...";
+        try{
+            const res=await fetch(`/api/stampa/${encodeURIComponent(collocazione)}/immagine/${encodeURIComponent(id)}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            const result=await res.json();
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante la cancellazione.";
+                return;
+            }
+            message.textContent=result.message;
+            form.reset();
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            console.error(err);
         }
     });
 

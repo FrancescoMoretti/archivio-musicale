@@ -307,6 +307,233 @@ router.put("/api/stampa/:collocazione", autenticaToken, autorizzaRuoli('superadm
     }
 });
 
+//endpoint per lista immagini stampa
+router.get("/api/stampa/:collocazione/immagini", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), async (req, res)=>{
+    const {collocazione}=req.params;
+    //validazione server-side
+    //campi obbligatori
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });
+    }
+    //preparazione query
+    const queryStampa="SELECT id FROm stampe WHERE collocazione=?";
+    const queryImmagini="SELECT id, url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY id";
+    try{
+        const [resultStampa]=await pool.query(queryStampa, [collocazione]);
+        //stampa non trovata
+        if(resultStampa.length===0){
+            return res.status(404).json({
+                success: false,
+                message: " non trovata."
+            });//404: not found
+        }
+        //stampa trovata
+        const id=resultStampa[0].id;//estraggo l'id della stampa
+        const [resultImmagini]=await pool.query(queryImmagini, [id]);
+        //immagini trovate (vale anche se sono 0)
+        return res.json({
+            success: true,
+            immagini: resultImmagini
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint GET stampa/:collocazione/immagini: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero delle immagini."
+        });
+    }
+});
+
+//endpoint per inserimento immagine stampa
+router.post("/api/stampa/:collocazione/immagine", autenticaToken, autorizzaRuoli('superadmin', 'admin', 'editor'), upload.array('immagini'), async (req, res)=>{
+    let {collocazione}=req.params;
+    let files=req.files;//immagini
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });//400: bad request
+    }
+    //nessuna immagine inserita
+    if(!files || files.length===0){
+        return res.status(400).json({
+            success: false,
+            message: "Nessuna immagine fornita."
+        });//400: bd request
+    }
+    //preparazione query
+    const queryImmagini="INSERT INTO immagini_stampe (stampa_id, url_immagine) VALUES(?, ?)";
+    const queryStampa="SELECT id FROM stampe WHERE collocazione=?";
+    let id=null;
+    try{
+        const [resultStampa]=await pool.query(queryStampa, [collocazione]);
+        //stampa non trovata
+        if(resultStampa.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Stampa non trovata."
+            });
+        }
+        id=resultStampa[0].id;//estraggo l'id della stampa
+    }catch(err){
+        console.error("Errore nell'endpoint POST stampa/:collocazione/immagine: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero della stampa."
+        });
+    }
+    //stampa trovata
+    //se ho una sola immagine
+    if(files.length===1){
+        let idCloudinary=null;
+        try{
+            //caricament su cloudinary
+            const file=files[0];
+            const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "stampe");
+            idCloudinary=publicId;
+            //query inserimento immagine
+            await pool.query(queryImmagini, [id, imageUrl]);
+            return res.json({
+                success: true,
+                message: "Immagine inserita con successo!"
+            });
+        }catch(err){
+            try{
+                if(idCloudinary){
+                    await cloudinary.uploader.destroy(idCloudinary);
+                    console.log("Pulizia dell'immagine parzialmente caricata su Cloudinary completata.");
+                }
+            }catch(cloudinaryErr){
+                console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+            }
+            console.error("Errore nell'endpoint POST stampa/:collocazione/immagine: ", err);
+            return res.status(500).json({
+                success: false,
+                message: "Errore interno durante l'inserimento."
+            });
+        }
+    }
+    //se ho più immagini => uso connection
+    const connection=await pool.getConnection();
+    let publicIds=[];//id pubblici delle immagini caricate su cloudinary
+    try{
+        await connection.beginTransaction();
+        //caricamento delle immagini su cloudinary
+        for(let i=0; i<files.length; i++){
+            const file=files[i];
+            const {imageUrl, publicId}=await uploadToCloudinary(file.buffer, "stampe");
+            publicIds.push(publicId);
+            //query inserimento immagine
+            await connection.execute(queryImmagini, [id, imageUrl]);
+        }
+        await connection.commit();
+        return res.json({
+            success: true,
+            message: "Immagini inserite con successo!"
+        });
+    }catch(err){
+        await connection.rollback();
+        try{
+            if(publicIds.length>0){
+                for(let i=0; i<publicIds.length; i++){
+                    await cloudinary.uploader.destroy(publicIds[i]);
+                }
+                console.log("Pulizia delle immagini parzialmente caricate su Cloudinary completata.");
+            }
+        }catch(cloudinaryErr){
+            console.error("Errore durante la pulizia di Cloudinary: ", cloudinaryErr);
+        }
+        console.error("Errore nell'endpoint POST stampa/:collocazione/immagine: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante l'inserimento."
+        });
+    }finally{
+        connection.release();   
+    }
+});
+
+//endpoint per cancellazione immagine stampa
+router.delete("/api/stampa/:collocazione/immagine/:id", autenticaToken, autorizzaRuoli("superadmin", "admin", "editor"), async (req, res)=>{
+    const {collocazione, id}=req.params;
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });//400: bad request
+    }
+    if(!id || !String(id).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Id dell'immagine non valido."
+        });//400: bad request
+    }
+    //preparazione query
+    const queryStampa="SELECT id FROM stampe WHERE collocazione=?";
+    let idStampa=null;
+    const queryImmagine="SELECT url_immagine FROM immagini_stampe WHERE id=? AND stampa_id=?";
+    const queryCancellazione="DELETE FROM immagini_stampe WHERE id=?";
+    try{
+        const [resultStampa]=await pool.query(queryStampa, [collocazione]);
+        //stampa non trovata
+        if(resultStampa.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Stampa non trovata."
+            });
+        }
+        idStampa=resultStampa[0].id;//estraggo l'id della stampa
+    }catch(err){
+        console.error("Errore nell'endpoint DELETE stampa/:collocazione/immagine/:id: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero della stampa."
+        });
+    }
+    //stampa trovata
+    try{
+        const [resultImmagine]=await pool.query(queryImmagine, [id, idStampa]);
+        //immagine non trovata
+        if(resultImmagine.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Immagine non trovata."
+            });//404: not found
+        }
+        //immagine trovata
+        //estraggo il public_id dall'url dell'immagine ('.../v12345/campione.jpg'=>'campione')
+        const nomeFile=resultImmagine[0].url_immagine.split('/').pop().split('.')[0];
+        const publicId=`archivio_musicale/stampa/${nomeFile}`;
+        //cancello immagine da cloudinary
+        await cloudinary.uploader.destroy(publicId);
+        //cancello immagine dal DB
+        const [resultCancellazione]=await pool.query(queryCancellazione, [id]);
+        //cancellazione non avvenuta
+        if(resultCancellazione.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Immagine non presente nel database."
+            });//404: not found
+        }
+        //cancellazione avvenuta
+        return res.json({
+            success: true,
+            message: "Immagine eliminata con successo"
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint DELETE stampa/:collocazione/immagine/:id: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante la cancellazione."
+        });
+    }
+});
+
 router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;

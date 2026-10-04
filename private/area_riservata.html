@@ -165,7 +165,7 @@
           </div>
           <input type="submit" value="Cerca immagini">
         </form>
-        <div id="immagini">
+        <div id="immagini-edizione" class="immagini-div">
           <!--silder immagini-->
         </div>
       </div>
@@ -283,6 +283,50 @@
             <input type="text" name="dimensioni" id="update-dimensioni-stampa" placeholder="Altezza: **cm; larghezza: **cm" maxlength="50">
           </div>
           <input type="submit" value="Salva modifiche" disabled>
+        </form>
+      </div>
+      <div class="element">
+        <h3>Lista immagini:</h3>
+        <form id="cerca-immagini-stampa-form" action="/api/stampa/:collocazione/immagini" method="GET">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="search-collocazione-immagini-stampa" class="required">Collocazione: </label>
+            <input type="text" id="search-collocazione-immagini-stampa" placeholder="A-001" maxlength="10" required>
+          </div>
+          <input type="submit" value="Cerca immagini">
+        </form>
+        <div id="immagini-stampa" class="immagini-div">
+          <!--silder immagini-->
+        </div>
+      </div>
+      <div class="element">
+        <h3>Aggiunta immagini:</h3>
+        <form id="aggiungi-immagine-stampa-form" action="/api/stampa/:collocazione/immagine" method="POST" enctype="multipart/form-data">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="collocazione-stampa-add-immagine" class="required">Collocazione: </label>
+            <input type="text" id="collocazione-stampa-add-immagine" placeholder="A-001" maxlength="10" required>
+          </div>
+          <div>
+            <label for="add-immagine-stampa" class="required">Immagine: </label>
+            <input type="file" name="immagini" id="add-immagine-stampa" accept="image/*" multiple>
+          </div>
+          <input type="submit" value="Aggiungi immagine">
+        </form>
+      </div>
+      <div class="element">
+        <h3>Eliminazione immagini:</h3>
+        <form id="cancella-immagine-stampa-form" action="/api/stampa/:collocazione/immagine/:id" method="DELETE">
+          <p><!--messaggio--></p>
+          <div>
+            <label for="collocazione-stampa-delete-immagine" class="required">Collocazione: </label>
+            <input type="text" id="collocazione-stampa-delete-immagine" placeholder="A-001" maxlength="10" required>
+          </div>
+          <div>
+            <label for="id-delete-immagine-stampa" class="required">Id immagine: </label>
+            <input type="number" id="id-delete-immagine-stampa" placeholder="1" min="1" required>
+          </div>
+          <input type="submit" value="Elimina immagine">
         </form>
       </div>
     </div>
