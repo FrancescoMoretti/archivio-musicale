@@ -541,6 +541,83 @@ router.post("/api/edizione/:collocazione/immagine", autenticaToken, autorizzaRuo
     }
 });
 
+//endpoint per cancellazione immagine edizione
+router.delete("/api/edizione/:collocazione/immagine/:id", autenticaToken, autorizzaRuoli("superadmin", "admin", "editor"), async (req, res)=>{
+    const {collocazione, id}=req.params;
+    //validazione server-side
+    if(!collocazione || !String(collocazione).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Collocazione non valida."
+        });//400: bad request
+    }
+    if(!id || !String(id).trim()){
+        return res.status(400).json({
+            success: false,
+            message: "Id dell'immagine non valido."
+        });//400: bad request
+    }
+    //preparazione query
+    const queryEdizione="SELECT id FROM edizioni WHERE collocazione=?";
+    let idEdizione=null;
+    const queryImmagine="SELECT url_immagine FROM immagini_edizioni WHERE id=? AND edizione_id=?";
+    const queryCancellazione="DELETE FROM immagini_edizioni WHERE id=?";
+    try{
+        const [resultEdizione]=await pool.query(queryEdizione, [collocazione]);
+        //edizione non trovata
+        if(resultEdizione.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Edizione non trovata."
+            });
+        }
+        idEdizione=resultEdizione[0].id;//estraggo l'id dell'edizione
+    }catch(err){
+        console.error("Errore nell'endpoint DELETE edizione/:collocazione/immagine/:id: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante il recupero dell'edizione."
+        });
+    }
+    //edizione trovata
+    try{
+        const [resultImmagine]=await pool.query(queryImmagine, [id, idEdizione]);
+        //immagine non trovata
+        if(resultImmagine.length===0){
+            return res.status(404).json({
+                success: false,
+                message: "Immagine non trovata."
+            });//404: not found
+        }
+        //immagine trovata
+        //estraggo il public_id dall'url dell'immagine ('.../v12345/campione.jpg'=>'campione')
+        const nomeFile=resultImmagine[0].url_immagine.split('/').pop().split('.')[0];
+        const publicId=`archivio_musicale/edizioni/${nomeFile}`;
+        //cancello immagine da cloudinary
+        await cloudinary.uploader.destroy(publicId);
+        //cancello immagine dal DB
+        const [resultCancellazione]=await pool.query(queryCancellazione, [id]);
+        //cancellazione non avvenuta
+        if(resultCancellazione.affectedRows===0){
+            return res.status(404).json({
+                success: false,
+                message: "Immagine non presente nel database."
+            });//404: not found
+        }
+        //cancellazione avvenuta
+        return res.json({
+            success: true,
+            message: "Immagine eliminata con successo"
+        });
+    }catch(err){
+        console.error("Errore nell'endpoint DELETE edizione/:collocazione/immagine/:id: ", err);
+        return res.status(500).json({
+            success: false,
+            message: "Errore interno durante la cancellazione."
+        });
+    }
+});
+
 router.use(gestioneErroriUpload);//gestione di errori durante l'upload delle immagini
 
 module.exports=router;

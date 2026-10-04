@@ -288,13 +288,13 @@ document.addEventListener("DOMContentLoaded", function(){
         event.preventDefault();
         const form=event.target;
         const message=form.querySelector('p');
-        //validazione client-side
         const collocazione=document.getElementById("collocazione-edizione-add-immagine").value.trim();
+        const files=document.getElementById("add-immagine-edizione").files;
+        //validazione client-side
         if(!collocazione){
             message.textContent="Errore: collocazione è un campo obbligatorio.";
             return;
         }
-        const files=document.getElementById("add-immagine-edizione").files;
         if(files.length===0){
             message.textContent="Errore: nessuna immagine inserita.";
             return;
@@ -318,6 +318,37 @@ document.addEventListener("DOMContentLoaded", function(){
         }catch(err){
             message.textContent="Errore di rete: impossibile raggiugere il server.";
             //console.error(err);
+        }
+    });
+
+    //fetch DELETE edizione/:collocazione/immagine/:id
+    document.getElementById("cancella-immagine-edizione-form").addEventListener("submit", async (event)=>{
+        event.preventDefault();
+        const form=event.target;
+        const message=form.querySelector('p');
+        const collocazione=document.getElementById("collocazione-edizione-delete-immagine").value.trim();
+        const id=document.getElementById("id-delete-immagine-edizione").value.trim();
+        //validazione client-side
+        if(!collocazione || !id){
+            message.textContent="Errore: collocazione e id sono campi obbligatori.";
+            return;
+        }
+        message.textContent="Cancellazione in corso...";
+        try{
+            const res=await fetch(`/api/edizione/${encodeURIComponent(collocazione)}/immagine/${encodeURIComponent(id)}`, {
+                method: "DELETE",
+                credentials: "include"
+            });
+            const result=await res.json();
+            if(!res.ok || !result.success){
+                message.textContent=result.message || "Errore durante la cancellazione.";
+                return;
+            }
+            message.textContent=result.message;
+            form.reset();
+        }catch(err){
+            message.textContent="Errore di rete: impossibile raggiungere il server.";
+            console.error(err);
         }
     });
 
