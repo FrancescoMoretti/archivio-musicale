@@ -55,8 +55,11 @@ app.use(edizioniRoutes);
 const stampeRoutes=require('./src/routes/stampeRoutes');
 app.use(stampeRoutes);
 
-const eventiRouter=require('./src/routes/eventiRoutes');
-app.use(eventiRouter);
+const eventiRoutes=require('./src/routes/eventiRoutes');
+app.use(eventiRoutes);
+
+const homeRoutes=require('./src/routes/homeRoutes');
+app.use(homeRoutes);
 
 //serve i file statici dalla cartella public
 app.use(express.static('public'));

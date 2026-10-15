@@ -16,13 +16,13 @@ router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
         return next();//nessuna collocazione
     }
     //preparazione query
-    const query="SELECT id, titolo, autore, data_str, editore, descrizione FROM edizioni WHERE collocazione=?";
+    const query="SELECT id, titolo, autore, data_str, editore, descrizione, note FROM edizioni WHERE collocazione=?";
     const queryImg="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY id ASC LIMIT 1";//prendo l'immagine corrispondente con id minore (e prendo una sola immagine)
     try{
         const [result]=await pool.query(query, [collocazione]);
         //nessuna edizione trovata
         if(result.length===0){
-            return next();
+            return res.status(404).sendFile(path.join(__dirname, '../../public/404.html'));
         }
         //edizione trovata
         //estraggo i dati
@@ -61,7 +61,25 @@ router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
         //inserisco dati nel file html
         let html=await fs.readFile(path.join(__dirname, '../../public/edizione.html'), 'utf-8');
         html=html.replace('<title>Contenuto | Archivio musicale Luca Moretti</title>', `<title>${escapeHTML(titolo)}</title>\n    <!--SEO globale-->\n    <meta name="description" content="${escapeHTML(metaTesto)}">\n    <link rel="canonical" href="${escapeHTML(urlCanonical)}">\n    <!--Open Graph-->\n    <meta property="og:site_name" content="Archivio musicale Luca Moretti">\n    <meta property="og:title" content="${escapeHTML(titolo)}">\n    <meta property="og:description" content="${escapeHTML(metaTesto)}">\n    <meta property="og:image" content="${escapeHTML(urlImmagine)}">\n    <meta property="og:type" content="article">\n    <meta property="og:url" content="${escapeHTML(urlCanonical)}">`);
-        html=html.replace('<h1></h1>', `<h1>${escapeHTML(e.titolo)}</h1>`)
+        //costruzione scheda
+        let scheda="";
+        if(e.link_rism && (e.link_rism.startsWith("http://") || e.link_rism.startsWith("https://"))){
+            scheda+=`<li><span><a href="${escapeHTML(e.link_rism)}" target="_blank" rel="noopener noreferrer">Link RISM<a/></span></li>`;
+        }
+        scheda+=`<li><span>Autore</span>: ${escapeHTML(e.autore)}</li>`;
+        if(e.data_str){
+            scheda+=`<li><span>Data</span>: ${escapeHTML(e.data_str)}</li>`;
+        }
+        if(e.editore){
+            scheda+=`<li><span>Editore</span>: ${escapeHTML(e.editore)}</li>`;
+        }
+        if(e.descrizione){
+            scheda+=`<li><span>Descrizione</span>: ${escapeHTML(e.descrizione)}</li>`;
+        }
+        if(e.note){
+            scheda+=`<li><span>Note</span>: ${escapeHTML(e.note)}</li>`;
+        }
+        html=html.replace('<li></li>', `<li><h1>${escapeHTML(e.titolo)}</h1></li>${scheda}`);
         res.set('Content-Type', 'text/html');
         return res.send(html);
     }catch(err){

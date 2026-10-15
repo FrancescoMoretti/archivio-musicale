@@ -19,24 +19,9 @@ document.addEventListener("DOMContentLoaded", async function caricaStampa(){
         const contenuto=result.content;//dati della risorsa
         const listaImmagini=result.immagini || [];//array di URL a cloudinary
         //popolazione della scheda dell'articolo
-        let stringaHTML=`
-            <ul>
-                <li><span>Autore</span>: ${escapeHTML(contenuto.autore)}</li>
-        `;
         if(contenuto.collocazione){
-            stringaHTML+=`<li><span>Collocazione</span>: ${escapeHTML(contenuto.collocazione)}</li>`;
+            scheda.querySelector('ul li').insertAdjacentHTML("afterend", `<li><span>Collocazione</span>: ${escapeHTML(contenuto.collocazione)}</li>`);
         }
-        if(contenuto.data_str){
-            stringaHTML+=`<li><span>Data</span>: ${escapeHTML(contenuto.data_str)}</li>`;
-        }
-        if(contenuto.stampa){
-            stringaHTML+=`<li><span>Stampa</span>: ${escapeHTML(contenuto.stampa)}</li>`;
-        }
-        if(contenuto.dimensioni){
-            stringaHTML+=`<li><span>Dimensioni</span>: ${escapeHTML(contenuto.dimensioni)}</li>`;
-        }
-        stringaHTML+=`</ul>`;
-        scheda.innerHTML=stringaHTML;
         //gestione delle immagini
         const n_immagini=listaImmagini.length;
         //se ho una sola immagine la metto come immagine

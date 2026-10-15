@@ -22,7 +22,7 @@ router.get("/stampa.html", publicLimiter, async (req, res, next)=>{
         const [result]=await pool.query(query, [collocazione]);
         //nessuna stampa trovata
         if(result.length===0){
-            return next();
+            return res.status(404).sendFile(path.join(__dirname, '../../public/404.html'));
         }
         //stampa trovata
         //estraggo i dati
@@ -61,7 +61,19 @@ router.get("/stampa.html", publicLimiter, async (req, res, next)=>{
         //inserisco dati nel file html
         let html=await fs.readFile(path.join(__dirname, '../../public/stampa.html'), 'utf-8');
         html=html.replace('<title>Contenuto | Archivio musicale Luca Moretti</title>', `<title>${escapeHTML(titolo)}</title>\n    <!--SEO globale-->\n    <meta name="description" content="${escapeHTML(metaTesto)}">\n    <link rel="canonical" href="${escapeHTML(urlCanonical)}">\n    <!--Open Graph-->\n    <meta property="og:site_name" content="Archivio musicale Luca Moretti">\n    <meta property="og:title" content="${escapeHTML(titolo)}">\n    <meta property="og:description" content="${escapeHTML(metaTesto)}">\n    <meta property="og:image" content="${escapeHTML(urlImmagine)}">\n    <meta property="og:type" content="article">\n    <meta property="og:url" content="${escapeHTML(urlCanonical)}">`);
+        //costruzione scheda
+        let scheda=`<li><span>Autore</span>: ${escapeHTML(s.autore)}</li>`;
+        if(s.data_str){
+            scheda+=`<li><span>Data</span>: ${escapeHTML(s.data_str)}</li>`;
+        }
+        if(s.stampa){
+            scheda+=`<li><span>Stampa</span>: ${escapeHTML(s.stampa)}</li>`;
+        }
+        if(s.dimensioni){
+            scheda+=`<li><span>Dimensioni</span>: ${escapeHTML(s.dimensioni)}</li>`;
+        }
         html=html.replace('<h1></h1>', `<h1>${escapeHTML(s.titolo)}</h1>`);
+        html=html.replace('<li></li>', `${scheda}`);
         res.set('Content-Type', 'text/html');
         return res.send(html);
     }catch(err){

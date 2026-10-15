@@ -19,34 +19,15 @@ document.addEventListener("DOMContentLoaded", async function caricaEdizione(){
         const contenuto=result.content;//dati della risorsa
         const listaImmagini=result.immagini || [];//array di URL a cloudinary
         //popolazione della scheda dell'articolo
-        let stringaHTML="";
         if(contenuto.collocazione){
-            stringaHTML+=`<li><span>Collocazione</span>: ${escapeHTML(contenuto.collocazione)}</li>`;
+            scheda.querySelector('ul li').insertAdjacentHTML("afterend", `<li><span>Collocazione</span>: ${escapeHTML(contenuto.collocazione)}</li>`);
         }
-        if(contenuto.link_rism && (contenuto.link_rism.startsWith("http://") || contenuto.link_rism.startsWith("https://"))){
-            stringaHTML+=`<li><span><a href="${escapeHTML(contenuto.link_rism)}" target="_blank" rel="noopener noreferrer">Link RISM</a></span></li>`;
-        }
-        stringaHTML+=`<li><span>Autore</span>: ${escapeHTML(contenuto.autore)}</li>`
-        if(contenuto.data_str){
-            stringaHTML+=`<li><span>Data</span>: ${escapeHTML(contenuto.data_str)}</li>`;
-        }
-        if(contenuto.editore){
-            stringaHTML+=`<li><span>Editore</span>: ${escapeHTML(contenuto.editore)}</li>`;
-        }
-        if(contenuto.descrizione){
-            stringaHTML+=`<li><span>Descrizione</span>: ${escapeHTML(contenuto.descrizione)}</li>`;
-        }
-        if(contenuto.note){
-            stringaHTML+=`<li><span>Note</span>: ${escapeHTML(contenuto.note)}</li>`;
-        }
-        //inserisco la stringa html nell'ul già esistente
-        scheda.querySelector('ul').insertAdjacentHTML("beforeend", stringaHTML);
         //gestione delle immagini
         const n_immagini=listaImmagini.length;
         //se ho una sola immagine la metto come immagine
         if(n_immagini===1){
             immaginiDiv.innerHTML=`<img src="${escapeHTML(listaImmagini[0])}" alt="Immagine di ${escapeHTML(contenuto.titolo)}">`;
-        }else if(n_immagini > 1){
+        }else if(n_immagini>1){
             immaginiDiv.innerHTML=`
                 <div id="slider">
                     <div id="slider-track">

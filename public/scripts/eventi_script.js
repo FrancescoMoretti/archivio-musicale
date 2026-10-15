@@ -11,8 +11,21 @@ document.addEventListener("DOMContentLoaded", async function(){
     const sec=document.getElementById("eventi-sec");
     //const message=sec.querySelector('p');
     const altriBtn=document.getElementById("show-more-btn");
-    //chiamata iniziale
-    await caricaEventi();
+    //se ho già i primi eventi, riparto da quelli
+    if(sec.querySelector('article')){
+        articoliMostrati=sec.querySelectorAll('article').length;
+        left=sec.dataset.left==="true";
+        if(altriBtn){
+            if(sec.dataset.altri==="true"){
+                altriBtn.style.display="block";
+            }else{
+                altriBtn.style.display="none";
+            }
+        }
+    }else{
+        //fallback: se non ho eventi remderizzati dal server => li cerco
+        await caricaEventi();
+    }
 
     //fetch di caricamento degli eventi
     async function caricaEventi(){

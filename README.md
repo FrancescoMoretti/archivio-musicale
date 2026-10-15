@@ -32,7 +32,7 @@ Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testua
 
 **Frontend**
 - HTML, CSS, JavaScript vanilla
-- Costruzione dinamica del DOM lato client tramite fetch verso le API, con alcune pagine di dettaglio arricchite da un piccolo rendering server-side (titolo, intestazione)
+- Costruzione dinamica del DOM lato client tramite fetch verso le API, affiancata dal rendering server-side del contenuto testuale (schede di dettaglio, ultimi eventi, conteggio delle schede in home) e dei meta tag SEO, così i dati sono già presenti nell'HTML restituito ai crawler
 
 **Hosting**
 - Applicazione Node.js in produzione su **Render**
@@ -96,8 +96,11 @@ flowchart LR
 │   │   └── cloudinary.js        # configura Cloudinary + multer
 │   ├── middleware/
 │   │   └── auth.js               # autenticazione JWT, accesso per ruolo
+│   ├── utils/
+│   │   └── eventiHtml.js         # costruzione html degli articoli per gli eventi (rendering server-side)
 │   └── routes/
 │       ├── authRoutes.js          # login, logout, sessione (/api/me)
+│       ├── homeRoutes.js          # rendering server-side della home
 │       ├── utentiRoutes.js        # CRUD utenti, cambio password
 │       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti
 │       ├── stampeRoutes.js        # CRUD stampe/fotografie
@@ -128,6 +131,7 @@ L'autenticazione avviene tramite JWT firmato, salvato in un cookie `httpOnly`; i
 - Area riservata per operatori: inserimento, modifica e cancellazione di edizioni, stampe ed eventi, con upload multiplo di immagini su Cloudinary
 - Area amministrativa: creazione/cancellazione utenti, monitoraggio di chi ha creato/modificato ciascun contenuto, correzione massiva automatica di descrizioni/note (punteggiatura mancante)
 - Generazione dinamica di `sitemap.xml` per la SEO
+- Rendering server-side dei contenuti testuali delle pagine dinamiche (schede di dettaglio, eventi, home) e dei relativi meta tag, per una migliore indicizzazione
 - Redirect automatico post-login in base al ruolo dell'utente
 
 ## API
