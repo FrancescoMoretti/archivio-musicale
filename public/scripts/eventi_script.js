@@ -14,16 +14,15 @@ document.addEventListener("DOMContentLoaded", async function(){
     //se ho già i primi eventi, riparto da quelli
     if(sec.querySelector('article')){
         articoliMostrati=sec.querySelectorAll('article').length;
-        left=sec.dataset.left==="true";
+        //alterno allineamento a sinistra e destra per articoli con una sola immagine
+        if(sec.querySelectorAll('.one-img-article').length%2!==0){
+            left=false;
+        }
         if(altriBtn){
-            if(sec.dataset.altri==="true"){
-                altriBtn.style.display="block";
-            }else{
-                altriBtn.style.display="none";
-            }
+            altriBtn.style.display="block";
         }
     }else{
-        //fallback: se non ho eventi remderizzati dal server => li cerco
+        //fallback: se non ho eventi renderizzati dal server => li cerco
         await caricaEventi();
     }
 
@@ -40,37 +39,38 @@ document.addEventListener("DOMContentLoaded", async function(){
                     const article=document.createElement('article');
                     const testata=document.createElement('div');//titolo + date
                     testata.classList.add('testata');
-                    let h3=`<h3>${evento.titolo}`;
+                    const titolo=escapeHTML(evento.titolo);
+                    let h3=`<h3>${titolo}`;
                     if(evento.codice){
-                        h3+=`(${evento.codice})`;
+                        h3+=`(${escapeHTML(evento.codice)})`;
                     }
                     h3+=`</h3>`;
                     testata.insertAdjacentHTML('beforeend', h3);
-                    let date=`<p class="date">${evento.data_inizio}`;//date dell'evento
+                    let date=`<p class="date">${escapeHTML(evento.data_inizio)}`;//date dell'evento
                     if(evento.data_fine){
-                        date+=` - ${evento.data_fine}`;
+                        date+=` - ${escapeHTML(evento.data_fine)}`;
                     }
                     date+=`</p>`;
                     testata.insertAdjacentHTML('beforeend', date);
                     article.appendChild(testata);
                     const testo=document.createElement('p');//sezione testuale dell'articolo
                     testo.classList.add('testo');
-                    testo.insertAdjacentHTML('beforeend', evento.descrizione);
+                    testo.textContent=evento.descrizione;
                     let collegamenti=null;
                     //se c'è almeno un link=> creo div collegamenti
                     if(evento.link_evento || evento.link_facebook || evento.link_instagram){
                         collegamenti=document.createElement('div');
                         collegamenti.classList.add("collegamenti");
                         if(evento.link_evento){
-                            const a=`<a href="${evento.link_evento}" target="_blank" rel="noopener">Ulteriori dettagli</a>`;
+                            const a=`<a href="${escapeHTML(evento.link_evento)}" target="_blank" rel="noopener">Ulteriori dettagli</a>`;
                             collegamenti.insertAdjacentHTML('beforeend', a);
                         }
                         if(evento.link_facebook){
-                            const a=`<a href="${evento.link_facebook}" target="_blank" rel="noopener">Post Facebook</a>`;
+                            const a=`<a href="${escapeHTML(evento.link_facebook)}" target="_blank" rel="noopener">Post Facebook</a>`;
                             collegamenti.insertAdjacentHTML('beforeend', a);
                         }
                         if(evento.link_instagram){
-                            const a=`<a href="${evento.link_instagram}" target="_blank" rel="noopener">Post Instagram</a>`;
+                            const a=`<a href="${escapeHTML(evento.link_instagram)}" target="_blank" rel="noopener">Post Instagram</a>`;
                             collegamenti.insertAdjacentHTML('beforeend', a);
                         }
                     }
@@ -84,8 +84,8 @@ document.addEventListener("DOMContentLoaded", async function(){
                     switch(numeroImmagini){
                         case 1:
                             article.classList.add("one-img-article");
-                            const img=`<img class="pc-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
-                            const imgResponsive=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
+                            const img=`<img class="pc-img" src="${escapeHTML(evento.immagini[0])}" alt="${titolo} prima immagine">`;
+                            const imgResponsive=`<img src="${escapeHTML(evento.immagini[0])}" alt="${titolo} prima immagine">`;
                             if(left){
                                 article.insertAdjacentHTML('beforeend', img);
                                 article.appendChild(testo);
@@ -100,10 +100,10 @@ document.addEventListener("DOMContentLoaded", async function(){
                         break;
                         case 2:
                             article.classList.add("two-img-article");
-                            const img1=`<img class="pc-img" src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
-                            const img2=`<img class="pc-img" src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
-                            const img1Responsive=`<img src="${evento.immagini[0]}" alt="${evento.titolo} prima immagine">`;
-                            const img2Responsive=`<img src="${evento.immagini[1]}" alt="${evento.titolo} seconda immagine">`;
+                            const img1=`<img class="pc-img" src="${escapeHTML(evento.immagini[0])}" alt="${titolo} prima immagine">`;
+                            const img2=`<img class="pc-img" src="${escapeHTML(evento.immagini[1])}" alt="${titolo} seconda immagine">`;
+                            const img1Responsive=`<img src="${escapeHTML(evento.immagini[0])}" alt="${titolo} prima immagine">`;
+                            const img2Responsive=`<img src="${escapeHTML(evento.immagini[1])}" alt="${titolo} seconda immagine">`;
                             article.insertAdjacentHTML('beforeend', img1);
                             article.appendChild(testo);
                             article.insertAdjacentHTML('beforeend', img2);

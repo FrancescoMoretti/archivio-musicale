@@ -43,12 +43,12 @@ router.get(['/', '/index.html'], publicLimiter, autenticaTokenMorbido('superadmi
                 }
             });
         });
-        const {html: articoli, left}=costruisciArticoliEventi(eventi, true, mostraCodice);
-        //conteggio delle edizioni
+        const articoli=costruisciArticoliEventi(eventi, mostraCodice);
+        //conteggio delle schede
         const [[{totale}]]=await pool.query(querySchede);
         let html=await fs.readFile(path.join(__dirname, '../../public/index.html'), 'utf-8');
         //popolo il file html con gli eventi
-        html=html.replace('<section id="eventi-sec">', ()=>`<section id="eventi-sec" data-left="${left}">${articoli}`);
+        html=html.replace('<!--articoli eventi-->', ()=>articoli);
         //popolo il file html con il conteggio
         if(totale>0){
             html=html.replace("<p><!--Schede caricate: *.--></p>", ()=>`<p>Schede caricate: ${totale}</p>`);

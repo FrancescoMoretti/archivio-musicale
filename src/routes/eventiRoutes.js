@@ -22,7 +22,6 @@ router.get('/eventi.html', publicLimiter, autenticaTokenMorbido('superadmin', 'a
     }
     const queryEventi=`SELECT ${campiSelect} FROM eventi ORDER BY eventi.data_inizio DESC LIMIT ?`;
     const queryImmagini="SELECT evento_id, url_immagine FROM immagini_eventi WHERE evento_id IN (?) ORDER BY id ASC";
-    const queryTotale="SELECT COUNT(*) AS totale FROM eventi";
     try{
         const [eventi]=await pool.query(queryEventi, [numeroEventi]);
         //nessun evento trovato
@@ -35,7 +34,6 @@ router.get('/eventi.html', publicLimiter, autenticaTokenMorbido('superadmin', 'a
             ids.push(evento.id);
         });
         const [immagini]=await pool.query(queryImmagini, [ids]);
-        const [[{totale}]]=await pool.query(queryTotale);
         //associo le immagini ai rispettivi eventi
         eventi.forEach(evento=>{
             evento.immagini=[];
@@ -45,15 +43,10 @@ router.get('/eventi.html', publicLimiter, autenticaTokenMorbido('superadmin', 'a
                 }
             });
         });
-        //controllo se ci sono altri eventi da mostrare
-        let altri=false;
-        if(eventi.length<totale){
-            altri=true;
-        }
-        const {html: articoli, left}=costruisciArticoliEventi(eventi, true, mostraCodice);
+        const articoli=costruisciArticoliEventi(eventi, mostraCodice);
         let html=await fs.readFile(path.join(__dirname, '../../public/eventi.html'), 'utf-8');
         //popolo il file html con gli eventi
-        html=html.replace('<section id="eventi-sec">', ()=>`<section id="eventi-sec" data-left="${left}" data-altri="${altri}">${articoli}`);
+        html=html.replace('<!--articoli eventi-->', ()=>articoli);
         res.set('Content-Type', 'text/html');
         return res.send(html);
     }catch(err){

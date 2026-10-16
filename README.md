@@ -102,9 +102,9 @@ flowchart LR
 │       ├── authRoutes.js          # login, logout, sessione (/api/me)
 │       ├── homeRoutes.js          # rendering server-side della home
 │       ├── utentiRoutes.js        # CRUD utenti, cambio password
-│       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti
-│       ├── stampeRoutes.js        # CRUD stampe/fotografie
-│       ├── eventiRoutes.js        # CRUD eventi
+│       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti, rendering server-side
+│       ├── stampeRoutes.js        # CRUD stampe/fotografie, rendering server-side
+│       ├── eventiRoutes.js        # CRUD eventi, rendering server-side
 │       └── statisticheRoutes.js   # statistiche, monitoraggio, sitemap
 ├── public/                       # area pubblica
 ├── private/                      # area riservata editor
@@ -136,7 +136,7 @@ L'autenticazione avviene tramite JWT firmato, salvato in un cookie `httpOnly`; i
 
 ## API
 
-Tutti gli endpoint restituiscono JSON nella forma `{ success, message, ... }`, salvo la sitemap (XML).
+Gli endpoint `/api/...` restituiscono JSON nella forma `{ success, message, ... }`; fanno eccezione la sitemap (XML) e le pagine renderizzate lato server (HTML), elencate sotto.
 
 **Autenticazione** (`authRoutes.js`)
 | Metodo | Endpoint | Accesso |
@@ -172,12 +172,22 @@ Tutti gli endpoint restituiscono JSON nella forma `{ success, message, ... }`, s
 | GET | `/sitemap.xml` | pubblico |
 | GET | `/health` | pubblico (usato per keepalive Render)
 
+**Pagine renderizzate lato server** (`homeRoutes.js`, `eventiRoutes.js`, `edizioniRoutes.js`, `stampeRoutes.js`)
+| Metodo | Endpoint | Accesso |
+|---|---|---|
+| GET | `/`, `/index.html` | pubblico (ultimi eventi e conteggio schede; codice evento solo se autenticato) |
+| GET | `/eventi.html` | pubblico (codice evento solo se autenticato) |
+| GET | `/edizione.html?collocazione=...`, `/stampa.html?collocazione=...` | pubblico (meta tag SEO, titolo e scheda testuale) |
+
+Per home ed eventi, se non ci sono eventi viene servito il file statico e lo script li carica tramite le API. La home fa lo stesso anche in caso di errore.
+
 ## Sicurezza
 
 Il progetto adotta le seguenti misure, introdotte e verificate iterativamente durante lo sviluppo:
 
 - **Query parametrizzate** ovunque: nessuna concatenazione di stringhe SQL, protezione da SQL injection;
 - **Escaping HTML lato client** (`escapeHTML`) su tutti i dati generati dall'utente prima dell'inserimento via `innerHTML`, per prevenire XSS stored;
+- **Escaping HTML lato server** (`escapeHTML`) su tutti i dati inseriti nelle pagine renderizzate lato server, con `String.replace` in forma di funzione per evitare che sequenze speciali nel testo (es. `$&`) vengano interpretate;
 - **Gestione centralizzata degli errori non previsti**: un error handler globale intercetta le eccezioni non gestite nelle rotte e risponde con un JSON uniforme (500), invece di lasciare la richiesta senza risposta.
 - **Validazione URL** (`validaUrl`/`validaUrlSocial`) su tutti i link facoltativi, con controllo esplicito del protocollo (`http`/`https`) e, per i social, del dominio effettivo;
 - **Password**: hashing con `bcrypt` (mai salvate in chiaro); requisiti minimi di robustezza (lunghezza, varietà di caratteri, assenza di dati personali riconoscibili) applicati al cambio password, obbligatorio al primo accesso;
