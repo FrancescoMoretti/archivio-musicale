@@ -611,25 +611,25 @@ footer .material-symbols-outlined{
 }
 /*fine stile pagina login e area personale*/
 
-/*inizio stile pagina catalogo*/
-#catalogo .grid{
+/*inizio stile sezione catalogo*/
+#catalogo-sec .grid{
     gap: 0 0;
     grid-template-columns: repeat(2, 1fr);
     margin: 0 20% 0 20%;
 }
 
-#catalogo .grid .element{
+#catalogo-sec .grid .element{
     position: relative;
     aspect-ratio: 3/4;
     margin: 0 15%;
 }
 
-#catalogo .grid .element img{
+#catalogo-sec .grid .element img{
     height: 100%;
     display: block;
 }
 
-#catalogo .link{
+#catalogo-sec .link{
     /*posiziono sopra l'immagine*/
     z-index: 1;
     position: absolute;
@@ -651,11 +651,11 @@ footer .material-symbols-outlined{
     transition: color 0.3s ease-out;
 }
 
-#catalogo .link:hover{
+#catalogo-sec .link:hover{
     color: var(--carta2);
     background-color: var(--colorD);
 }
-/*fine stile pagina catalogo*/
+/*fine stile sezione catalogo*/
 
 /*inizio stile pagine contenuti*/
 .articolo{
@@ -1038,17 +1038,17 @@ footer .material-symbols-outlined{
     }
 /*fine restyling privacy*/
 
-/*inizio restyling catalogo*/
-    #catalogo .grid{
+/*inizio restyling sezione catalogo*/
+    #catalogo-sec .grid{
         display: flex;
         flex-direction: column;
         gap: 3em;
     }
 
-    #catalogo .link{
+    #catalogo-sec .link{
         font-size: 1.25em;
     }
-/*fine restyling catalogo*/
+/*fine restyling sezione catalogo*/
 
 /*inizio restyling pagine lista*/
     #ricerca-sec{
