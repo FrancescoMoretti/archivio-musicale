@@ -37,14 +37,14 @@ function costruisciNumeriPagine(numeroPagine, pagina, percorso){
         }
     }
     //scrivo i numeri e i "..."
-    let html="";
+    let html="\n";
     for(let i=0; i<daMostrare.length; i++){
         if(i>0){//se NON è il primo
             if(daMostrare[i]-daMostrare[i-1]>finestra){
                 html+=`${tab4}<span>...</span>\n`;
             }
         }
-        html+="\n"+numeroHTML(daMostrare[i], pagina, percorso);
+        html+=numeroHTML(daMostrare[i], pagina, percorso);
     }
     html+=tab3;
     return html;
