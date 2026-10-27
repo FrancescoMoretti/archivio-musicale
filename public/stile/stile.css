@@ -618,15 +618,37 @@ footer .material-symbols-outlined{
     margin: 0 20% 0 20%;
 }
 
+/*stile per la griglia delle ultime aggiunte (seconda griglia in catalogo-sec)*/
+#catalogo-sec .grid:nth-of-type(2){
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5%;
+    margin: auto;
+}
+
 #catalogo-sec .grid .element{
     position: relative;
     aspect-ratio: 3/4;
     margin: 0 15%;
 }
 
+#catalogo-sec .grid:nth-of-type(2) .element{
+    position: relative;
+    aspect-ratio: 3/2;
+}
+
 #catalogo-sec .grid .element img{
     height: 100%;
     display: block;
+}
+
+#catalogo-sec .grid:nth-of-type(2) .element img{
+    filter: brightness(0.5);
+    transition: filter 0.3s ease-out, transform 0.3s ease-out;
+}
+
+#catalogo-sec .grid:nth-of-type(2) .element:hover img{
+    filter: brightness(1);
+    transform: scale(1.05);
 }
 
 #catalogo-sec .link{
@@ -649,6 +671,11 @@ footer .material-symbols-outlined{
     padding: 0.75em;
     /*effetti*/
     transition: color 0.3s ease-out;
+}
+
+#catalogo-sec .grid:nth-of-type(2) .link{
+    font-size: 1.75em;
+    width: 65%;
 }
 
 #catalogo-sec .link:hover{
@@ -1039,14 +1066,20 @@ footer .material-symbols-outlined{
 /*fine restyling privacy*/
 
 /*inizio restyling sezione catalogo*/
-    #catalogo-sec .grid{
+    #catalogo-sec .grid,
+    #catalogo-sec .grid:nth-of-type(2){
         display: flex;
         flex-direction: column;
         gap: 3em;
     }
 
-    #catalogo-sec .link{
+    #catalogo-sec .link,
+    #catalogo-sec .grid:nth-of-type(2) .link{
         font-size: 1.25em;
+    }
+
+    #catalogo-sec .grid:nth-of-type(2){
+        margin: 0 20%;
     }
 /*fine restyling sezione catalogo*/
 

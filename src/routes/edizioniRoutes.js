@@ -6,7 +6,7 @@ const pool=require('../config/db');
 const {cloudinary, upload, uploadToCloudinary}=require('../config/cloudinary');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 const {validaStringa, validaUrl, escapeHTML, costruisciFiltro, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
-const {costruisciNumeriPagine}=require('../utils/paginazioneListe');
+const {costruisciNumeriPagine}=require('../utils/paginazioneListeHtml');
 const publicLimiter=createPublicLimiter();
 
 //endpoint per rendering server-side per lettura edizione

@@ -32,7 +32,7 @@ Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testua
 
 **Frontend**
 - HTML, CSS, JavaScript vanilla
-- Costruzione dinamica del DOM lato client tramite fetch verso le API, affiancata dal rendering server-side del contenuto testuale (schede di dettaglio, lista delle edizioni/manoscritti, ultimi eventi, conteggio delle schede in home) e dei meta tag SEO, così i dati sono già presenti nell'HTML restituito ai crawler
+- Costruzione dinamica del DOM lato client tramite fetch verso le API, affiancata dal rendering server-side del contenuto testuale (schede di dettaglio, lista delle edizioni/manoscritti, ultimi eventi, conteggio delle schede e preview delle ultime aggiunte in home) e dei meta tag SEO, così i dati sono già presenti nell'HTML restituito ai crawler
 
 **Hosting**
 - Applicazione Node.js in produzione su **Render**
@@ -87,29 +87,30 @@ flowchart LR
 ## Struttura del progetto
 
 ```
-├── index.js                     # entry point del server Express
+├── index.js                            # entry point del server Express
 ├── database/
-│   ├── schema.sql                # definizione delle tabelle
+│   ├── schema.sql                      # definizione delle tabelle
 ├── src/
 │   ├── config
-│   │   ├── db.js                # crea pool MySQL (Aiven, SSL)
-│   │   └── cloudinary.js        # configura Cloudinary + multer
+│   │   ├── db.js                       # crea pool MySQL (Aiven, SSL)
+│   │   └── cloudinary.js               # configura Cloudinary + multer
 │   ├── middleware/
-│   │   └── auth.js               # autenticazione JWT, accesso per ruolo
+│   │   └── auth.js                     # autenticazione JWT, accesso per ruolo
 │   ├── utils/
-│   │   ├── eventiHtml.js         # costruzione html degli articoli per gli eventi (rendering server-side)
-│   │   └── paginazioneListe.js    # costruzione dei numeri di pagina (in forma compatta) per le liste
+│   │   ├── eventiHtml.js               # costruzione html degli articoli per gli eventi (rendering server-side)
+│   │   ├── paginazioneListeHtml.js     # costruzione dei numeri di pagina (in forma compatta) per le liste
+│   │   └── ultimeAggiunteHtml.js       # costruzione delle card di preview per le ultime 3 schede
 │   └── routes/
-│       ├── authRoutes.js          # login, logout, sessione (/api/me)
-│       ├── homeRoutes.js          # rendering server-side della home
-│       ├── utentiRoutes.js        # CRUD utenti, cambio password
-│       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti, rendering server-side di schede e lista edizioni
-│       ├── stampeRoutes.js        # CRUD stampe/fotografie, rendering server-side
-│       ├── eventiRoutes.js        # CRUD eventi, rendering server-side
-│       └── statisticheRoutes.js   # statistiche, monitoraggio, sitemap
-├── public/                       # area pubblica
-├── private/                      # area riservata editor
-└── admin/                        # area riservata admin/superadmin
+│       ├── authRoutes.js               # login, logout, sessione (/api/me)
+│       ├── homeRoutes.js               # rendering server-side della home
+│       ├── utentiRoutes.js             # CRUD utenti, cambio password
+│       ├── edizioniRoutes.js           # CRUD edizioni/manoscritti, rendering server-side di schede e lista edizioni
+│       ├── stampeRoutes.js             # CRUD stampe/fotografie, rendering server-side
+│       ├── eventiRoutes.js             # CRUD eventi, rendering server-side
+│       └── statisticheRoutes.js        # statistiche, monitoraggio, sitemap
+├── public/                             # area pubblica
+├── private/                            # area riservata editor
+└── admin/                              # area riservata admin/superadmin
 ```
 > Validazione, hashing, keepalive del DB, gestione errori upload, rate limiting, escaping HTML lato client, slider immagini, error handler generico, gestore 404, gestore del favicon e gestore del filtro per barre di ricerca sono forniti da [`express-mysql-cloudinary-kit`](https://github.com/FrancescoMoretti/express-mysql-cloudinary-kit), installata come dipendenza.
 
@@ -176,7 +177,7 @@ Gli endpoint `/api/...` restituiscono JSON nella forma `{ success, message, ... 
 **Pagine renderizzate lato server** (`homeRoutes.js`, `eventiRoutes.js`, `edizioniRoutes.js`, `stampeRoutes.js`)
 | Metodo | Endpoint | Accesso |
 |---|---|---|
-| GET | `/`, `/index.html` | pubblico (ultimi eventi e conteggio schede; codice evento solo se autenticato) |
+| GET | `/`, `/index.html` | pubblico (conteggio schede, preview ultime aggiunte e ultimi eventi; codice evento solo se autenticato) |
 | GET | `/eventi.html` | pubblico (codice evento solo se autenticato) |
 | GET | `/edizione.html?collocazione=...`, `/stampa.html?collocazione=...` | pubblico (meta tag SEO, titolo e scheda testuale) |
 | GET | `/lista_edizioni.html`, `/lista_edizioni.html?pagina=N` | pubblico (elenco paginato con link alle schede e numeri di pagina) |
