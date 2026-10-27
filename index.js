@@ -84,5 +84,5 @@ app.use(createNotFoundHandler(path.join(__dirname, 'public')));
 app.use(errorHandler);
 
 app.listen(PORT, ()=>{
-    console.log(`Server in esecuzione sulla porta ${PORT}`);
+    console.log(`Server in esecuzione sulla porta ${PORT}\nVersione Node.js: `, process.version);
 });
