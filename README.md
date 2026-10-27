@@ -17,7 +17,7 @@ Applicazione web full-stack per la digitalizzazione e la consultazione pubblica 
 
 ## Panoramica
 
-Il sito espone al pubblico il catalogo dell'archivio (edizioni/manoscritti, stampe, eventi) e offre un'area riservata dove operatori autorizzati (editor, admin, superadmin) possono inserire, modificare e cancellare i contenuti, gestire gli utenti e monitorare le modifiche apportate all'archivio.
+Il sito espone al pubblico il catalogo dell'Archivio musicale Luca Moretti (edizioni/manoscritti, stampe, eventi) e offre un'area riservata dove operatori autorizzati (editor, admin, superadmin) possono inserire, modificare e cancellare i contenuti, gestire gli utenti e monitorare le modifiche apportate ai contenuti.
 
 Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testuali sono conservati in un database MySQL ospitato su **Aiven** (Amsterdam, UE), mentre le immagini sono gestite tramite **Cloudinary**.
 

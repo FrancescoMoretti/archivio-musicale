@@ -74,7 +74,6 @@ router.get("/sitemap.xml", async (req, res)=>{
         //lista pagine statiche
         const pagineStatiche=[
             '', //index.html
-            '/catalogo.html',
             '/biografia.html',
             '/eventi.html',
             '/lista_edizioni.html',
