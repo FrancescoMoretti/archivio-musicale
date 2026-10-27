@@ -339,7 +339,6 @@ footer .material-symbols-outlined{
     text-align: center;
     font-family: "Ubuntu", sans-serif;
     font-size: 1.05em;
-    margin: 1em auto 0 auto;
     grid-column: span 5;
 }
 
@@ -349,6 +348,24 @@ footer .material-symbols-outlined{
 
 .lista-contenuti button{
     margin: auto;
+}
+
+.lista-contenuti #pagine{
+    grid-column: span 5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75em;
+    margin-top: 1em;
+    font-family: "Ubuntu", sans-serif;
+}
+
+.lista-contenuti #pagine a{
+    color: var(--sfondoScuro);
+}
+
+.lista-contenuti #pagine .corrente{
+    font-weight: bold;
 }
 /*fine stile pagine lista*/
 
@@ -1053,10 +1070,7 @@ footer .material-symbols-outlined{
 
     .lista-contenuti #paginazione{
         display: flex;
-    }
-
-    .lista-contenuti #paginazione span{
-        margin-top: 5%;
+        margin: 1em 25% 0 25%;
     }
 
     .lista-contenuti #paginazione .mobile-btn{

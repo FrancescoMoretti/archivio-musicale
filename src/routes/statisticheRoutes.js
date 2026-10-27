@@ -93,6 +93,12 @@ router.get("/sitemap.xml", async (req, res)=>{
         pagineStatiche.forEach(pagina=>{
             xml+=`  <url>\n    <loc>${urlBase}${pagina}</loc>\n  </url>\n`;
         });
+        //aggiunta pagine per lista_edizioni.html?Pagina=N (il numero di pagine è numero_edizioni/righe_per_ogni_pagina)
+        const righeLista=10;//righe per ogni pagina
+        const pagineLista=Math.ceil(edizioni.length/righeLista);
+        for(let i=2; i<=pagineLista; i++){//comincio da 2 perché la prima è tra le pagine statiche
+            xml+=`  <url>\n    <loc>${urlBase}/lista_edizioni.html?pagina=${i}</loc>\n  </url>\n`
+        }
         //aggiunta edizioni
         edizioni.forEach(edizione=>{
             xml+=`  <url>\n    <loc>${urlBase}/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}</loc>\n    <lastmod>${new Date(edizione.updated_at).toISOString().split('T')[0]}</lastmod>\n  </url>\n`;
@@ -105,7 +111,7 @@ router.get("/sitemap.xml", async (req, res)=>{
         xml+='</urlset>';
         //dico al browser che questo è xml
         res.header('Content-type', 'application/xml');
-        //invio la striga xml
+        //invio la stringa xml
         res.send(xml);
     }catch(err){
         console.error("Errore durante la generazione della sitemap: ", err);

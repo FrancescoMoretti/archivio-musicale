@@ -32,7 +32,7 @@ Il server applicativo è ospitato su **Render** (Francoforte, UE); i dati testua
 
 **Frontend**
 - HTML, CSS, JavaScript vanilla
-- Costruzione dinamica del DOM lato client tramite fetch verso le API, affiancata dal rendering server-side del contenuto testuale (schede di dettaglio, ultimi eventi, conteggio delle schede in home) e dei meta tag SEO, così i dati sono già presenti nell'HTML restituito ai crawler
+- Costruzione dinamica del DOM lato client tramite fetch verso le API, affiancata dal rendering server-side del contenuto testuale (schede di dettaglio, lista delle edizioni/manoscritti, ultimi eventi, conteggio delle schede in home) e dei meta tag SEO, così i dati sono già presenti nell'HTML restituito ai crawler
 
 **Hosting**
 - Applicazione Node.js in produzione su **Render**
@@ -97,12 +97,13 @@ flowchart LR
 │   ├── middleware/
 │   │   └── auth.js               # autenticazione JWT, accesso per ruolo
 │   ├── utils/
-│   │   └── eventiHtml.js         # costruzione html degli articoli per gli eventi (rendering server-side)
+│   │   ├── eventiHtml.js         # costruzione html degli articoli per gli eventi (rendering server-side)
+│   │   └── paginazioneListe.js    # costruzione dei numeri di pagina (in forma compatta) per le liste
 │   └── routes/
 │       ├── authRoutes.js          # login, logout, sessione (/api/me)
 │       ├── homeRoutes.js          # rendering server-side della home
 │       ├── utentiRoutes.js        # CRUD utenti, cambio password
-│       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti, rendering server-side
+│       ├── edizioniRoutes.js      # CRUD edizioni/manoscritti, rendering server-side di schede e lista edizioni
 │       ├── stampeRoutes.js        # CRUD stampe/fotografie, rendering server-side
 │       ├── eventiRoutes.js        # CRUD eventi, rendering server-side
 │       └── statisticheRoutes.js   # statistiche, monitoraggio, sitemap
@@ -131,7 +132,7 @@ L'autenticazione avviene tramite JWT firmato, salvato in un cookie `httpOnly`; i
 - Area riservata per operatori: inserimento, modifica e cancellazione di edizioni, stampe ed eventi, con upload multiplo di immagini su Cloudinary
 - Area amministrativa: creazione/cancellazione utenti, monitoraggio di chi ha creato/modificato ciascun contenuto, correzione massiva automatica di descrizioni/note (punteggiatura mancante)
 - Generazione dinamica di `sitemap.xml` per la SEO
-- Rendering server-side dei contenuti testuali delle pagine dinamiche (schede di dettaglio, eventi, home) e dei relativi meta tag, per una migliore indicizzazione
+- Rendering server-side dei contenuti testuali delle pagine dinamiche (schede di dettaglio, lista edizioni/manoscritti, eventi, home) e dei relativi meta tag, per una migliore indicizzazione
 - Redirect automatico post-login in base al ruolo dell'utente
 
 ## API
@@ -178,8 +179,10 @@ Gli endpoint `/api/...` restituiscono JSON nella forma `{ success, message, ... 
 | GET | `/`, `/index.html` | pubblico (ultimi eventi e conteggio schede; codice evento solo se autenticato) |
 | GET | `/eventi.html` | pubblico (codice evento solo se autenticato) |
 | GET | `/edizione.html?collocazione=...`, `/stampa.html?collocazione=...` | pubblico (meta tag SEO, titolo e scheda testuale) |
+| GET | `/lista_edizioni.html`, `/lista_edizioni.html?pagina=N` | pubblico (elenco paginato con link alle schede e numeri di pagina) |
 
 Per home ed eventi, se non ci sono eventi viene servito il file statico e lo script li carica tramite le API. La home fa lo stesso anche in caso di errore.
+Nelle liste le miniature delle immagini vengono aggiunte dallo script dopo il caricamento.
 
 ## Sicurezza
 

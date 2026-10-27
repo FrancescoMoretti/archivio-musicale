@@ -29,6 +29,13 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     const searchBar=document.getElementById("search-bar");
     const tbody=document.querySelector('tbody');
 
+    //se arrivo da un link con ?Pagina=N riparto da quella pagina
+    const params=new URLSearchParams(window.location.search);
+    const paginaUrl=parseInt(params.get("pagina"), 10);
+    if(paginaUrl>0){
+        schermata=paginaUrl;
+    }
+
     //chiamata iniziale
     await caricaContenuti();
 
@@ -97,28 +104,25 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             tbody.style.height="auto";
             return;
         }
-        listaDaMostrare.forEach(contenuto=>{
+        listaDaMostrare.forEach(c=>{
             const tr=document.createElement("tr");
             const tdAutore=document.createElement("td");
             tdAutore.classList.add("nome-autore");
-            tdAutore.textContent=contenuto.autore;
+            tdAutore.textContent=c.autore;
             const tdTitolo=document.createElement("td");
-            let titolo=contenuto.titolo;
-            /*if(titolo.length>100){
-                titolo=titolo.slice(0, 100)+"...";
-            }*/
+            let titolo=c.titolo;
             //aggiungo link per SEO
             const linkTitolo=document.createElement("a");
-            linkTitolo.href=`${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
+            linkTitolo.href=`${paginaContenuto}?collocazione=${encodeURIComponent(c.collocazione)}`;
             linkTitolo.textContent=titolo;
             tdTitolo.appendChild(linkTitolo);
             //GESTIONE COLONNA IMMAGINE
             const tdImmagine=document.createElement("td");
-            if(contenuto.url_immagine){
+            if(c.url_immagine){
                 const img=document.createElement("img");
-                const miniaturaUrl=contenuto.url_immagine.replace('/upload/', '/upload/w_100,c_thumb/');//w_100,c_thumb servono per scaricare l'immagine in versione miniatura
+                const miniaturaUrl=c.url_immagine.replace('/upload/', '/upload/w_100,c_thumb/');//w_100,c_thumb servono per scaricare l'immagine in versione miniatura
                 img.src=miniaturaUrl;
-                img.alt=`Copertina di ${contenuto.titolo}`;
+                img.alt=`Copertina di ${c.titolo}`;
                 img.loading="lazy";
                 tdImmagine.appendChild(img);
             }else{
@@ -129,14 +133,12 @@ document.addEventListener("DOMContentLoaded", async ()=>{
             tr.appendChild(tdTitolo);
             tr.appendChild(tdImmagine);
             tr.addEventListener("click", ()=>{
-                window.location.href=`${paginaContenuto}?collocazione=${encodeURIComponent(contenuto.collocazione)}`;
+                window.location.href=`${paginaContenuto}?collocazione=${encodeURIComponent(c.collocazione)}`;
             });
             tbody.appendChild(tr);
         });
         //adatto tabella al contenuto
         tbody.style.height=`${tbody.rows.length*altezzaCellaImmagine}em`;
-        //aggiorno indice pagina
-        document.getElementById("schermata").textContent=`Pagina ${schermata}`;
         //gestione bottoni
         const paginaCorrente=(schermata-1)*righe;
         if(schermata===1){
