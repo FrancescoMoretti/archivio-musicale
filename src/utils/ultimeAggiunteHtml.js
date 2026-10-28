@@ -16,9 +16,7 @@ function costruisciUltimeAggiunte(aggiunte){
             }
             html+=`
                 <div class="element">
-                    <a href="${escapeHTML(href)}">
-                        <img src="${escapeHTML(src)}" alt="Copertina di ${escapeHTML(a.titolo)}">
-                    </a>
+                    <img src="${escapeHTML(src)}" alt="Copertina di ${escapeHTML(a.titolo)}">
                     <a class="link" href="${escapeHTML(href)}">${escapeHTML(testo)}</a>
                 </div>`;
         });
