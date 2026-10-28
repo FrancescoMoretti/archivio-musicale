@@ -6,7 +6,7 @@ function costruisciUltimeAggiunte(aggiunte){
     if(aggiunte.length>0){
         aggiunte.forEach(a=>{
             const href=`/${a.tipo}.html?collocazione=${encodeURIComponent(a.collocazione)}`;
-            let src='/immagini/logo_archivio_rettangolare.webp';//immagine di default in caso un'opera non abbia immagini
+            let src='/immagini/logo_archivio_rettangolare.jpeg';//immagine di default in caso un'opera non abbia immagini
             if(a.url){
                 src=a.url.replace('/upload', '/upload/w_450,h_300,c_fill/');//miniatura 3:2 (come aspect ratio via css)
             }
