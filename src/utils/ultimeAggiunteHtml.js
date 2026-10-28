@@ -5,21 +5,21 @@ function costruisciUltimeAggiunte(aggiunte){
     let html="";
     if(aggiunte.length>0){
         aggiunte.forEach(a=>{
-            const href=`/${escapeHTML(a.tipo)}.html?collocazione=${escapeHTML(a.collocazione)}`;
-            let src='/immagini/logo_archivio_rettangolare.webp';
+            const href=`/${a.tipo}.html?collocazione=${encodeURIComponent(a.collocazione)}`;
+            let src='/immagini/logo_archivio_rettangolare.webp';//immagine di default in caso un'opera non abbia immagini
             if(a.url){
-                src=`${escapeHTML(a.url)}`;
+                src=a.url.replace('/upload', '/upload/w_450,h_300,c_fill/');//miniatura 3:2 (come aspect ratio via css)
             }
             let testo=a.titolo;
-            if(testo.length>20){
+            if(testo.length>30){
                 testo=testo.substring(0, 30)+"...";
             }
             html+=`
                 <div class="element">
-                    <a href="${href}">
-                        <img src="${src}" alt="Copertina di ${escapeHTML(a.titolo)}">
+                    <a href="${escapeHTML(href)}">
+                        <img src="${escapeHTML(src)}" alt="Copertina di ${escapeHTML(a.titolo)}">
                     </a>
-                    <a class="link" href="${href}">${escapeHTML(testo)}</a>
+                    <a class="link" href="${escapeHTML(href)}">${escapeHTML(testo)}</a>
                 </div>`;
         });
     }
