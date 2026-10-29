@@ -102,7 +102,7 @@ flowchart LR
 │   │   └── ultimeAggiunteHtml.js       # costruzione delle card di preview per le ultime 3 schede
 │   └── routes/
 │       ├── authRoutes.js               # login, logout, sessione (/api/me)
-│       ├── homeRoutes.js               # rendering server-side della home
+│       ├── homeRoutes.js               # rendering server-side della home e redirect da '/index.html' a '/'
 │       ├── utentiRoutes.js             # CRUD utenti, cambio password
 │       ├── edizioniRoutes.js           # CRUD edizioni/manoscritti, rendering server-side di schede e lista edizioni
 │       ├── stampeRoutes.js             # CRUD stampe/fotografie, rendering server-side
@@ -172,12 +172,13 @@ Gli endpoint `/api/...` restituiscono JSON nella forma `{ success, message, ... 
 | GET | `/api/conta-reperti` | pubblico |
 | GET | `/api/monitor-contenuti` | admin, superadmin |
 | GET | `/sitemap.xml` | pubblico |
-| GET | `/health` | pubblico (usato per keepalive Render)
+| GET | `/health` | pubblico (usato per keepalive Render) |
+| GET | `/index.html` | pubblico (redirect da '/index.html' a '/')
 
 **Pagine renderizzate lato server** (`homeRoutes.js`, `eventiRoutes.js`, `edizioniRoutes.js`, `stampeRoutes.js`)
 | Metodo | Endpoint | Accesso |
 |---|---|---|
-| GET | `/`, `/index.html` | pubblico (conteggio schede, preview ultime aggiunte e ultimi eventi; codice evento solo se autenticato) |
+| GET | `/` | pubblico (conteggio schede, preview ultime aggiunte e ultimi eventi; codice evento solo se autenticato) |
 | GET | `/eventi.html` | pubblico (codice evento solo se autenticato) |
 | GET | `/edizione.html?collocazione=...`, `/stampa.html?collocazione=...` | pubblico (meta tag SEO, titolo e scheda testuale) |
 | GET | `/lista_edizioni.html`, `/lista_edizioni.html?pagina=N` | pubblico (elenco paginato con link alle schede e numeri di pagina) |
