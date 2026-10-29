@@ -9,8 +9,13 @@ const {costruisciArticoliEventi}=require('../utils/eventiHtml');
 const {costruisciUltimeAggiunte}=require('../utils/ultimeAggiunteHtml');
 const publicLimiter=createPublicLimiter();
 
+//redirect di /index.html a /
+router.get('/index.html', (req, res)=>{
+    res.redirect(301, '/');
+});
+
 //endpoint per rendering server-side della home
-router.get(['/', '/index.html'], publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res, next)=>{
+router.get('/', publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res, next)=>{
     const numeroEventi=3;//eventi mostrati nella home
     //preparazione query
     //query per ultimi eventi
