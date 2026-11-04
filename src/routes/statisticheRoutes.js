@@ -73,11 +73,11 @@ router.get("/sitemap.xml", async (req, res)=>{
         const urlBase="https://archivio-musicale-luca-moretti.onrender.com";//dominio di base
         //lista pagine statiche
         const pagineStatiche=[
-            '', //index.html
-            '/biografia.html',
-            '/eventi.html',
-            '/lista_edizioni.html',
-            '/lista_stampe.html'
+            {percorso: '/', lastmod: '2026-11-03'}, //index.html
+            {percorso: '/biografia.html', lastmod: '2026-07-11'},
+            {percorso: '/eventi.html', lastmod: '2026-11-03'},
+            {percorso: '/lista_edizioni.html'},
+            {percorso: '/lista_stampe.html'}
         ];
         //preparazione query
         const queryEdizioni="SELECT collocazione, updated_at FROM edizioni";
@@ -90,7 +90,11 @@ router.get("/sitemap.xml", async (req, res)=>{
         xml+='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
         //aggiunta pagine statiche
         pagineStatiche.forEach(pagina=>{
-            xml+=`  <url>\n    <loc>${urlBase}${pagina}</loc>\n  </url>\n`;
+            xml+=`  <url>\n    <loc>${urlBase}${pagina.percorso}</loc>\n`;
+            if(pagina.lastmod){
+                xml+=`    <lastmod>${pagina.lastmod}</lastmod>\n`;
+            }
+            xml+=`  </url>\n`;
         });
         //aggiunta pagine per lista_edizioni.html?Pagina=N (il numero di pagine è numero_edizioni/righe_per_ogni_pagina)
         const righeLista=10;//righe per ogni pagina

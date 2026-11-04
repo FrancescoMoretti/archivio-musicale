@@ -8,7 +8,7 @@ function costruisciUltimeAggiunte(aggiunte){
             const href=`/${a.tipo}.html?collocazione=${encodeURIComponent(a.collocazione)}`;
             let src='/immagini/logo_archivio_rettangolare.jpeg';//immagine di default in caso un'opera non abbia immagini
             if(a.url){
-                src=a.url.replace('/upload', '/upload/w_450,h_300,c_fill/');//miniatura 3:2 (come aspect ratio via css)
+                src=a.url.replace('/upload/', '/upload/w_450,h_300,c_fill/');//miniatura 3:2 (come aspect ratio via css)
             }
             let testo=a.titolo;
             if(testo.length>30){
