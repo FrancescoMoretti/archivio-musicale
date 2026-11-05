@@ -73,7 +73,7 @@ router.get("/sitemap.xml", async (req, res)=>{
         const urlBase="https://archivio-musicale-luca-moretti.onrender.com";//dominio di base
         //lista pagine statiche
         const pagineStatiche=[
-            {percorso: '/', lastmod: '2026-11-03'}, //index.html
+            {percorso: '/', lastmod: '2026-11-05'}, //index.html
             {percorso: '/biografia.html', lastmod: '2026-07-11'},
             {percorso: '/eventi.html', lastmod: '2026-11-03'},
             {percorso: '/lista_edizioni.html'},
