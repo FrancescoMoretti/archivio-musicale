@@ -17,6 +17,7 @@ router.get('/index.html', (req, res)=>{
 //endpoint per rendering server-side della home
 router.get('/', publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'editor'), async (req, res, next)=>{
     const numeroEventi=3;//eventi mostrati nella home
+    const numeroAggiunte=3;//ultime aggiunte mostrate nella home
     //preparazione query
     //query per ultimi eventi
     let campiSelect="id, link_evento, link_facebook, link_instagram, titolo, descrizione, DATE_FORMAT(data_inizio, '%d/%m/%Y') AS data_inizio, DATE_FORMAT(data_fine, '%d/%m/%Y') AS data_fine";
@@ -31,7 +32,7 @@ router.get('/', publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'edi
     //query per conteggio schede totali
     const querySchede="SELECT (SELECT COUNT(*) FROM edizioni) + (SELECT COUNT(*) FROM stampe) AS totale";
     //query per preview ultime aggiunte
-    const queryAggiunte="(SELECT 'edizione' AS tipo, id, collocazione, titolo, created_at FROM edizioni) UNION (SELECT 'stampa' AS tipo, id, collocazione, titolo, created_at FROM stampe) ORDER BY created_at DESC LIMIT 3";
+    const queryAggiunte="(SELECT 'edizione' AS tipo, id, collocazione, titolo, created_at FROM edizioni) UNION (SELECT 'stampa' AS tipo, id, collocazione, titolo, created_at FROM stampe) ORDER BY created_at DESC LIMIT ?";
     const queryImmagineEdizione="SELECT url_immagine FROM immagini_edizioni WHERE edizione_id=? ORDER BY id ASC LIMIT 1";
     const queryImmagineStampa="SELECT url_immagine FROM immagini_stampe WHERE stampa_id=? ORDER BY id ASC LIMIT 1";
     try{
@@ -59,7 +60,7 @@ router.get('/', publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'edi
         //conteggio delle schede
         const [[{totale}]]=await pool.query(querySchede);
         //recupero ultime aggiunte
-        const [aggiunte]=await pool.query(queryAggiunte);
+        const [aggiunte]=await pool.query(queryAggiunte, [numeroAggiunte]);
         //nessuna aggiunta trovata (DB vuoto)
         if(aggiunte.length===0){
             return next();//servo la home con il file statico
