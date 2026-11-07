@@ -63,15 +63,17 @@ router.get("/stampa.html", publicLimiter, async (req, res, next)=>{
         let html=await fs.readFile(path.join(__dirname, '../../public/stampa.html'), 'utf-8');
         html=html.replace('<title>Contenuto | Archivio musicale Luca Moretti</title>', `<title>${escapeHTML(titolo)}</title>\n    <!--SEO globale-->\n    <meta name="description" content="${escapeHTML(metaTesto)}">\n    <link rel="canonical" href="${escapeHTML(urlCanonical)}">\n    <!--Open Graph-->\n    <meta property="og:site_name" content="Archivio musicale Luca Moretti">\n    <meta property="og:title" content="${escapeHTML(titolo)}">\n    <meta property="og:description" content="${escapeHTML(metaTesto)}">\n    <meta property="og:image" content="${escapeHTML(urlImmagine)}">\n    <meta property="og:type" content="article">\n    <meta property="og:url" content="${escapeHTML(urlCanonical)}">`);
         //costruzione scheda
-        let scheda=`<li><span>Autore</span>: ${escapeHTML(s.autore)}</li>`;
+        const tab="    ";//4 spazi <=> 1 tab
+        const r5=tab+tab+tab+tab+tab;
+        let scheda=`<li><span>Autore</span>: ${escapeHTML(s.autore)}</li>\n`;
         if(s.data_str){
-            scheda+=`<li><span>Data</span>: ${escapeHTML(s.data_str)}</li>`;
+            scheda+=`${r5}<li><span>Data</span>: ${escapeHTML(s.data_str)}</li>\n`;
         }
         if(s.stampa){
-            scheda+=`<li><span>Stampa</span>: ${escapeHTML(s.stampa)}</li>`;
+            scheda+=`${r5}<li><span>Stampa</span>: ${escapeHTML(s.stampa)}</li>\n`;
         }
         if(s.dimensioni){
-            scheda+=`<li><span>Dimensioni</span>: ${escapeHTML(s.dimensioni)}</li>`;
+            scheda+=`${r5}<li><span>Dimensioni</span>: ${escapeHTML(s.dimensioni)}</li>`;
         }
         html=html.replace('<h1></h1>', `<h1>${escapeHTML(s.titolo)}</h1>`);
         html=html.replace('<li></li>', `${scheda}`);

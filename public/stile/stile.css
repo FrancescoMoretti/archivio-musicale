@@ -629,6 +629,8 @@ footer .material-symbols-outlined{
     position: relative;
     aspect-ratio: 3/4;
     margin: 0 15%;
+    border-radius: 5%;
+    overflow: visible;
 }
 
 #catalogo-sec .grid:nth-of-type(2) .element{

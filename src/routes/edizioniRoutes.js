@@ -63,22 +63,26 @@ router.get('/edizione.html', publicLimiter, async (req, res, next)=>{
         let html=await fs.readFile(path.join(__dirname, '../../public/edizione.html'), 'utf-8');
         html=html.replace('<title>Contenuto | Archivio musicale Luca Moretti</title>', `<title>${escapeHTML(titolo)}</title>\n    <!--SEO globale-->\n    <meta name="description" content="${escapeHTML(metaTesto)}">\n    <link rel="canonical" href="${escapeHTML(urlCanonical)}">\n    <!--Open Graph-->\n    <meta property="og:site_name" content="Archivio musicale Luca Moretti">\n    <meta property="og:title" content="${escapeHTML(titolo)}">\n    <meta property="og:description" content="${escapeHTML(metaTesto)}">\n    <meta property="og:image" content="${escapeHTML(urlImmagine)}">\n    <meta property="og:type" content="article">\n    <meta property="og:url" content="${escapeHTML(urlCanonical)}">`);
         //costruzione scheda
+        const tab="    ";//4 spazi <=> 1 tab
+        const r5=tab+tab+tab+tab+tab;
         let scheda="";
         if(e.link_rism && (e.link_rism.startsWith("http://") || e.link_rism.startsWith("https://"))){
-            scheda+=`<li><span><a href="${escapeHTML(e.link_rism)}" target="_blank" rel="noopener noreferrer">Link RISM<a/></span></li>`;
+            scheda+=`${r5}<li><span><a href="${escapeHTML(e.link_rism)}" target="_blank" rel="noopener noreferrer">Link RISM<a/></span></li>\n`;
+        }else{
+            scheda+=`\n`;
         }
-        scheda+=`<li><span>Autore</span>: ${escapeHTML(e.autore)}</li>`;
+        scheda+=`${r5}<li><span>Autore</span>: ${escapeHTML(e.autore)}</li>\n`;
         if(e.data_str){
-            scheda+=`<li><span>Data</span>: ${escapeHTML(e.data_str)}</li>`;
+            scheda+=`${r5}<li><span>Data</span>: ${escapeHTML(e.data_str)}</li>\n`;
         }
         if(e.editore){
-            scheda+=`<li><span>Editore</span>: ${escapeHTML(e.editore)}</li>`;
+            scheda+=`${r5}<li><span>Editore</span>: ${escapeHTML(e.editore)}</li>\n`;
         }
         if(e.descrizione){
-            scheda+=`<li><span>Descrizione</span>: ${escapeHTML(e.descrizione)}</li>`;
+            scheda+=`${r5}<li><span>Descrizione</span>: ${escapeHTML(e.descrizione)}</li>\n`;
         }
         if(e.note){
-            scheda+=`<li><span>Note</span>: ${escapeHTML(e.note)}</li>`;
+            scheda+=`${r5}<li><span>Note</span>: ${escapeHTML(e.note)}</li>`;
         }
         html=html.replace('<li></li>', `<li><h1>${escapeHTML(e.titolo)}</h1></li>${scheda}`);
         res.set('Content-Type', 'text/html');
