@@ -6,6 +6,7 @@ const pool=require('../config/db');
 const {cloudinary, upload, uploadToCloudinary}=require('../config/cloudinary');
 const {autenticaToken, autorizzaRuoli, autenticaTokenMorbido}=require('../middleware/auth');
 const {validaStringa, escapeHTML, costruisciFiltro, gestioneErroriUpload, createPublicLimiter}=require('express-mysql-cloudinary-kit');
+const {costruisciNumeriPagine}=require('../utils/paginazioneListeHtml');
 const publicLimiter=createPublicLimiter();
 
 //endpoint per rendering server-side per lettura stampa
@@ -79,6 +80,64 @@ router.get("/stampa.html", publicLimiter, async (req, res, next)=>{
     }catch(err){
         console.error("Errore nel rendering server-side di stampa.html: ", err);
         next(err);
+    }
+});
+
+//endpoint per rendering server-side per lista stampe
+router.get('/lista_stampe.html', publicLimiter, async (req, res, next)=>{
+    const righe=10;//righe di tabella per ogni pagina
+    const urlBase='https://archivio-musicale-luca-moretti.onrender.com/lista_stampe.html';
+    //pagina richiesta: se non specificata=>1; se non valida=>404
+    let pagina=1;
+    if(req.query.pagina!==undefined){
+        pagina=parseInt(req.query.pagina, 10);
+        if(!pagina || pagina<1){
+            return res.status(404).sendFile(path.join(__dirname, '../../public/404.html'));
+        }
+    }
+    const inizio=(pagina-1)*righe;
+    //preparazione query
+    const queryTotali="SELECT COUNT(*) AS totali FROM stampe";
+    const queryContenuti="SELECT collocazione, titolo, autore FROM stampe ORDER BY collocazione ASC LIMIT ? OFFSET ?";
+    try{
+        const [[{totali}]]=await pool.query(queryTotali);
+        const numeroPagine=Math.ceil(totali/righe);//parte intera superiore
+        //nessuna stampa: pagina esistente ma vuota (gestita da frontend)
+        if(totali<1 && pagina===1){
+            return next();
+        }
+        //pagina oltre l'ultima
+        if(pagina>numeroPagine){
+            return res.status(404).sendFile(path.join(__dirname, '../../public/404.html'));
+        }
+        const [contenuti]=await pool.query(queryContenuti, [righe, inizio]);
+        //righe della tabella
+        const tab="    ";
+        const tab4=tab+tab+tab+tab;
+        const tab5=tab4+tab;//indentazione
+        let corpoTabella="\n";
+        contenuti.forEach(c=>{
+            const link=`/stampa.html?collocazione=${encodeURIComponent(c.collocazione)}`;
+            corpoTabella+=`${tab5}<tr><td class="nome-autore">${escapeHTML(c.autore)}</td><td><a href="${escapeHTML(link)}">${escapeHTML(c.titolo)}</a></td><td></td></tr>\n`;
+        });
+        corpoTabella+=tab4;
+        //link a tutte le pagine
+        const linkPagine=costruisciNumeriPagine(numeroPagine, pagina, '/lista_stampe.html');
+        let html=await fs.readFile(path.join(__dirname, '../../public/lista_stampe.html'), 'utf-8');
+        html=html.replace('<!--corpo della tabella-->', ()=>corpoTabella);
+        html=html.replace('<!--link alle pagine-->', ()=>linkPagine);
+        //dalla seconda pagina titolo, canonical e og devono cambiare
+        if(pagina>1){
+            const urlPagina=`${urlBase}?pagina=${pagina}`;
+            html=html.replace(`<title>Stampe e Foto | Archivio musicale Luca Moretti</title>`, ()=>`<title>Stampe e Foto - Pagina ${pagina} | Archivio musicale Luca Moretti</title>`);
+            html=html.replace(`<link rel="canonical" href="${urlBase}">`, ()=>`<link rel="canonical" href="${urlPagina}">`);
+            html=html.replace(`<meta property="og:url" content="${urlBase}">`, ()=>`<meta property="og:url" content="${urlPagina}">`);
+        }
+        res.set('Content-Type', 'text/html');
+        return res.send(html);
+    }catch(err){
+        console.error("Errore nel rendering server-side di lista_stampe.html: ", err);
+        next();//servo il file statico
     }
 });
 

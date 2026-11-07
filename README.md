@@ -105,7 +105,7 @@ flowchart LR
 │       ├── homeRoutes.js               # rendering server-side della home e redirect da '/index.html' a '/'
 │       ├── utentiRoutes.js             # CRUD utenti, cambio password
 │       ├── edizioniRoutes.js           # CRUD edizioni/manoscritti, rendering server-side di schede e lista edizioni
-│       ├── stampeRoutes.js             # CRUD stampe/fotografie, rendering server-side
+│       ├── stampeRoutes.js             # CRUD stampe/fotografie, rendering server-side di schede e lista stampe
 │       ├── eventiRoutes.js             # CRUD eventi, rendering server-side
 │       └── statisticheRoutes.js        # statistiche, monitoraggio, sitemap
 ├── public/                             # area pubblica
@@ -182,6 +182,7 @@ Gli endpoint `/api/...` restituiscono JSON nella forma `{ success, message, ... 
 | GET | `/eventi.html` | pubblico (codice evento solo se autenticato) |
 | GET | `/edizione.html?collocazione=...`, `/stampa.html?collocazione=...` | pubblico (meta tag SEO, titolo e scheda testuale) |
 | GET | `/lista_edizioni.html`, `/lista_edizioni.html?pagina=N` | pubblico (elenco paginato con link alle schede e numeri di pagina) |
+| GET | `/lista_stampe.html`, `/lista_stampe.html?pagina=N` | pubblico (elenco paginato con link alle schede e numeri di pagina) |
 
 Per home ed eventi, se non ci sono eventi viene servito il file statico e lo script li carica tramite le API. La home fa lo stesso anche in caso di errore.
 Nelle liste le miniature delle immagini vengono aggiunte dallo script dopo il caricamento.
