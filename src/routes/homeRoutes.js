@@ -80,7 +80,7 @@ router.get('/', publicLimiter, autenticaTokenMorbido('superadmin', 'admin', 'edi
         let html=await fs.readFile(path.join(__dirname, '../../public/index.html'), 'utf-8');
         //popolo il file html con il conteggio
         if(totale>0){
-            html=html.replace("<!--Schede caricate: *.-->", ()=>`Schede caricate: ${totale}`);
+            html=html.replace("<!--schede: *-->", ()=>`Schede: ${totale}`);
         }
         //popolo il file con le ultime schede aggiunte
         html=html.replace('<!--ultime aggiunte-->', ()=>ultimeAggiunte);
