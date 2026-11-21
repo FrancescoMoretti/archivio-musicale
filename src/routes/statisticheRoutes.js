@@ -96,17 +96,6 @@ router.get("/sitemap.xml", async (req, res)=>{
             }
             xml+=`  </url>\n`;
         });
-        //aggiunta pagine per lista_edizioni.html?pagina=N (il numero di pagine è numero_edizioni/righe_per_ogni_pagina)
-        const righeLista=10;//righe per ogni pagina
-        const pagineListaEdizioni=Math.ceil(edizioni.length/righeLista);
-        for(let i=2; i<=pagineListaEdizioni; i++){//comincio da 2 perché la prima è tra le pagine statiche
-            xml+=`  <url>\n    <loc>${urlBase}/lista_edizioni.html?pagina=${i}</loc>\n  </url>\n`;
-        }
-        //aggiunta pagine per lista_stampe.html?pagina=N (il numero di pagine è numero_stampe/righe_per_ogni_pagina)
-        const pagineListaStampe=Math.ceil(stampe.length/righeLista);
-        for(let i=2; i<=pagineListaStampe; i++){
-            xml+=`  <url>\n    <loc>${urlBase}/lista_stampe.html?pagina=${i}</loc>\n  </url>\n`;
-        }
         //aggiunta edizioni
         edizioni.forEach(edizione=>{
             xml+=`  <url>\n    <loc>${urlBase}/edizione.html?collocazione=${encodeURIComponent(edizione.collocazione)}</loc>\n    <lastmod>${new Date(edizione.updated_at).toISOString().split('T')[0]}</lastmod>\n  </url>\n`;
